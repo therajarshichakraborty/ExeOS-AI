@@ -13,7 +13,8 @@
     "format:check": "prettier . --check",
     "typecheck:exact": "tsc --noEmit --exactOptionalPropertyTypes",
     "lint:fix": "next lint --fix",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check": "bun run lint && bun run typecheck"
   },
   "dependencies": {
     "-": "^0.0.1-security.1",
