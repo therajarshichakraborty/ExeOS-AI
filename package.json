@@ -2,8 +2,9 @@
   "name": "intellicode-x",
   "version": "0.1.0",
   "private": true,
+  "description": "Built a full-stack workflow automation platform inspired by n8n, enabling users to visually design, execute, and monitor complex automation pipelines using a node-based interface. Engineered with Next.js, TypeScript, and modern backend architecture, the platform integrates AI models from OpenAI, Anthropic, and Gemini to power intelligent workflow execution, content generation, and decision-making. Implemented secure authentication, real-time workflow orchestration, background job processing, API integrations, execution history, and scalable state management, following production-grade software engineering practices.",
   "scripts": {
-    "dev": "next dev -p 4040",
+    "dev": "next dev -p 4040 --turbopack",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
