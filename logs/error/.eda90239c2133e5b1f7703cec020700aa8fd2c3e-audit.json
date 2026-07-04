@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 60
+    },
+    "auditLog": "D:\\Rajarshi Chakraborty ( Arghya )\\Projects\\intellicode-x\\logs\\error\\.eda90239c2133e5b1f7703cec020700aa8fd2c3e-audit.json",
+    "files": [
+        {
+            "date": 1783190072558,
+            "name": "D:\\Rajarshi Chakraborty ( Arghya )\\Projects\\intellicode-x\\logs\\error\\2026-07-05.log",
+            "hash": "e7beb5af38da392f919dddeed5d301af20148116bfa8db799d5c41f652d98337"
+        }
+    ],
+    "hashType": "sha256"
+}

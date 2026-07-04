@@ -1,22 +1,29 @@
-export default function Home() {
+type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+interface PageProps {
+  searchParams: SearchParams;
+}
+export default async function HomePage({ searchParams }: PageProps) {
+  const resolvedParams = await searchParams;
+  const userTyped = resolvedParams.text;
   return (
-    <div className='text-2xl flex justify-center items-center mt-50 ml-50 mr-50'>
-      <p className='handwriting'>
-        There are many variations of passages of Lorem Ipsum available, but the
-        majority have suffered alteration in some form, by injected humour, or
-        randomised words which don't look even slightly believable.
-        <b>
-          If you are going to use a passage of Lorem Ipsum, you need to be sure
-          there isn't anything embarrassing hidden in the middle of text. All
-          the Lorem Ipsum generators on the Internet tend to repeat predefined
-          chunks as necessary, making this the first true generator on the
-          Internet. It uses a
-        </b>{" "}
-        dictionary of over 200 Latin words, combined with a handful of model
-        sentence structures, to generate Lorem Ipsum which looks reasonable. The
-        generated Lorem Ipsum is therefore always free from repetition, injected
-        humour, or non-characteristic words etc.
-      </p>
-    </div>
+    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
+      <h1>Root Page URL Reader</h1>
+      {userTyped ? (
+        <div>
+          <p>You typed in the URL:</p>
+          <h2 style={{ color: "red" }}>{userTyped}</h2>
+        </div>
+      ) : (
+        <div>
+          <p>The URL is empty.</p>
+          <p>
+            Try typing this into your browser bar:{" "}
+            <code style={{ background: "#000", padding: "4px" }}>
+              localhost:3000/?hello=hello-world
+            </code>
+          </p>
+        </div>
+      )}
+    </main>
   );
 }

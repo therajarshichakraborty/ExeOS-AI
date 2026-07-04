@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Nanum_Pen_Script } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-providers";
-import { AnimatedThemeToggler } from "@/components/ui/animated-theme-toggler";
+import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
 
 export const nanumPenScript = Nanum_Pen_Script({
   subsets: ["latin"],
