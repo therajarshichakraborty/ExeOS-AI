@@ -11,7 +11,7 @@ export const nanumPenScript = Nanum_Pen_Script({
 });
 
 export const metadata: Metadata = {
-  title: "IntelliCode-X",
+  title: "ExeOS-AI",
   description: "Your NextGeneration WorkFlow Management Application",
 };
 
