@@ -1,29 +1,118 @@
-type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
-interface PageProps {
-  searchParams: SearchParams;
-}
-export default async function HomePage({ searchParams }: PageProps) {
-  const resolvedParams = await searchParams;
-  const userTyped = resolvedParams.text;
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  PricingTable,
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
+import Link from "next/link";
+import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
+
+export default function Home() {
   return (
-    <main style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Root Page URL Reader</h1>
-      {userTyped ? (
-        <div>
-          <p>You typed in the URL:</p>
-          <h2 style={{ color: "red" }}>{userTyped}</h2>
+    <div className="landing-wrapper">
+      <header className="landing-header">
+        <div className="landing-header-inner">
+          <div className="logo-container">
+            <Link href="/">
+              <span className="logo-text">ExecOS</span>
+            </Link>
+            <div className="nav-actions">
+              <Show when="signed-in">
+                <Link href="/dashboard">
+                  <Button variant="ghost">Dashboard</Button>
+                </Link>
+                <UserButton />
+              </Show>
+              <Show when="signed-out">
+                <SignInButton />
+                <SignUpButton />
+              </Show>
+              <AnimatedThemeToggler className="p-2 rounded-lg border border-border hover:bg-muted text-foreground transition-all duration-200 shrink-0 [&_svg]:size-4" />
+            </div>
+          </div>
         </div>
-      ) : (
-        <div>
-          <p>The URL is empty.</p>
+      </header>
+
+      {/* Hero Section */}
+      <section className="section-heading">
+        <div className="text-center">
           <p>
-            Try typing this into your browser bar:{" "}
-            <code style={{ background: "#000", padding: "4px" }}>
-              localhost:3000/?hello=hello-world
-            </code>
+            <span className="hero-subtitle">
+              The AI that actually does things
+            </span>
           </p>
+          <h1>
+            Your Autonomous Executive <br />
+            Assistant
+          </h1>
+
+          <p className="hero-description">
+            Clears your inbox, sends emails, manages your calendar, all from
+            your favorite chat app.
+          </p>
+          <div className="hero-buttons">
+            <Link href="/sign-up">
+              <Button size="lg" className="text-lg">
+                Start Free Trial
+              </Button>
+            </Link>
+            <Button size="lg" variant="outline" className="text-lg">
+              See How It Works
+            </Button>
+          </div>
         </div>
-      )}
-    </main>
+      </section>
+
+      {/* Features Section */}
+      <section className="section-heading">
+        <h2>Powerful Features</h2>
+        <div className="features-grid">
+          {[
+            {
+              key: "email-management",
+              title: "Autonomous Email Management",
+              description:
+                "AI processes your emails every 15 minutes, categorizes them, and drafts intelligent replies",
+            },
+            {
+              key: "task-extraction",
+              title: "Smart Task Extraction",
+              description:
+                "Automatically creates tasks from your emails and calendar events. Never miss a to-do again",
+            },
+            {
+              key: "calendar-intelligence",
+              title: "Calendar Intelligence",
+              description:
+                "Suggests optimal meeting times, detects conflicts, and keeps your schedule organized",
+            },
+          ].map((feature) => (
+            <Card key={feature.key} className="p-6">
+              <CardHeader>
+                <CardTitle className="text-xl text-foreground">
+                  {feature.title}
+                </CardTitle>
+                <CardDescription className="text-base leading-relaxed text-muted-foreground">
+                  {feature.description}
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="section-heading text-xl dark:text-foreground text-background" id="pricing ">
+        <h2>Simple, Transparent Pricing</h2>
+        <PricingTable />
+      </section>
+    </div>
   );
 }

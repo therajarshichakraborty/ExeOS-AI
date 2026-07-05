@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Nanum_Pen_Script } from "next/font/google";
+import { Nanum_Pen_Script, Inter } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-providers";
 import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
+import {ClerkProvider} from '@clerk/nextjs';
+import { dark } from '@clerk/ui/themes'
+
+export const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const nanumPenScript = Nanum_Pen_Script({
   subsets: ["latin"],
@@ -12,7 +19,7 @@ export const nanumPenScript = Nanum_Pen_Script({
 
 export const metadata: Metadata = {
   title: "ExeOS-AI",
-  description: "Your NextGeneration WorkFlow Management Application",
+  description: "Your autonomous AI assistant for email and calendar management",
 };
 
 export default function RootLayout({
@@ -23,9 +30,10 @@ export default function RootLayout({
   return (
     <html
       lang='en'
-      className={`${nanumPenScript.variable} h-full antialiased`}
+      className={`${inter.variable} ${nanumPenScript.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <ClerkProvider appearance={{ theme: dark }}>
       <body className='min-h-full flex flex-col'>
         <ThemeProvider
           attribute='class'
@@ -33,12 +41,20 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className='absolute top-4 right-4'>
+          <div className='layout-theme-toggler absolute top-4 right-4'>
             <AnimatedThemeToggler />
           </div>
           {children}
+          <footer className="footer-wrapper">
+            <div className="section-heading">
+              <p className="text-center text-sm text-muted-foreground">
+                © {new Date().getFullYear()} ExeOS- AI.
+              </p>
+            </div>
+          </footer>
         </ThemeProvider>
       </body>
+      </ClerkProvider>
     </html>
   );
 }
