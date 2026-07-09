@@ -1,3 +1,3 @@
 export default defineNuxtConfig({
-  modules: ['@clerk/nuxt'],
-})
+  modules: ["@clerk/nuxt"],
+});

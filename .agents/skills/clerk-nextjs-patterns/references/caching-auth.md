@@ -1,6 +1,7 @@
 # Caching with Auth
 
-**CRITICAL**: Cache keys MUST include userId/orgId to prevent data leaking between users.
+**CRITICAL**: Cache keys MUST include userId/orgId to prevent data leaking
+between users.
 
 ## User-Scoped Cache
 
@@ -26,17 +27,17 @@ export default async function ProfilePage() {
 ## Revalidate After Updates
 
 ```typescript
-'use server';
-import { revalidateTag } from 'next/cache';
-import { auth } from '@clerk/nextjs/server';
+"use server";
+import { revalidateTag } from "next/cache";
+import { auth } from "@clerk/nextjs/server";
 
 export async function updateProfile(formData: FormData) {
   const { userId } = await auth();
-  if (!userId) throw new Error('Unauthorized');
+  if (!userId) throw new Error("Unauthorized");
 
   await db.users.update({
     where: { id: userId },
-    data: { name: formData.get('name') as string },
+    data: { name: formData.get("name") as string },
   });
   revalidateTag(`user-${userId}`);
 }
@@ -49,7 +50,7 @@ const { orgId } = await auth();
 const getOrgData = unstable_cache(
   () => db.orgData.findMany({ where: { organizationId: orgId } }),
   [`org-${orgId}-data`],
-  { revalidate: 300, tags: [`org-${orgId}`] }
+  { revalidate: 300, tags: [`org-${orgId}`] },
 );
 ```
 

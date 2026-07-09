@@ -1,10 +1,13 @@
 ---
 name: clerk-nextjs-patterns
-description: Advanced Next.js patterns - middleware, Server Actions, caching with
-  Clerk.
+description:
+  Advanced Next.js patterns - middleware, Server Actions, caching with Clerk.
 license: MIT
 allowed-tools: WebFetch
-compatibility: Requires NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY. For manual JWT verification (standalone API servers without Clerk middleware), additionally requires CLERK_JWT_KEY or CLERK_PEM_PUBLIC_KEY.
+compatibility:
+  Requires NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY. For manual
+  JWT verification (standalone API servers without Clerk middleware),
+  additionally requires CLERK_JWT_KEY or CLERK_PEM_PUBLIC_KEY.
 metadata:
   author: clerk
   version: 2.2.0
@@ -12,44 +15,51 @@ metadata:
 
 # Next.js Patterns
 
-> **Version**: Check `package.json` for the SDK version — see `clerk` skill for the version table. Core 2 differences are noted inline with `> **Core 2 ONLY (skip if current SDK):**` callouts.
+> **Version**: Check `package.json` for the SDK version — see `clerk` skill for
+> the version table. Core 2 differences are noted inline with
+> `> **Core 2 ONLY (skip if current SDK):**` callouts.
 
 For basic setup, see `clerk-setup` skill.
 
 ## What Do You Need?
 
-| Task | Reference |
-|------|-----------|
-| Server vs client auth (`auth()` vs hooks) | references/server-vs-client.md |
+| Task                                                   | Reference                           |
+| ------------------------------------------------------ | ----------------------------------- |
+| Server vs client auth (`auth()` vs hooks)              | references/server-vs-client.md      |
 | Configure middleware (public-first vs protected-first) | references/middleware-strategies.md |
-| Protect Server Actions | references/server-actions.md |
-| API route auth (401 vs 403) | references/api-routes.md |
-| Cache auth data (user-scoped caching) | references/caching-auth.md |
+| Protect Server Actions                                 | references/server-actions.md        |
+| API route auth (401 vs 403)                            | references/api-routes.md            |
+| Cache auth data (user-scoped caching)                  | references/caching-auth.md          |
 
 ## References
 
-| Reference | Description |
-|-----------|-------------|
-| `references/server-vs-client.md` | `await auth()` vs hooks |
+| Reference                             | Description                                                                 |
+| ------------------------------------- | --------------------------------------------------------------------------- |
+| `references/server-vs-client.md`      | `await auth()` vs hooks                                                     |
 | `references/middleware-strategies.md` | Public-first vs protected-first, `proxy.ts` (Next.js <=15: `middleware.ts`) |
-| `references/server-actions.md` | Protect mutations |
-| `references/api-routes.md` | 401 vs 403 |
-| `references/caching-auth.md` | User-scoped caching |
+| `references/server-actions.md`        | Protect mutations                                                           |
+| `references/api-routes.md`            | 401 vs 403                                                                  |
+| `references/caching-auth.md`          | User-scoped caching                                                         |
 
 ## Mental Model
 
 Server vs Client = different auth APIs:
+
 - **Server**: `await auth()` from `@clerk/nextjs/server` (async!)
 - **Client**: `useAuth()` hook from `@clerk/nextjs` (sync)
 
-Never mix them. Server Components use server imports, Client Components use hooks.
+Never mix them. Server Components use server imports, Client Components use
+hooks.
 
 Key properties from `auth()`:
+
 - `isAuthenticated` — boolean, replaces the `!!userId` pattern
-- `sessionStatus` — `'active'` | `'pending'`, for detecting incomplete session tasks
+- `sessionStatus` — `'active'` | `'pending'`, for detecting incomplete session
+  tasks
 - `userId`, `orgId`, `orgSlug`, `has()`, `protect()` — unchanged
 
-> **Core 2 ONLY (skip if current SDK):** `isAuthenticated` and `sessionStatus` are not available. Check `!!userId` instead.
+> **Core 2 ONLY (skip if current SDK):** `isAuthenticated` and `sessionStatus`
+> are not available. Check `!!userId` instead.
 
 ## Minimal Pattern
 
@@ -64,20 +74,23 @@ export default async function Page() {
 }
 ```
 
-> **Core 2 ONLY (skip if current SDK):** `isAuthenticated` is not available. Use `if (!userId)` instead.
+> **Core 2 ONLY (skip if current SDK):** `isAuthenticated` is not available. Use
+> `if (!userId)` instead.
 
 ### Conditional Rendering with `<Show>`
 
-For client-side conditional rendering based on auth state. `<Show>` covers both authentication checks and authorization (feature, plan, role, permission) in one component.
+For client-side conditional rendering based on auth state. `<Show>` covers both
+authentication checks and authorization (feature, plan, role, permission) in one
+component.
 
 **Authentication check:**
 
 ```tsx
-import { Show } from '@clerk/nextjs'
+import { Show } from "@clerk/nextjs";
 
-<Show when="signed-in" fallback={<p>Please sign in</p>}>
+<Show when='signed-in' fallback={<p>Please sign in</p>}>
   <Dashboard />
-</Show>
+</Show>;
 ```
 
 **Authorization checks (B2B):**
@@ -107,28 +120,38 @@ import { Show } from '@clerk/nextjs'
 **Callback for complex logic:**
 
 ```tsx
-<Show when={(has) => has({ role: 'org:admin' }) || has({ role: 'org:billing_manager' })}>
+<Show
+  when={(has) =>
+    has({ role: "org:admin" }) || has({ role: "org:billing_manager" })
+  }
+>
   <BillingActions />
 </Show>
 ```
 
-> **Core 2 ONLY (skip if current SDK):** `<Show>` does not exist. For authentication, use `<SignedIn>` and `<SignedOut>`. For authorization (role / permission), use `<Protect>` with the same prop names (`role`, `permission`, `condition`). Feature- and plan-based variants require Core 3. See `clerk-custom-ui` skill, `core-3/show-component.md` for the full migration table.
+> **Core 2 ONLY (skip if current SDK):** `<Show>` does not exist. For
+> authentication, use `<SignedIn>` and `<SignedOut>`. For authorization (role /
+> permission), use `<Protect>` with the same prop names (`role`, `permission`,
+> `condition`). Feature- and plan-based variants require Core 3. See
+> `clerk-custom-ui` skill, `core-3/show-component.md` for the full migration
+> table.
 
 ## Common Pitfalls
 
-| Symptom | Cause | Fix |
-|---------|-------|-----|
-| `undefined` userId in Server Component | Missing `await` | `await auth()` not `auth()` |
-| Auth not working on API routes | Missing matcher | Add `'/(api|trpc)(.*)'` to `proxy.ts` (Next.js <=15: `middleware.ts`) |
-| Cache returns wrong user's data | Missing userId in key | Include `userId` in `unstable_cache` key |
-| Mutations bypass auth | Unprotected Server Action | Check `auth()` at start of action |
-| Wrong HTTP error code | Confused 401/403 | 401 = not signed in, 403 = no permission |
+| Symptom                                | Cause                     | Fix                                      |
+| -------------------------------------- | ------------------------- | ---------------------------------------- |
+| `undefined` userId in Server Component | Missing `await`           | `await auth()` not `auth()`              |
+| Auth not working on API routes         | Missing matcher           | Add `'/(api                              | trpc)(.*)'`to`proxy.ts`(Next.js <=15:`middleware.ts`) |
+| Cache returns wrong user's data        | Missing userId in key     | Include `userId` in `unstable_cache` key |
+| Mutations bypass auth                  | Unprotected Server Action | Check `auth()` at start of action        |
+| Wrong HTTP error code                  | Confused 401/403          | 401 = not signed in, 403 = no permission |
 
 ## Session Tokens & Custom JWTs
 
 ### getToken() for external APIs
 
-Pass a custom JWT to third-party services (Hasura, Supabase, etc.) using JWT templates defined in the Clerk dashboard.
+Pass a custom JWT to third-party services (Hasura, Supabase, etc.) using JWT
+templates defined in the Clerk dashboard.
 
 **Server-side (Server Component or Route Handler)**:
 
@@ -171,7 +194,8 @@ export function DataFetcher() {
 }
 ```
 
-`getToken()` returns `null` when the user is not authenticated — always null-check before use.
+`getToken()` returns `null` when the user is not authenticated — always
+null-check before use.
 
 ### useSession() for session data
 
@@ -195,49 +219,55 @@ export function SessionInfo() {
 
 ### Manual JWT verification (no Clerk middleware)
 
-For standalone API servers that receive Clerk session tokens from the `Authorization` header or the `__session` cookie (same-origin).
+For standalone API servers that receive Clerk session tokens from the
+`Authorization` header or the `__session` cookie (same-origin).
 
 **Using `@clerk/backend` `verifyToken`** (recommended):
 
 ```typescript
-import { verifyToken } from '@clerk/backend'
+import { verifyToken } from "@clerk/backend";
 
-const token = req.headers.authorization?.replace('Bearer ', '')
-if (!token) return res.status(401).json({ error: 'No token' })
+const token = req.headers.authorization?.replace("Bearer ", "");
+if (!token) return res.status(401).json({ error: "No token" });
 
 try {
   const claims = await verifyToken(token, {
     jwtKey: process.env.CLERK_JWT_KEY,
-  })
+  });
   // claims.sub = userId
 } catch {
-  return res.status(401).json({ error: 'Invalid token' })
+  return res.status(401).json({ error: "Invalid token" });
 }
 ```
 
 **Using `jsonwebtoken`** (when you can't use `@clerk/backend`):
 
 ```typescript
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
-const publicKey = process.env.CLERK_PEM_PUBLIC_KEY!.replace(/\\n/g, '\n')
-const token = req.headers.authorization?.replace('Bearer ', '')
-if (!token) return res.status(401).json({ error: 'No token' })
+const publicKey = process.env.CLERK_PEM_PUBLIC_KEY!.replace(/\\n/g, "\n");
+const token = req.headers.authorization?.replace("Bearer ", "");
+if (!token) return res.status(401).json({ error: "No token" });
 
 try {
-  const claims = jwt.verify(token, publicKey, { algorithms: ['RS256'] }) as jwt.JwtPayload
+  const claims = jwt.verify(token, publicKey, {
+    algorithms: ["RS256"],
+  }) as jwt.JwtPayload;
   // Manually check exp and nbf (jsonwebtoken does this automatically, but verify azp if needed)
   // claims.sub = userId
 } catch {
-  return res.status(401).json({ error: 'Invalid or expired token' })
+  return res.status(401).json({ error: "Invalid or expired token" });
 }
 ```
 
 Token sources:
+
 - **Same-origin requests**: `__session` cookie (Clerk sets this automatically)
 - **Cross-origin / mobile / API-to-API**: `Authorization: Bearer <token>` header
 
-> **CRITICAL**: Always check `exp` and `nbf` claims. `verifyToken` from `@clerk/backend` handles this automatically; with raw `jsonwebtoken`, set `ignoreExpiration: false` (default) and ensure `clockTolerance` is minimal.
+> **CRITICAL**: Always check `exp` and `nbf` claims. `verifyToken` from
+> `@clerk/backend` handles this automatically; with raw `jsonwebtoken`, set
+> `ignoreExpiration: false` (default) and ensure `clockTolerance` is minimal.
 
 ## See Also
 

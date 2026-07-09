@@ -1,16 +1,26 @@
-import { ClerkProvider, Show, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
+import {
+  ClerkProvider,
+  Show,
+  SignInButton,
+  SignUpButton,
+  UserButton,
+} from "@clerk/nextjs";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>
         <ClerkProvider>
           <header>
-            <Show when="signed-out">
+            <Show when='signed-out'>
               <SignInButton />
               <SignUpButton />
             </Show>
-            <Show when="signed-in">
+            <Show when='signed-in'>
               <UserButton />
             </Show>
           </header>
@@ -18,5 +28,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </ClerkProvider>
       </body>
     </html>
-  )
+  );
 }

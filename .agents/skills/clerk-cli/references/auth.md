@@ -1,6 +1,7 @@
 # Clerk CLI - Authentication & Targeting Reference
 
-Everything you need to know about how the CLI authenticates, resolves keys, and targets the right application/instance.
+Everything you need to know about how the CLI authenticates, resolves keys, and
+targets the right application/instance.
 
 ## Two APIs, two auth paths
 
@@ -11,37 +12,45 @@ Clerk exposes two HTTP APIs. The CLI speaks both.
 | **Backend API (BAPI)**   | `https://api.clerk.dev/v1/` | Instance **secret key** (`sk_...`)                                     | Tenant data: users, orgs, sessions, invitations, JWT templates, webhooks.                          | (default)    |
 | **Platform API (PLAPI)** | `https://api.clerk.com/v1/` | **Platform API key** (`ak_...`) or OAuth token from `clerk auth login` | Account-level: listing your applications, fetching app/instance metadata, pulling config, billing. | `--platform` |
 
-You override the base URLs via `CLERK_BACKEND_API_URL` and `CLERK_PLATFORM_API_URL` when testing against non-production Clerk environments.
+You override the base URLs via `CLERK_BACKEND_API_URL` and
+`CLERK_PLATFORM_API_URL` when testing against non-production Clerk environments.
 
 ### Backend API secret key resolution order
 
-When you run `clerk api /users` (no `--platform`), the CLI picks the `sk_` key in this order:
+When you run `clerk api /users` (no `--platform`), the CLI picks the `sk_` key
+in this order:
 
 1. `--secret-key <key>` flag (explicit override)
 2. `CLERK_SECRET_KEY` environment variable
-3. Auto-resolved from `--app <id>` (uses `CLERK_PLATFORM_API_KEY` or stored OAuth token to fetch the app's secret key)
-4. Auto-resolved from the linked project profile (same mechanism as #3, but the app ID comes from the repo's link)
+3. Auto-resolved from `--app <id>` (uses `CLERK_PLATFORM_API_KEY` or stored
+   OAuth token to fetch the app's secret key)
+4. Auto-resolved from the linked project profile (same mechanism as #3, but the
+   app ID comes from the repo's link)
 
-The CLI validates prefixes: passing `ak_...` where `sk_...` is expected (or vice versa) throws an error immediately with guidance on which key type to use.
+The CLI validates prefixes: passing `ak_...` where `sk_...` is expected (or vice
+versa) throws an error immediately with guidance on which key type to use.
 
 ### Platform API auth resolution order
 
-When you run `clerk api --platform ...`, or any command that already uses PLAPI (`apps list`, `config pull`, `link`, etc.), the CLI picks the bearer token in this order:
+When you run `clerk api --platform ...`, or any command that already uses PLAPI
+(`apps list`, `config pull`, `link`, etc.), the CLI picks the bearer token in
+this order:
 
 1. `CLERK_PLATFORM_API_KEY` environment variable
 2. Stored OAuth token from `clerk auth login`
-3. If neither is present, the CLI errors: "Not authenticated. Run `clerk auth login` or set `CLERK_PLATFORM_API_KEY`."
+3. If neither is present, the CLI errors: "Not authenticated. Run
+   `clerk auth login` or set `CLERK_PLATFORM_API_KEY`."
 
-Set `CLERK_PLATFORM_API_KEY` for CI and scripted agent usage. Use `clerk auth login` for local interactive development.
+Set `CLERK_PLATFORM_API_KEY` for CI and scripted agent usage. Use
+`clerk auth login` for local interactive development.
 
 ## Host vs sandbox behavior
 
-These auth and targeting rules only produce trustworthy results when the CLI
-can actually reach the user's host state.
+These auth and targeting rules only produce trustworthy results when the CLI can
+actually reach the user's host state.
 
-In agent mode, the CLI now emits a best-effort warning once per invocation
-when it detects that host-only Clerk state or system capabilities are
-unavailable:
+In agent mode, the CLI now emits a best-effort warning once per invocation when
+it detects that host-only Clerk state or system capabilities are unavailable:
 
 ```text
 Host-only Clerk state or system capabilities may be unavailable in agent mode. This may be a sandboxed run.
@@ -65,23 +74,34 @@ targeting result. A sandboxed run can misreport:
 
 Rerun the same command on the host before acting on it.
 
-> **`config` commands do not accept `--secret-key`.** They target the Platform API and authenticate via the PLAPI chain above (`CLERK_PLATFORM_API_KEY` or the stored OAuth token). If you need to script `config pull/schema/patch/put` in CI, export `CLERK_PLATFORM_API_KEY`; a Backend API `sk_...` key will not work.
+> **`config` commands do not accept `--secret-key`.** They target the Platform
+> API and authenticate via the PLAPI chain above (`CLERK_PLATFORM_API_KEY` or
+> the stored OAuth token). If you need to script `config pull/schema/patch/put`
+> in CI, export `CLERK_PLATFORM_API_KEY`; a Backend API `sk_...` key will not
+> work.
 
 ## Project linking
 
-`clerk link` stores a mapping from your repo to a Clerk application in the CLI config file (run `clerk doctor --verbose` to see the resolved path; override with `CLERK_CONFIG_DIR`). The key is the normalized git remote URL (e.g., `github.com/org/repo`), which means the link is shared across all clones and worktrees of the same repo automatically.
+`clerk link` stores a mapping from your repo to a Clerk application in the CLI
+config file (run `clerk doctor --verbose` to see the resolved path; override
+with `CLERK_CONFIG_DIR`). The key is the normalized git remote URL (e.g.,
+`github.com/org/repo`), which means the link is shared across all clones and
+worktrees of the same repo automatically.
 
 When you run a command without `--app`/`--instance`:
 
-1. The CLI resolves the current repo's profile (normalized git remote → git common dir → current working directory).
+1. The CLI resolves the current repo's profile (normalized git remote → git
+   common dir → current working directory).
 2. If linked, it uses the stored app ID and instance IDs.
 3. If not linked, it errors with guidance to run `clerk link`.
 
 ## `--app` and `--instance` targeting
 
-Most commands accept `--app <id>` and `--instance <target>` to override the linked profile:
+Most commands accept `--app <id>` and `--instance <target>` to override the
+linked profile:
 
-- `--app <id>` - Clerk application ID (starts with `app_`). Works from any directory; no link required.
+- `--app <id>` - Clerk application ID (starts with `app_`). Works from any
+  directory; no link required.
 - `--instance <target>` - One of:
   - `dev` (development instance, the default)
   - `prod` (production instance)
@@ -106,7 +126,8 @@ clerk config pull --instance ins_2aB3c...
 
 Aliases: `signup`, `signin`, `sign-in`. Top-level shortcut: `clerk login`.
 
-OAuth 2.0 PKCE flow against the Clerk OAuth system instance (`https://clerk.clerk.com` by default, overridable via `CLERK_OAUTH_BASE_URL`):
+OAuth 2.0 PKCE flow against the Clerk OAuth system instance
+(`https://clerk.clerk.com` by default, overridable via `CLERK_OAUTH_BASE_URL`):
 
 1. Generates PKCE parameters.
 2. Starts a local callback server on `127.0.0.1`.
@@ -115,10 +136,10 @@ OAuth 2.0 PKCE flow against the Clerk OAuth system instance (`https://clerk.cler
 5. Fetches user info from `/oauth/userinfo`.
 6. Stores the token in the OS credential store.
 
-In agent mode, if already authenticated, it's a no-op. If not, it prints guidance rather than opening a browser.
-In a sandbox, even the "already authenticated" check can be false if the
-keychain or fallback credential file is blocked, so rerun on the host before
-trusting a sandboxed auth failure.
+In agent mode, if already authenticated, it's a no-op. If not, it prints
+guidance rather than opening a browser. In a sandbox, even the "already
+authenticated" check can be false if the keychain or fallback credential file is
+blocked, so rerun on the host before trusting a sandboxed auth failure.
 
 ### `clerk auth logout`
 
@@ -128,7 +149,8 @@ Clears the stored token. No API calls.
 
 ### `clerk whoami`
 
-Hits `GET /oauth/userinfo` with the stored token and prints the email. Exits with a message if not logged in.
+Hits `GET /oauth/userinfo` with the stored token and prints the email. Exits
+with a message if not logged in.
 
 ## Environment variables the CLI honors
 
@@ -152,4 +174,5 @@ Hits `GET /oauth/userinfo` with the stored token and prints the email. Exits wit
 | `Unauthorized` from API             | Key belongs to a different instance                           | Verify `--instance` and ensure the key matches               |
 | Sandbox warning + auth/link failure | Host-only Clerk state or system capabilities are blocked      | Rerun the same command on the host before trusting the error |
 
-When in doubt: `clerk doctor --json` walks through all of this and tells you exactly what's wrong.
+When in doubt: `clerk doctor --json` walks through all of this and tells you
+exactly what's wrong.

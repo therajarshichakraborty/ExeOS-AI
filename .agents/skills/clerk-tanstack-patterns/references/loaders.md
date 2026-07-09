@@ -2,7 +2,8 @@
 
 ## Auth in Loaders
 
-Loaders receive context from `beforeLoad`. Pass `userId` or `orgId` through context:
+Loaders receive context from `beforeLoad`. Pass `userId` or `orgId` through
+context:
 
 ```typescript
 export const Route = createFileRoute('/dashboard')({
@@ -31,24 +32,24 @@ export const Route = createFileRoute('/dashboard')({
 
 ```typescript
 const getOrgContext = createServerFn().handler(async () => {
-  const { isAuthenticated, userId, orgId } = await auth()
-  if (!isAuthenticated) throw redirect({ to: '/sign-in' })
-  return { userId, orgId }
-})
+  const { isAuthenticated, userId, orgId } = await auth();
+  if (!isAuthenticated) throw redirect({ to: "/sign-in" });
+  return { userId, orgId };
+});
 
-export const Route = createFileRoute('/app/projects')({
+export const Route = createFileRoute("/app/projects")({
   beforeLoad: async () => await getOrgContext(),
   loader: async ({ context }) => {
     if (!context.orgId) {
-      return { projects: [], requiresOrg: true }
+      return { projects: [], requiresOrg: true };
     }
 
     const projects = await db.projects.findMany({
       where: { orgId: context.orgId },
-    })
-    return { projects, requiresOrg: false }
+    });
+    return { projects, requiresOrg: false };
   },
-})
+});
 ```
 
 ## useLoaderData
@@ -69,6 +70,7 @@ function Projects() {
 
 ## Server vs Client Data
 
-Loaders run on the server during SSR and on the client during navigation. `auth()` works in both because it reads from the Clerk middleware context.
+Loaders run on the server during SSR and on the client during navigation.
+`auth()` works in both because it reads from the Clerk middleware context.
 
 [Docs](https://clerk.com/docs/tanstack-react-start/getting-started/quickstart)

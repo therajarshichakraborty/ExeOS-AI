@@ -25,7 +25,7 @@ export default async function MainLayout({
   const name = clerkUser?.fullName ?? "";
 
   //getthe user from db or create the user in the db
-  const user = await getOrCreateUser(userId, email, name);
+  // const user = await getOrCreateUser(userId, email, name);
 
   //isPaiduser
 
@@ -50,41 +50,41 @@ export default async function MainLayout({
   ];
 
   return (
-    <div className="layout-wrapper">
-      <aside className="sidebar-container">
-        <div className="sidebar-inner">
-          <div className="logo-container">
-            <Link href="/">
-              <span className="logo-text">ExecOS</span>
+    <div className='layout-wrapper'>
+      <aside className='sidebar-container'>
+        <div className='sidebar-inner'>
+          <div className='logo-container'>
+            <Link href='/'>
+              <span className='logo-text'>ExecOS</span>
             </Link>
           </div>
-          <nav className="sidebar-nav">
+          <nav className='sidebar-nav'>
             {navItems.map((item) => (
               <Link href={item.href} key={item.href}>
-                <Button variant="ghost" className="sidebar-nav-button">
-                  <item.icon className="sidebar-icon" />
+                <Button variant='ghost' className='sidebar-nav-button'>
+                  <item.icon className='sidebar-icon' />
                   {item.label}
                 </Button>
               </Link>
             ))}
           </nav>
           {!isPaidUser && (
-            <div className="sidebar-section">
-              <div className="upgrade-card">
-                <div className="upgrade-card-header">
-                  <ZapIcon className="sidebar-icon" />
-                  <span className="font-semibold">Upgrade to Pro</span>
+            <div className='sidebar-section'>
+              <div className='upgrade-card'>
+                <div className='upgrade-card-header'>
+                  <ZapIcon className='sidebar-icon' />
+                  <span className='font-semibold'>Upgrade to Pro</span>
                 </div>
-                <p className="upgrade-card-text">Unlock autonomous AI agents</p>
-                <Button variant="secondary" className="w-full" asChild>
-                  <Link href="/#pricing">Upgrade Now</Link>
+                <p className='upgrade-card-text'>Unlock autonomous AI agents</p>
+                <Button variant='secondary' className='w-full'>
+                  <Link href='/#pricing'>Upgrade Now</Link>
                 </Button>
               </div>
             </div>
           )}
 
-          <div className="sidebar-section">
-            <div className="user-profile">
+          <div className='sidebar-section'>
+            <div className='user-profile'>
               <UserButton />
               {isPaidUser && <Badge>Pro</Badge>}
             </div>
@@ -92,8 +92,8 @@ export default async function MainLayout({
         </div>
       </aside>
 
-      <main className="main-content">
-        <div className="main-content-inner">{children}</div>
+      <main className='main-content'>
+        <div className='main-content-inner'>{children}</div>
       </main>
     </div>
   );

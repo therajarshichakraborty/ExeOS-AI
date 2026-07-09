@@ -14,21 +14,22 @@ Update config:
 
 ```ts
 // astro.config.mjs
-import { defineConfig } from "astro/config"
-import node from "@astrojs/node"
-import react from "@astrojs/react"
-import clerk from "@clerk/astro"
+import { defineConfig } from "astro/config";
+import node from "@astrojs/node";
+import react from "@astrojs/react";
+import clerk from "@clerk/astro";
 
 export default defineConfig({
-	integrations: [clerk(), react()],
-	output: "server",
-	adapter: node({ mode: "standalone" }),
-})
+  integrations: [clerk(), react()],
+  output: "server",
+  adapter: node({ mode: "standalone" }),
+});
 ```
 
 ## Clerk Components in Astro Pages
 
-Import from `@clerk/astro/react` (NOT `@clerk/astro/components`). Add `client:load` to hydrate:
+Import from `@clerk/astro/react` (NOT `@clerk/astro/components`). Add
+`client:load` to hydrate:
 
 ```astro
 ---
@@ -57,19 +58,19 @@ Standard React imports from `@clerk/astro/react`:
 
 ```tsx
 // src/components/Header.tsx
-import { SignInButton, Show, UserButton } from "@clerk/astro/react"
+import { SignInButton, Show, UserButton } from "@clerk/astro/react";
 
 export default function Header() {
-	return (
-		<>
-			<Show when="signed-out">
-				<SignInButton />
-			</Show>
-			<Show when="signed-in">
-				<UserButton />
-			</Show>
-		</>
-	)
+  return (
+    <>
+      <Show when='signed-out'>
+        <SignInButton />
+      </Show>
+      <Show when='signed-in'>
+        <UserButton />
+      </Show>
+    </>
+  );
 }
 ```
 
@@ -89,19 +90,23 @@ Access user data with `$userStore` from `@clerk/astro/client`:
 
 ```tsx
 // src/components/Username.tsx
-import { useSyncExternalStore } from "react"
-import { $userStore } from "@clerk/astro/client"
+import { useSyncExternalStore } from "react";
+import { $userStore } from "@clerk/astro/client";
 
 export default function Username() {
-	const user = useSyncExternalStore($userStore.listen, $userStore.get, $userStore.get)
-	return <>{user?.firstName}</>
+  const user = useSyncExternalStore(
+    $userStore.listen,
+    $userStore.get,
+    $userStore.get,
+  );
+  return <>{user?.firstName}</>;
 }
 ```
 
 ## Key Differences
 
-| Import | From | Use In |
-|--------|------|--------|
-| `SignedIn`, `SignedOut` | `@clerk/astro/components` | `.astro` files (SSR) |
-| `Show`, `UserButton` | `@clerk/astro/react` | `.astro` files (with `client:load`) or `.tsx` files |
-| `$userStore` | `@clerk/astro/client` | React components (via `useSyncExternalStore`) |
+| Import                  | From                      | Use In                                              |
+| ----------------------- | ------------------------- | --------------------------------------------------- |
+| `SignedIn`, `SignedOut` | `@clerk/astro/components` | `.astro` files (SSR)                                |
+| `Show`, `UserButton`    | `@clerk/astro/react`      | `.astro` files (with `client:load`) or `.tsx` files |
+| `$userStore`            | `@clerk/astro/client`     | React components (via `useSyncExternalStore`)       |

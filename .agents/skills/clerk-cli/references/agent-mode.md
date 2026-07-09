@@ -1,6 +1,8 @@
 # Clerk CLI - Agent Mode Reference
 
-The Clerk CLI has a first-class "agent" mode that's designed for non-interactive and AI-driven use. Read this before writing scripts or letting an LLM drive the CLI.
+The Clerk CLI has a first-class "agent" mode that's designed for non-interactive
+and AI-driven use. Read this before writing scripts or letting an LLM drive the
+CLI.
 
 ## Sandbox warning semantics
 
@@ -20,9 +22,8 @@ Re-run this command on the host shell before trusting auth, link, env, or API fa
 ```
 
 Treat that warning as authoritative. The command may still continue and return
-an ordinary Clerk error, but any auth/link/env/config/API/browser/OAuth
-failure from that invocation should be treated as suspect until rerun on the
-host.
+an ordinary Clerk error, but any auth/link/env/config/API/browser/OAuth failure
+from that invocation should be treated as suspect until rerun on the host.
 
 The warning can be triggered by:
 
@@ -44,7 +45,8 @@ Priority (first match wins):
 2. `CLERK_MODE=agent` environment variable
 3. Stdout is not a TTY (piped, redirected, or running under an agent harness)
 
-Force human mode with `--mode human` or `CLERK_MODE=human`. Typical AI-agent invocations automatically land in agent mode because stdout is piped.
+Force human mode with `--mode human` or `CLERK_MODE=human`. Typical AI-agent
+invocations automatically land in agent mode because stdout is piped.
 
 ## What changes in agent mode
 
@@ -70,11 +72,16 @@ Force human mode with `--mode human` or `CLERK_MODE=human`. Typical AI-agent inv
 In addition, sandboxed agent-mode invocations may emit the warning above once
 per CLI invocation when a host-sensitive operation is blocked.
 
-**Rule of thumb:** always pass `--yes` for mutations and `--json` for structured output where available. Pass `--app` / `--instance` when you intentionally target a real app; pass `--keyless` to opt into auto-generated dev keys when bootstrapping a new project without authenticating.
+**Rule of thumb:** always pass `--yes` for mutations and `--json` for structured
+output where available. Pass `--app` / `--instance` when you intentionally
+target a real app; pass `--keyless` to opt into auto-generated dev keys when
+bootstrapping a new project without authenticating.
 
 ## Passing options as JSON: `--input-json`
 
-Every command accepts `--input-json <json|@file|->`. Keys convert from camelCase/snake_case to kebab-case and expand into flags before Commander parses argv - so anything a command accepts as a flag can come from JSON instead.
+Every command accepts `--input-json <json|@file|->`. Keys convert from
+camelCase/snake_case to kebab-case and expand into flags before Commander parses
+argv - so anything a command accepts as a flag can come from JSON instead.
 
 ```sh
 clerk init --input-json '{"framework":"next","yes":true}'
@@ -84,9 +91,12 @@ clerk init --input-json -                                           # read JSON 
 echo '{"framework":"next","yes":true}' | clerk init                 # auto-detect piped stdin
 ```
 
-When `--input-json` is omitted and stdin is piped (not a TTY), the CLI automatically reads JSON from stdin - no flag needed. This lets agents pipe options directly: `echo '{"yes":true}' | clerk init`.
+When `--input-json` is omitted and stdin is piped (not a TTY), the CLI
+automatically reads JSON from stdin - no flag needed. This lets agents pipe
+options directly: `echo '{"yes":true}' | clerk init`.
 
-Positional arguments (e.g. the `<name>` in `clerk apps create <name>`) cannot come from JSON - only flag-style options can.
+Positional arguments (e.g. the `<name>` in `clerk apps create <name>`) cannot
+come from JSON - only flag-style options can.
 
 | JSON             | Expansion                               |
 | ---------------- | --------------------------------------- |
@@ -96,9 +106,14 @@ Positional arguments (e.g. the `<name>` in `clerk apps create <name>`) cannot co
 | `["a","b"]`      | `--flag a --flag b` (empty arrays omit) |
 | `{…}` (nested)   | rejected - `invalid_json`, exit `2`     |
 
-**Placement.** Put `--input-json` after the leaf subcommand. Before it, flags land on the root program, so only `--mode` / `--verbose` work there - subcommand flags (`--json`, `--app`, etc.) error as unknown. Explicit flags after `--input-json` override its values (last-flag-wins).
+**Placement.** Put `--input-json` after the leaf subcommand. Before it, flags
+land on the root program, so only `--mode` / `--verbose` work there - subcommand
+flags (`--json`, `--app`, etc.) error as unknown. Explicit flags after
+`--input-json` override its values (last-flag-wins).
 
-Errors use the standard agent-mode format: bad JSON → `invalid_json`, missing `@file` → `file_not_found`, unknown expanded flags → Commander's `unknown option`. All exit `2`.
+Errors use the standard agent-mode format: bad JSON → `invalid_json`, missing
+`@file` → `file_not_found`, unknown expanded flags → Commander's
+`unknown option`. All exit `2`.
 
 ## Exit codes
 
@@ -116,19 +131,24 @@ Errors use the standard agent-mode format: bad JSON → `invalid_json`, missing 
 
 - Single-line error message on stderr.
 - Stack traces hidden unless `--verbose` is passed.
-- API errors include the first message from the response body, prefixed with a human context string (e.g., `Failed to fetch config: unauthorized`).
+- API errors include the first message from the response body, prefixed with a
+  human context string (e.g., `Failed to fetch config: unauthorized`).
 
 **Agent mode:**
 
-- Structured JSON on stderr: `{"error":{"code":"...","message":"...","docsUrl?":"...","errors?":[...]}}`.
-- `code` is a machine-readable error code (e.g., `auth_required`, `api_error`, `unexpected_error`).
-- `errors` array is present for API errors and mirrors the Clerk API error shape (`{code?, message?, meta?}`).
+- Structured JSON on stderr:
+  `{"error":{"code":"...","message":"...","docsUrl?":"...","errors?":[...]}}`.
+- `code` is a machine-readable error code (e.g., `auth_required`, `api_error`,
+  `unexpected_error`).
+- `errors` array is present for API errors and mirrors the Clerk API error shape
+  (`{code?, message?, meta?}`).
 - `docsUrl` is present when the error has associated documentation.
 
 **Both modes:**
 
 - User-aborted commands exit cleanly with no error output.
-- When handling errors programmatically, read stderr, check the exit code, and re-run with `--verbose` to get a trace if you need to debug.
+- When handling errors programmatically, read stderr, check the exit code, and
+  re-run with `--verbose` to get a trace if you need to debug.
 
 ## Structured outputs you can rely on
 
@@ -150,7 +170,8 @@ Errors use the standard agent-mode format: bad JSON → `invalid_json`, missing 
 | `clerk deploy status` (agent mode)            | Deploy verification report with the same shape, plus exit `0` complete or `1` incomplete      |
 | Any command (agent mode)                      | On error: `{"error":{"code","message","docsUrl?","errors?"}}` on stderr                       |
 
-For commands without an explicit `--json` flag, `clerk api` is your escape hatch: hit the underlying endpoint directly.
+For commands without an explicit `--json` flag, `clerk api` is your escape
+hatch: hit the underlying endpoint directly.
 
 ## Patterns for agent-driven use
 
@@ -160,7 +181,8 @@ For commands without an explicit `--json` flag, `clerk api` is your escape hatch
 clerk doctor --json --spotlight
 ```
 
-Parse the output, then for each failing check read `remedy` and act. Never call `--fix` from an agent - it's interactive.
+Parse the output, then for each failing check read `remedy` and act. Never call
+`--fix` from an agent - it's interactive.
 
 In agent mode, `doctor` also includes a **`Host execution`** check when it can
 detect that Clerk's host-side state is not writable. If that check warns, stop
@@ -183,11 +205,15 @@ clerk api /users/user_abc123 -X DELETE --yes
 clerk api /users --app app_abc123 --instance prod
 ```
 
-The same advice applies to linking in agent mode: `clerk link --app app_abc123` is deterministic and works non-interactively. If you omit `--app`, the command only succeeds when silent autolink can prove the target app from existing publishable keys.
+The same advice applies to linking in agent mode: `clerk link --app app_abc123`
+is deterministic and works non-interactively. If you omit `--app`, the command
+only succeeds when silent autolink can prove the target app from existing
+publishable keys.
 
 ### Deploy handoff and verification
 
-Do not try to drive the interactive deploy wizard from an agent. Use the handoff and check commands instead.
+Do not try to drive the interactive deploy wizard from an agent. Use the handoff
+and check commands instead.
 
 ```sh
 # 1. Inspect current production deploy state without mutating anything.
@@ -204,11 +230,29 @@ clerk deploy status --mode agent
 clerk deploy status --mode agent --wait
 ```
 
-`clerk deploy --mode agent` is read-only. It resolves the linked app and current production deploy snapshot, then emits JSON on stdout. It does **not** trigger DNS checks, poll, create production instances, patch OAuth config, or prompt. Linked projects exit `0` because this is an informational handoff. Not-linked and API failures still use the normal agent error envelope on stderr.
+`clerk deploy --mode agent` is read-only. It resolves the linked app and current
+production deploy snapshot, then emits JSON on stdout. It does **not** trigger
+DNS checks, poll, create production instances, patch OAuth config, or prompt.
+Linked projects exit `0` because this is an informational handoff. Not-linked
+and API failures still use the normal agent error envelope on stderr.
 
-Never try to run the human wizard through Claude's `! clerk deploy` shell escape or any non-interactive agent shell. The deploy wizard asks for domain, DNS export, OAuth, and verification inputs over stdin, so it needs a real human terminal. Tell the user to open a new terminal window in the project directory and run `clerk deploy` or `clerk deploy --mode human` there. After they finish, return to agent mode and run `clerk deploy status --mode agent`.
+Never try to run the human wizard through Claude's `! clerk deploy` shell escape
+or any non-interactive agent shell. The deploy wizard asks for domain, DNS
+export, OAuth, and verification inputs over stdin, so it needs a real human
+terminal. Tell the user to open a new terminal window in the project directory
+and run `clerk deploy` or `clerk deploy --mode human` there. After they finish,
+return to agent mode and run `clerk deploy status --mode agent`.
 
-`clerk deploy status --mode agent` is the gate. It is also read-only with respect to deploy configuration, but for an active production domain it triggers one Clerk DNS check, waits briefly, reads a live status/config snapshot, then reports DNS, SSL, email DNS, aggregate domain readiness, and OAuth completeness. By default it does not keep waiting or exponentially back off in agent mode. If the check is incomplete and the user asks the agent to continue waiting, run `clerk deploy status --mode agent --wait` instead of manually sleeping and retrying. `--wait` uses the shared poll loop: one immediate status read, then up to 5 exponential-backoff retries until aggregate domain status is complete. It emits the same status JSON. It exits:
+`clerk deploy status --mode agent` is the gate. It is also read-only with
+respect to deploy configuration, but for an active production domain it triggers
+one Clerk DNS check, waits briefly, reads a live status/config snapshot, then
+reports DNS, SSL, email DNS, aggregate domain readiness, and OAuth completeness.
+By default it does not keep waiting or exponentially back off in agent mode. If
+the check is incomplete and the user asks the agent to continue waiting, run
+`clerk deploy status --mode agent --wait` instead of manually sleeping and
+retrying. `--wait` uses the shared poll loop: one immediate status read, then up
+to 5 exponential-backoff retries until aggregate domain status is complete. It
+emits the same status JSON. It exits:
 
 | Exit | Meaning                                                                              |
 | ---- | ------------------------------------------------------------------------------------ |
@@ -216,9 +260,15 @@ Never try to run the human wizard through Claude's `! clerk deploy` shell escape
 | `1`  | The check ran successfully, but deploy is incomplete. Read `state` and `nextAction`. |
 | else | A real CLI error occurred. Read the standard agent error envelope on stderr.         |
 
-Deploy-specific agent errors still use the standard envelope and may include typed codes such as `plan_insufficient`, `provider_domain_not_allowed`, `home_url_taken`, or `form_param_invalid`.
+Deploy-specific agent errors still use the standard envelope and may include
+typed codes such as `plan_insufficient`, `provider_domain_not_allowed`,
+`home_url_taken`, or `form_param_invalid`.
 
-When a production instance exists, `nextAction` includes the full Clerk Dashboard domains URL so agents can send the user directly to the same page the human CLI prints in its next steps. Always show that URL to the user. Ask whether they want you to open it for them instead of omitting or paraphrasing it away.
+When a production instance exists, `nextAction` includes the full Clerk
+Dashboard domains URL so agents can send the user directly to the same page the
+human CLI prints in its next steps. Always show that URL to the user. Ask
+whether they want you to open it for them instead of omitting or paraphrasing it
+away.
 
 The deploy report has this shape:
 
@@ -229,13 +279,24 @@ The deploy report has this shape:
   "domain": "example.com",
   "productionInstanceId": "ins_...",
   "domainStatus": { "dns": "complete", "ssl": "pending", "mail": "complete" },
-  "pendingDnsRecords": [{ "type": "CNAME", "host": "clerk.example.com", "value": "..." }],
-  "oauth": { "complete": true, "configured": ["google"], "pending": [], "unsupported": [] },
+  "pendingDnsRecords": [
+    { "type": "CNAME", "host": "clerk.example.com", "value": "..." }
+  ],
+  "oauth": {
+    "complete": true,
+    "configured": ["google"],
+    "pending": [],
+    "unsupported": []
+  },
   "nextAction": "SSL still provisioning for example.com. Re-run `clerk deploy status` in a few minutes, DNS propagation can take time. Ask the user to visit the Clerk Dashboard domains page, or offer to open it: https://dashboard.clerk.com/apps/app_.../instances/ins_.../domains"
 }
 ```
 
-`complete` is `true` only when the aggregate domain status is complete and all supported OAuth providers enabled in development have production credentials. The `domainStatus` object is a component summary; DNS, SSL, and email DNS can all read `complete` while `state` remains `domain_pending` if Clerk-side finalization is still pending.
+`complete` is `true` only when the aggregate domain status is complete and all
+supported OAuth providers enabled in development have production credentials.
+The `domainStatus` object is a component summary; DNS, SSL, and email DNS can
+all read `complete` while `state` remains `domain_pending` if Clerk-side
+finalization is still pending.
 
 State precedence:
 
@@ -247,7 +308,9 @@ State precedence:
 | `oauth_pending`       | Ask the human to finish the OAuth credential steps in `clerk deploy --mode human`, then verify with `deploy status`.          |
 | `complete`            | No action needed.                                                                                                             |
 
-Unsupported OAuth providers do not block `complete`, because the wizard cannot configure them automatically. They are still surfaced in `oauth.unsupported` so you can warn the user to review them in the Clerk Dashboard.
+Unsupported OAuth providers do not block `complete`, because the wizard cannot
+configure them automatically. They are still surfaced in `oauth.unsupported` so
+you can warn the user to review them in the Clerk Dashboard.
 
 ### Use the catalog, not hard-coded paths
 
@@ -258,9 +321,14 @@ clerk api ls --platform apps   # platform-side endpoints
 
 ### Surface doctor remedies to the user
 
-When `clerk doctor --json` reports a failure, show the user the `name`, `message`, and `remedy` - don't just silently try to fix it, because the underlying fix (e.g., `clerk auth login`) usually requires human interaction.
+When `clerk doctor --json` reports a failure, show the user the `name`,
+`message`, and `remedy` - don't just silently try to fix it, because the
+underlying fix (e.g., `clerk auth login`) usually requires human interaction.
 
-`clerk doctor --fix` is disabled in agent mode, so you cannot rely on it. If a caller wants to attempt remediation anyway, map the failing check to the command that would fix it in human mode. Each check exposes this mapping via the optional `fix.label` field on the JSON result:
+`clerk doctor --fix` is disabled in agent mode, so you cannot rely on it. If a
+caller wants to attempt remediation anyway, map the failing check to the command
+that would fix it in human mode. Each check exposes this mapping via the
+optional `fix.label` field on the JSON result:
 
 | Failing check           | Manual remediation                           |
 | ----------------------- | -------------------------------------------- |
@@ -274,14 +342,30 @@ When `clerk doctor --json` reports a failure, show the user the `name`, `message
 | `CLI version`           | (no auto-fix; run `clerk update`)            |
 | `Shell completion`      | (no auto-fix; see `clerk completion --help`) |
 
-All three remediation commands are themselves interactive by default: `auth login` opens a browser, `link` prompts for an app when `--app` is omitted, and `env pull` writes a file. In agent mode, prefer `clerk link --app <id>` over bare `clerk link`, since the bare form only works when silent autolink can resolve the target app without a picker.
+All three remediation commands are themselves interactive by default:
+`auth login` opens a browser, `link` prompts for an app when `--app` is omitted,
+and `env pull` writes a file. In agent mode, prefer `clerk link --app <id>` over
+bare `clerk link`, since the bare form only works when silent autolink can
+resolve the target app without a picker.
 
 ## What NOT to do in agent mode
 
-- **Don't ignore the sandbox warning.** If the CLI says host-only Clerk state or system capabilities may be unavailable, rerun the same command on the host before trusting the result.
-- **Don't assume `clerk auth login` is fully unattended from an agent** - it opens a browser and waits for a callback. Prefer `CLERK_PLATFORM_API_KEY` for headless automation. `clerk init --app <id>` or init in an already linked project may still invoke the normal login fallback when a real app target is explicit.
-- **Don't call `clerk link` without `--app` and assume the agent can pick for you** - it only succeeds when silent autolink can determine the app from detected keys.
-- **Don't run `clerk unlink` in agent mode without `--yes`** - it exits with a usage error instead of prompting.
-- **Don't run `clerk config put` without `--dry-run` first** - it's a full replacement and is destructive.
-- **Don't skip `--yes` on mutations and expect them to work** - agent mode disables prompts, so commands that require confirmation will error.
-- **Don't leak secret keys into logs** - the CLI never prints the raw secret key, and you shouldn't either.
+- **Don't ignore the sandbox warning.** If the CLI says host-only Clerk state or
+  system capabilities may be unavailable, rerun the same command on the host
+  before trusting the result.
+- **Don't assume `clerk auth login` is fully unattended from an agent** - it
+  opens a browser and waits for a callback. Prefer `CLERK_PLATFORM_API_KEY` for
+  headless automation. `clerk init --app <id>` or init in an already linked
+  project may still invoke the normal login fallback when a real app target is
+  explicit.
+- **Don't call `clerk link` without `--app` and assume the agent can pick for
+  you** - it only succeeds when silent autolink can determine the app from
+  detected keys.
+- **Don't run `clerk unlink` in agent mode without `--yes`** - it exits with a
+  usage error instead of prompting.
+- **Don't run `clerk config put` without `--dry-run` first** - it's a full
+  replacement and is destructive.
+- **Don't skip `--yes` on mutations and expect them to work** - agent mode
+  disables prompts, so commands that require confirmation will error.
+- **Don't leak secret keys into logs** - the CLI never prints the raw secret
+  key, and you shouldn't either.

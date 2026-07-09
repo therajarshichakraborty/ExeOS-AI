@@ -1,6 +1,8 @@
 # Clerk CLI - Recipes
 
-Copy-pasteable patterns for common tasks. Treat these as starting points; confirm exact paths and parameters with `clerk api ls <keyword>` and `clerk <command> --help`, since the Clerk API evolves.
+Copy-pasteable patterns for common tasks. Treat these as starting points;
+confirm exact paths and parameters with `clerk api ls <keyword>` and
+`clerk <command> --help`, since the Clerk API evolves.
 
 ## Discovery first
 
@@ -10,7 +12,9 @@ clerk api ls users            # filter by keyword
 clerk api ls --platform       # Platform API (account-level)
 ```
 
-The bundled catalog is cached locally for 1 hour. There is no force-refresh flag - once the TTL expires the next `clerk api ls` re-fetches automatically; on fetch failure the CLI falls back to the stale cache and prints a warning.
+The bundled catalog is cached locally for 1 hour. There is no force-refresh
+flag - once the TTL expires the next `clerk api ls` re-fetches automatically; on
+fetch failure the CLI falls back to the stale cache and prints a warning.
 
 ## Users
 
@@ -67,9 +71,12 @@ clerk api /users/user_abc123 -X DELETE --yes
 
 ### Test users (development only)
 
-For test accounts you need to sign into without real email or SMS delivery, Clerk provides two magic patterns that both verify with the fixed OTP `424242`. Use them on development instances; production rejects them.
+For test accounts you need to sign into without real email or SMS delivery,
+Clerk provides two magic patterns that both verify with the fixed OTP `424242`.
+Use them on development instances; production rejects them.
 
-**By email.** Any address with the `+clerk_test` subaddress is recognized as a test email. The domain portion is arbitrary.
+**By email.** Any address with the `+clerk_test` subaddress is recognized as a
+test email. The domain portion is arbitrary.
 
 ```sh
 # Create a test user with a test email (dev instance)
@@ -81,7 +88,8 @@ clerk users create -d '{
 }' --yes
 ```
 
-**By phone.** Any US fictional phone number in the `+1 (XXX) 555-0100` through `+1 (XXX) 555-0199` range is recognized as a test phone. Pass the E.164 form.
+**By phone.** Any US fictional phone number in the `+1 (XXX) 555-0100` through
+`+1 (XXX) 555-0199` range is recognized as a test phone. Pass the E.164 form.
 
 ```sh
 # Create a test user with a test phone (dev instance)
@@ -92,9 +100,15 @@ clerk users create -d '{
 }' --yes
 ```
 
-When signing in as either user in a browser or Playwright, enter `424242` at the OTP prompt.
+When signing in as either user in a browser or Playwright, enter `424242` at the
+OTP prompt.
 
-These patterns only apply to development instances. In production, client trust blocks sign-in regardless of suffix or number, and using real-looking test addresses is highly discouraged. Test addresses and numbers do not count against the dev-instance monthly caps (20 SMS, 100 emails). See [Clerk's test emails and phones reference](https://clerk.com/docs/guides/development/testing/test-emails-and-phones) for the full contract.
+These patterns only apply to development instances. In production, client trust
+blocks sign-in regardless of suffix or number, and using real-looking test
+addresses is highly discouraged. Test addresses and numbers do not count against
+the dev-instance monthly caps (20 SMS, 100 emails). See
+[Clerk's test emails and phones reference](https://clerk.com/docs/guides/development/testing/test-emails-and-phones)
+for the full contract.
 
 ## Organizations
 
@@ -122,7 +136,8 @@ clerk api /organizations/org_abc123/memberships/user_xyz -X DELETE --dry-run
 clerk api /organizations/org_abc123/invitations -d '{"email_address":"new@acme.com","role":"org:member"}'
 ```
 
-If organization endpoints return `organization_not_enabled_in_instance`, enable the feature first:
+If organization endpoints return `organization_not_enabled_in_instance`, enable
+the feature first:
 
 ```sh
 # Inspect org settings
@@ -168,7 +183,8 @@ clerk api /jwt_templates -d '{
 
 ## Instance configuration
 
-Prefer the dedicated `config` commands over raw `api` calls - they handle confirmation, dry-run, and formatting.
+Prefer the dedicated `config` commands over raw `api` calls - they handle
+confirmation, dry-run, and formatting.
 
 ```sh
 # Pull the current dev config
@@ -203,7 +219,9 @@ clerk env pull --instance prod
 clerk env pull --file .env
 ```
 
-`env pull` merges into the existing file: existing Clerk keys are updated in place; new ones are appended under a `# Clerk` header; everything else is preserved.
+`env pull` merges into the existing file: existing Clerk keys are updated in
+place; new ones are appended under a `# Clerk` header; everything else is
+preserved.
 
 ## Applications (Platform API)
 
@@ -220,7 +238,10 @@ clerk api /v1/platform/applications/app_abc123 --platform
 
 ### Save large responses to a file before reading them
 
-`users list`, `apps list`, `config pull`, and most `clerk api` GETs can return responses ranging from kilobytes to megabytes. Reading the full payload into an LLM-driven session burns context for no benefit. Persist the response, then query just the slice you need:
+`users list`, `apps list`, `config pull`, and most `clerk api` GETs can return
+responses ranging from kilobytes to megabytes. Reading the full payload into an
+LLM-driven session burns context for no benefit. Persist the response, then
+query just the slice you need:
 
 ```sh
 # Persist once, query as many times as you need.
@@ -232,14 +253,16 @@ jq '.data[0] | keys'                  /tmp/users.json   # learn the shape of one
 jq '.data[] | {id, email_addresses}'  /tmp/users.json   # project to relevant fields only
 ```
 
-If `jq` is not on `PATH`, fall back to Python or Node, which most environments have:
+If `jq` is not on `PATH`, fall back to Python or Node, which most environments
+have:
 
 ```sh
 python3 -c 'import json; d=json.load(open("/tmp/users.json")); print(len(d["data"]), d["hasMore"])'
 node    -e 'const d=require("/tmp/users.json"); console.log(d.data.length, d.hasMore)'
 ```
 
-Only `cat`/`head` the file when you genuinely need the raw structure for one-off debugging.
+Only `cat`/`head` the file when you genuinely need the raw structure for one-off
+debugging.
 
 ### Pipe to `jq`
 

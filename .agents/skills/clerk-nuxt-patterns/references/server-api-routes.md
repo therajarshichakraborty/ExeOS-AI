@@ -2,19 +2,20 @@
 
 ## Auth Context in Nitro
 
-`event.context.auth` is automatically populated by `@clerk/nuxt` for all server routes.
+`event.context.auth` is automatically populated by `@clerk/nuxt` for all server
+routes.
 
 ```typescript
 // server/api/me.get.ts
 export default defineEventHandler(async (event) => {
-  const { userId } = event.context.auth ?? {}
+  const { userId } = event.context.auth ?? {};
 
   if (!userId) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw createError({ statusCode: 401, message: "Unauthorized" });
   }
 
-  return { userId }
-})
+  return { userId };
+});
 ```
 
 ## Using clerkClient
@@ -23,23 +24,23 @@ Import `clerkClient` from `@clerk/nuxt/server` to access the Clerk backend API:
 
 ```typescript
 // server/api/user.get.ts
-import { clerkClient } from '@clerk/nuxt/server'
+import { clerkClient } from "@clerk/nuxt/server";
 
 export default defineEventHandler(async (event) => {
-  const { userId } = event.context.auth ?? {}
+  const { userId } = event.context.auth ?? {};
 
   if (!userId) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw createError({ statusCode: 401, message: "Unauthorized" });
   }
 
-  const user = await clerkClient(event).users.getUser(userId)
+  const user = await clerkClient(event).users.getUser(userId);
 
   return {
     id: user.id,
     firstName: user.firstName,
     email: user.emailAddresses[0]?.emailAddress,
-  }
-})
+  };
+});
 ```
 
 ## Org-Scoped Server Routes
@@ -47,19 +48,19 @@ export default defineEventHandler(async (event) => {
 ```typescript
 // server/api/projects.get.ts
 export default defineEventHandler(async (event) => {
-  const { userId, orgId } = event.context.auth ?? {}
+  const { userId, orgId } = event.context.auth ?? {};
 
   if (!userId) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
+    throw createError({ statusCode: 401, message: "Unauthorized" });
   }
 
   if (!orgId) {
-    throw createError({ statusCode: 403, message: 'No active organization' })
+    throw createError({ statusCode: 403, message: "No active organization" });
   }
 
-  const projects = await db.projects.findMany({ where: { orgId } })
-  return projects
-})
+  const projects = await db.projects.findMany({ where: { orgId } });
+  return projects;
+});
 ```
 
 ## Error Codes

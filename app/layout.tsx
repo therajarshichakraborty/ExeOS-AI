@@ -3,8 +3,8 @@ import "./globals.css";
 import { Nanum_Pen_Script, Inter } from "next/font/google";
 import { ThemeProvider } from "@/providers/theme-providers";
 import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
-import {ClerkProvider} from '@clerk/nextjs';
-import { dark } from '@clerk/ui/themes'
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/ui/themes";
 
 export const inter = Inter({
   subsets: ["latin"],
@@ -34,26 +34,26 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <ClerkProvider appearance={{ theme: dark }}>
-      <body className='min-h-full flex flex-col'>
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className='layout-theme-toggler absolute top-4 right-4'>
-            <AnimatedThemeToggler />
-          </div>
-          {children}
-          <footer className="footer-wrapper">
-            <div className="section-heading">
-              <p className="text-center text-sm text-muted-foreground">
-                © {new Date().getFullYear()} ExeOS- AI.
-              </p>
+        <body className='min-h-full flex flex-col'>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className='layout-theme-toggler absolute top-4 right-4'>
+              <AnimatedThemeToggler />
             </div>
-          </footer>
-        </ThemeProvider>
-      </body>
+            {children}
+            <footer className='footer-wrapper'>
+              <div className='section-heading'>
+                <p className='text-center text-sm text-muted-foreground'>
+                  © {new Date().getFullYear()} ExeOS- AI.
+                </p>
+              </div>
+            </footer>
+          </ThemeProvider>
+        </body>
       </ClerkProvider>
     </html>
   );

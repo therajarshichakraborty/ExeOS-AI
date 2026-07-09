@@ -17,35 +17,35 @@ import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
 
 export default function Home() {
   return (
-    <div className="landing-wrapper">
-      <header className="landing-header">
-        <div className="landing-header-inner">
-          <div className="logo-container">
-            <Link href="/">
-              <span className="logo-text">ExecOS</span>
+    <div className='landing-wrapper'>
+      <header className='landing-header'>
+        <div className='landing-header-inner'>
+          <div className='logo-container'>
+            <Link href='/'>
+              <span className='logo-text'>ExecOS</span>
             </Link>
-            <div className="nav-actions">
-              <Show when="signed-in">
-                <Link href="/dashboard">
-                  <Button variant="ghost">Dashboard</Button>
+            <div className='nav-actions'>
+              <Show when='signed-in'>
+                <Link href='/dashboard'>
+                  <Button variant='ghost'>Dashboard</Button>
                 </Link>
                 <UserButton />
               </Show>
-              <Show when="signed-out">
+              <Show when='signed-out'>
                 <SignInButton />
                 <SignUpButton />
               </Show>
-              <AnimatedThemeToggler className="p-2 rounded-lg border border-border hover:bg-muted text-foreground transition-all duration-200 shrink-0 [&_svg]:size-4" />
+              <AnimatedThemeToggler className='p-2 rounded-lg border border-border hover:bg-muted text-foreground transition-all duration-200 shrink-0 [&_svg]:size-4' />
             </div>
           </div>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="section-heading">
-        <div className="text-center">
+      <section className='section-heading'>
+        <div className='text-center'>
           <p>
-            <span className="hero-subtitle">
+            <span className='hero-subtitle'>
               The AI that actually does things
             </span>
           </p>
@@ -54,17 +54,17 @@ export default function Home() {
             Assistant
           </h1>
 
-          <p className="hero-description">
+          <p className='hero-description'>
             Clears your inbox, sends emails, manages your calendar, all from
             your favorite chat app.
           </p>
-          <div className="hero-buttons">
-            <Link href="/sign-up">
-              <Button size="lg" className="text-lg">
+          <div className='hero-buttons'>
+            <Link href='/sign-up'>
+              <Button size='lg' className='text-lg'>
                 Start Free Trial
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="text-lg">
+            <Button size='lg' variant='outline' className='text-lg'>
               See How It Works
             </Button>
           </div>
@@ -72,9 +72,9 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="section-heading">
+      <section className='section-heading'>
         <h2>Powerful Features</h2>
-        <div className="features-grid">
+        <div className='features-grid'>
           {[
             {
               key: "email-management",
@@ -95,12 +95,12 @@ export default function Home() {
                 "Suggests optimal meeting times, detects conflicts, and keeps your schedule organized",
             },
           ].map((feature) => (
-            <Card key={feature.key} className="p-6">
+            <Card key={feature.key} className='p-6'>
               <CardHeader>
-                <CardTitle className="text-xl text-foreground">
+                <CardTitle className='text-xl text-foreground'>
                   {feature.title}
                 </CardTitle>
-                <CardDescription className="text-base leading-relaxed text-muted-foreground">
+                <CardDescription className='text-base leading-relaxed text-muted-foreground'>
                   {feature.description}
                 </CardDescription>
               </CardHeader>
@@ -109,7 +109,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-heading text-xl dark:text-foreground text-background" id="pricing ">
+      <section
+        className='section-heading text-xl dark:text-foreground text-background'
+        id='pricing '
+      >
         <h2>Simple, Transparent Pricing</h2>
         <PricingTable />
       </section>

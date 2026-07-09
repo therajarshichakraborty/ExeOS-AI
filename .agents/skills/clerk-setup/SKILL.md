@@ -1,10 +1,15 @@
 ---
 name: clerk-setup
-description: Add Clerk authentication to any project by following the official quickstart
+description:
+  Add Clerk authentication to any project by following the official quickstart
   guides.
 license: MIT
 allowed-tools: WebFetch
-compatibility: Requires NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY (or framework-specific equivalents like VITE_CLERK_PUBLISHABLE_KEY for Vite-based apps). Keys can be auto-generated via Keyless on first SDK initialization, or pulled from the Clerk Dashboard. Requires Node.js 20.9.0 or higher.
+compatibility:
+  Requires NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY and CLERK_SECRET_KEY (or
+  framework-specific equivalents like VITE_CLERK_PUBLISHABLE_KEY for Vite-based
+  apps). Keys can be auto-generated via Keyless on first SDK initialization, or
+  pulled from the Clerk Dashboard. Requires Node.js 20.9.0 or higher.
 metadata:
   author: clerk
   version: 2.3.0
@@ -12,13 +17,18 @@ metadata:
 
 # Adding Clerk
 
-> **Version**: Check `package.json` for the SDK version — see `clerk` skill for the version table. Core 2 differences are noted inline with `> **Core 2 ONLY (skip if current SDK):**` callouts.
+> **Version**: Check `package.json` for the SDK version — see `clerk` skill for
+> the version table. Core 2 differences are noted inline with
+> `> **Core 2 ONLY (skip if current SDK):**` callouts.
 
-This skill sets up Clerk for authentication by following the official quickstart documentation. For agents, the `clerk` CLI handles most of this end to end — see the next section.
+This skill sets up Clerk for authentication by following the official quickstart
+documentation. For agents, the `clerk` CLI handles most of this end to end — see
+the next section.
 
 ## Agent-first: Provision via CLI
 
-The `clerk` CLI replaces most Dashboard clicks. Three scenarios cover almost everything:
+The `clerk` CLI replaces most Dashboard clicks. Three scenarios cover almost
+everything:
 
 ### Scenario A — New project, new Clerk app
 
@@ -26,7 +36,10 @@ The `clerk` CLI replaces most Dashboard clicks. Three scenarios cover almost eve
 clerk init --framework <next|react|vue|nuxt|astro|react-router|tanstack-react-start|expressjs|fastify|expo> -y
 ```
 
-`clerk init` creates the Clerk app via PLAPI, links the project, writes the framework-specific publishable + secret keys to the right env file (e.g. `.env.local` for Next.js, `.env` for Vite-based projects), and installs the SDK package.
+`clerk init` creates the Clerk app via PLAPI, links the project, writes the
+framework-specific publishable + secret keys to the right env file (e.g.
+`.env.local` for Next.js, `.env` for Vite-based projects), and installs the SDK
+package.
 
 ### Scenario B — Existing project, existing Clerk app
 
@@ -56,57 +69,71 @@ clerk doctor --json                   # framework integration health check
 
 ### Rotate the secret key (replaces Dashboard rotation)
 
-PLAPI exposes secret-key rotation directly. Use raw `clerk api` until the friendly wrapper ships:
+PLAPI exposes secret-key rotation directly. Use raw `clerk api` until the
+friendly wrapper ships:
 
 ```bash
 clerk api --platform POST /v1/platform/applications/<app_id>/rotate_secret_keys \
   -d '{"delay_old_secrets_expiration_hours": 24, "reason": "scheduled rotation"}'
 ```
 
-`delay_old_secrets_expiration_hours` keeps the old key valid for the grace period so deploys can roll forward without downtime.
+`delay_old_secrets_expiration_hours` keeps the old key valid for the grace
+period so deploys can roll forward without downtime.
 
 ### Notes for agents
 
-- `clerk link` (no flags) only autolinks when a `CLERK_PUBLISHABLE_KEY` is already in `.env` / `.env.local`. Without it, agent mode errors out: "Cannot select an application in agent mode." When that happens, run `clerk apps list --json`, and ask the user which `app_id` to link rather than guessing.
-- Pass `--json` on `apps list/create`, `users create`, and `doctor` for parseable output.
-- The CLI auto-detects framework env var names (`VITE_CLERK_PUBLISHABLE_KEY` for Vite, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` for Next.js, etc.) and target file (`.env.development.local` > `.env.local` > `.env`).
+- `clerk link` (no flags) only autolinks when a `CLERK_PUBLISHABLE_KEY` is
+  already in `.env` / `.env.local`. Without it, agent mode errors out: "Cannot
+  select an application in agent mode." When that happens, run
+  `clerk apps list --json`, and ask the user which `app_id` to link rather than
+  guessing.
+- Pass `--json` on `apps list/create`, `users create`, and `doctor` for
+  parseable output.
+- The CLI auto-detects framework env var names (`VITE_CLERK_PUBLISHABLE_KEY` for
+  Vite, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` for Next.js, etc.) and target file
+  (`.env.development.local` > `.env.local` > `.env`).
 
 ## Quick Reference (Dashboard fallback)
 
-If the CLI isn't an option (sandboxed environments, docs walkthroughs), here's the manual Dashboard path:
+If the CLI isn't an option (sandboxed environments, docs walkthroughs), here's
+the manual Dashboard path:
 
-| Step | Action |
-|------|--------|
-| 1. Detect framework | Check `package.json` dependencies |
-| 2. Fetch quickstart | Use WebFetch on the appropriate docs URL |
-| 3. Follow instructions | Execute steps; create `proxy.ts` (Next.js <=15: `middleware.ts`) |
-| 4. Get API keys | From [dashboard.clerk.com](https://dashboard.clerk.com/~/api-keys) |
+| Step                   | Action                                                             |
+| ---------------------- | ------------------------------------------------------------------ |
+| 1. Detect framework    | Check `package.json` dependencies                                  |
+| 2. Fetch quickstart    | Use WebFetch on the appropriate docs URL                           |
+| 3. Follow instructions | Execute steps; create `proxy.ts` (Next.js <=15: `middleware.ts`)   |
+| 4. Get API keys        | From [dashboard.clerk.com](https://dashboard.clerk.com/~/api-keys) |
 
-> If the project has `components.json` (shadcn/ui), apply the shadcn theme after setup. See `clerk-custom-ui` skill → shadcn Theme.
+> If the project has `components.json` (shadcn/ui), apply the shadcn theme after
+> setup. See `clerk-custom-ui` skill → shadcn Theme.
 
 ## Framework Detection
 
 Check `package.json` to identify the framework:
 
-| Dependency | Framework | Quickstart URL |
-|------------|-----------|----------------|
-| `next` | Next.js | `https://clerk.com/docs/nextjs/getting-started/quickstart` |
-| `@remix-run/react` | Remix (deprecated) | Migrate to React Router v7 — use the React Router quickstart below |
-| `react-router` | React Router (v7+) | `https://clerk.com/docs/react-router/getting-started/quickstart` |
-| `astro` | Astro | `https://clerk.com/docs/astro/getting-started/quickstart` |
-| `nuxt` | Nuxt | `https://clerk.com/docs/nuxt/getting-started/quickstart` |
-| `@tanstack/react-start` | TanStack Start | `https://clerk.com/docs/tanstack-react-start/getting-started/quickstart` |
-| `react` (no framework) | React SPA | `https://clerk.com/docs/react/getting-started/quickstart` |
-| `vue` | Vue | `https://clerk.com/docs/vue/getting-started/quickstart` |
-| `express` | Express | `https://clerk.com/docs/expressjs/getting-started/quickstart` |
-| `fastify` | Fastify | `https://clerk.com/docs/fastify/getting-started/quickstart` |
-| `expo` | Expo | `https://clerk.com/docs/expo/getting-started/quickstart` |
+| Dependency              | Framework          | Quickstart URL                                                           |
+| ----------------------- | ------------------ | ------------------------------------------------------------------------ |
+| `next`                  | Next.js            | `https://clerk.com/docs/nextjs/getting-started/quickstart`               |
+| `@remix-run/react`      | Remix (deprecated) | Migrate to React Router v7 — use the React Router quickstart below       |
+| `react-router`          | React Router (v7+) | `https://clerk.com/docs/react-router/getting-started/quickstart`         |
+| `astro`                 | Astro              | `https://clerk.com/docs/astro/getting-started/quickstart`                |
+| `nuxt`                  | Nuxt               | `https://clerk.com/docs/nuxt/getting-started/quickstart`                 |
+| `@tanstack/react-start` | TanStack Start     | `https://clerk.com/docs/tanstack-react-start/getting-started/quickstart` |
+| `react` (no framework)  | React SPA          | `https://clerk.com/docs/react/getting-started/quickstart`                |
+| `vue`                   | Vue                | `https://clerk.com/docs/vue/getting-started/quickstart`                  |
+| `express`               | Express            | `https://clerk.com/docs/expressjs/getting-started/quickstart`            |
+| `fastify`               | Fastify            | `https://clerk.com/docs/fastify/getting-started/quickstart`              |
+| `expo`                  | Expo               | `https://clerk.com/docs/expo/getting-started/quickstart`                 |
 
 For other platforms:
-- **Chrome Extension**: `https://clerk.com/docs/chrome-extension/getting-started/quickstart`
+
+- **Chrome Extension**:
+  `https://clerk.com/docs/chrome-extension/getting-started/quickstart`
 - **Android**: `https://clerk.com/docs/android/getting-started/quickstart`
 - **iOS**: `https://clerk.com/docs/ios/getting-started/quickstart`
-- **Vanilla JavaScript**: `https://clerk.com/docs/js-frontend/getting-started/quickstart`
+- **Vanilla JavaScript**:
+  `https://clerk.com/docs/js-frontend/getting-started/quickstart`
 
 ## Decision Tree
 
@@ -143,39 +170,50 @@ Prompt: "Extract the complete setup instructions including all code snippets, fi
 ### 3. Follow the Instructions
 
 Execute each step from the quickstart guide:
+
 - Install the required packages
 - Set up environment variables
 - Add the provider and proxy/middleware
 - Create sign-in/sign-up routes if needed
 - Test the integration
 
-> **Next.js:** Create `proxy.ts` (Next.js <=15: `middleware.ts`). See the `clerk-nextjs-patterns` skill for middleware strategies.
+> **Next.js:** Create `proxy.ts` (Next.js <=15: `middleware.ts`). See the
+> `clerk-nextjs-patterns` skill for middleware strategies.
 
-> **shadcn/ui detected** (`components.json` exists): ALWAYS apply the shadcn theme. See `clerk-custom-ui` skill → shadcn Theme section.
+> **shadcn/ui detected** (`components.json` exists): ALWAYS apply the shadcn
+> theme. See `clerk-custom-ui` skill → shadcn Theme section.
 
 ### 4. Get API Keys
 
 Two paths for development API keys:
 
 **Keyless (Automatic)**
-- On first SDK initialization, Clerk auto-generates dev keys and shows a "Configure your application" button in the bottom right of the running app
+
+- On first SDK initialization, Clerk auto-generates dev keys and shows a
+  "Configure your application" button in the bottom right of the running app
 - No manual key setup required, keys are created and injected automatically
-- Selecting "Configure your application" associates the auto-generated app with your Clerk account so you can edit it from the Dashboard
+- Selecting "Configure your application" associates the auto-generated app with
+  your Clerk account so you can edit it from the Dashboard
 - Simplest path for new projects
 
 **Manual (Dashboard)**
-- Get keys from [dashboard.clerk.com](https://dashboard.clerk.com/~/api-keys) if Keyless doesn't trigger
+
+- Get keys from [dashboard.clerk.com](https://dashboard.clerk.com/~/api-keys) if
+  Keyless doesn't trigger
 - **Publishable Key**: Starts with `pk_test_` or `pk_live_`
 - **Secret Key**: Starts with `sk_test_` or `sk_live_`
-- Set as environment variables: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY`
+- Set as environment variables: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and
+  `CLERK_SECRET_KEY`
 
 ## Migrating from Another Auth Provider
 
-If the project already has authentication, create a migration plan before replacing it.
+If the project already has authentication, create a migration plan before
+replacing it.
 
 ### Detect Existing Auth
 
 Check `package.json` for existing auth libraries:
+
 - `next-auth` / `@auth/core` → NextAuth/Auth.js
 - `@supabase/supabase-js` → Supabase Auth
 - `firebase` / `firebase-admin` → Firebase Auth
@@ -200,26 +238,30 @@ Check `package.json` for existing auth libraries:
    - **Session handling** - Existing sessions will terminate on switch
 
 3. **Choose migration strategy**:
-   - **Big bang** - Switch all users at once (simpler, requires maintenance window)
-   - **Trickle migration** - Run both systems temporarily (lower risk, higher complexity)
+   - **Big bang** - Switch all users at once (simpler, requires maintenance
+     window)
+   - **Trickle migration** - Run both systems temporarily (lower risk, higher
+     complexity)
 
 ### Migration Reference
 
-- **Migration Overview**: https://clerk.com/docs/guides/development/migrating/overview
+- **Migration Overview**:
+  https://clerk.com/docs/guides/development/migrating/overview
 
 ## SDK Notes
 
 ### Package Names
 
-| Package | Install |
-|---------|---------|
-| Next.js | `@clerk/nextjs` |
-| React | `@clerk/react` |
-| Expo | `@clerk/expo` |
-| React Router | `@clerk/react-router` |
+| Package        | Install                       |
+| -------------- | ----------------------------- |
+| Next.js        | `@clerk/nextjs`               |
+| React          | `@clerk/react`                |
+| Expo           | `@clerk/expo`                 |
+| React Router   | `@clerk/react-router`         |
 | TanStack Start | `@clerk/tanstack-react-start` |
 
-> **Core 2 ONLY (skip if current SDK):** React and Expo packages have different names: `@clerk/clerk-react` and `@clerk/clerk-expo` (with `clerk-` prefix).
+> **Core 2 ONLY (skip if current SDK):** React and Expo packages have different
+> names: `@clerk/clerk-react` and `@clerk/clerk-expo` (with `clerk-` prefix).
 
 ### ClerkProvider Placement (Next.js)
 
@@ -234,11 +276,12 @@ export default function RootLayout({ children }) {
         <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
-  )
+  );
 }
 ```
 
-> **Core 2 ONLY (skip if current SDK):** `ClerkProvider` can wrap `<html>` directly.
+> **Core 2 ONLY (skip if current SDK):** `ClerkProvider` can wrap `<html>`
+> directly.
 
 ### Dynamic Rendering (Next.js)
 
@@ -262,44 +305,49 @@ Themes are installed from `@clerk/ui`:
 npm install @clerk/ui
 ```
 
-> **Core 2 ONLY (skip if current SDK):** Themes are from `@clerk/themes` instead of `@clerk/ui`.
+> **Core 2 ONLY (skip if current SDK):** Themes are from `@clerk/themes` instead
+> of `@clerk/ui`.
 
 ### shadcn Theme
 
-If the project uses shadcn/ui (check for `components.json` in the project root), apply the shadcn theme so Clerk components match the app's design system:
+If the project uses shadcn/ui (check for `components.json` in the project root),
+apply the shadcn theme so Clerk components match the app's design system:
 
 ```bash
 npm install @clerk/ui
 ```
 
 ```tsx
-import { shadcn } from '@clerk/ui/themes'
+import { shadcn } from "@clerk/ui/themes";
 
-<ClerkProvider appearance={{ theme: shadcn }}>{children}</ClerkProvider>
+<ClerkProvider appearance={{ theme: shadcn }}>{children}</ClerkProvider>;
 ```
 
 Also import the shadcn CSS in your global styles:
+
 ```css
-@import 'tailwindcss';
-@import '@clerk/ui/themes/shadcn.css';
+@import "tailwindcss";
+@import "@clerk/ui/themes/shadcn.css";
 ```
 
-> **Core 2 ONLY (skip if current SDK):** Import from `@clerk/themes` and `@clerk/themes/shadcn.css` instead.
+> **Core 2 ONLY (skip if current SDK):** Import from `@clerk/themes` and
+> `@clerk/themes/shadcn.css` instead.
 
 ## Common Pitfalls
 
-> **Run `clerk doctor` first.** It checks framework integration, env vars, middleware presence, and SDK install status. Fixes a lot of these in one shot.
+> **Run `clerk doctor` first.** It checks framework integration, env vars,
+> middleware presence, and SDK install status. Fixes a lot of these in one shot.
 
-| Issue | Solution |
-|-------|----------|
-| Missing `await` on `auth()` | In Next.js 15+, `auth()` is async: `const { userId } = await auth()` |
+| Issue                       | Solution                                                                    |
+| --------------------------- | --------------------------------------------------------------------------- |
+| Missing `await` on `auth()` | In Next.js 15+, `auth()` is async: `const { userId } = await auth()`        |
 | Exposing `CLERK_SECRET_KEY` | Never use the secret key in client code; only `NEXT_PUBLIC_*` keys are safe |
-| Missing middleware matcher | Include API routes: `matcher: ['/((?!.*\\..*|_next).*)', '/']` |
-| ClerkProvider placement | Must be inside `<body>` in root layout (Core 2: could wrap `<html>`) |
-| Auth routes not public | Allow `/sign-in`, `/sign-up` in middleware config |
-| Landing page requires auth | To keep "/" public, exclude it: `matcher: ['/((?!.*\\..*|_next|^/$).*)', '/api/(.*)']` |
-| Wrong import path | Server code uses `@clerk/nextjs/server`, client uses `@clerk/nextjs` |
-| Wrong package name | Use `@clerk/react` not `@clerk/clerk-react` (Core 2 naming) |
+| Missing middleware matcher  | Include API routes: `matcher: ['/((?!._\\.._                                | _next).*)', '/']` |
+| ClerkProvider placement     | Must be inside `<body>` in root layout (Core 2: could wrap `<html>`)        |
+| Auth routes not public      | Allow `/sign-in`, `/sign-up` in middleware config                           |
+| Landing page requires auth  | To keep "/" public, exclude it: `matcher: ['/((?!._\\.._                    | _next             | ^/$)._)', '/api/(._)']` |
+| Wrong import path           | Server code uses `@clerk/nextjs/server`, client uses `@clerk/nextjs`        |
+| Wrong package name          | Use `@clerk/react` not `@clerk/clerk-react` (Core 2 naming)                 |
 
 ## See Also
 
@@ -322,6 +370,8 @@ Also import the shadcn CSS in your global styles:
 
 ## Documentation
 
-- **Quickstart Overview**: https://clerk.com/docs/getting-started/quickstart/overview
-- **Migration Guide**: https://clerk.com/docs/guides/development/migrating/overview
+- **Quickstart Overview**:
+  https://clerk.com/docs/getting-started/quickstart/overview
+- **Migration Guide**:
+  https://clerk.com/docs/guides/development/migrating/overview
 - **Full Documentation**: https://clerk.com/docs

@@ -2,11 +2,12 @@
 
 ## Built-in Auth Middleware
 
-`@clerk/nuxt` auto-registers an `auth` named middleware. Use it with `definePageMeta`:
+`@clerk/nuxt` auto-registers an `auth` named middleware. Use it with
+`definePageMeta`:
 
 ```vue
 <script setup lang="ts">
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: "auth" });
 </script>
 ```
 
@@ -18,23 +19,23 @@ Create `middleware/require-org.ts` for custom logic:
 
 ```typescript
 export default defineNuxtRouteMiddleware(() => {
-  const { isSignedIn, orgId } = useAuth()
+  const { isSignedIn, orgId } = useAuth();
 
   if (!isSignedIn.value) {
-    return navigateTo('/sign-in')
+    return navigateTo("/sign-in");
   }
 
   if (!orgId.value) {
-    return navigateTo('/select-org')
+    return navigateTo("/select-org");
   }
-})
+});
 ```
 
 Apply to a page:
 
 ```vue
 <script setup lang="ts">
-definePageMeta({ middleware: ['auth', 'require-org'] })
+definePageMeta({ middleware: ["auth", "require-org"] });
 </script>
 ```
 
@@ -43,22 +44,23 @@ definePageMeta({ middleware: ['auth', 'require-org'] })
 For API-level protection in `server/middleware/auth.ts`:
 
 ```typescript
-import { clerkClient } from '@clerk/nuxt/server'
+import { clerkClient } from "@clerk/nuxt/server";
 
 export default defineEventHandler(async (event) => {
-  const auth = event.context.auth
+  const auth = event.context.auth;
 
-  if (getRequestURL(event).pathname.startsWith('/api/protected')) {
+  if (getRequestURL(event).pathname.startsWith("/api/protected")) {
     if (!auth?.userId) {
-      throw createError({ statusCode: 401, message: 'Unauthorized' })
+      throw createError({ statusCode: 401, message: "Unauthorized" });
     }
   }
-})
+});
 ```
 
 ## Redirect URLs
 
 Configure in `.env`:
+
 ```
 NUXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NUXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up

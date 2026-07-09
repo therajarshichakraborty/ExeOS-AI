@@ -56,14 +56,14 @@ export default async function MonitoringPage() {
   const totalProcessed = processedEmals.length;
 
   return (
-    <div className="page-wrapper">
+    <div className='page-wrapper'>
       <div>
-        <h1 className="page-title">Monitoring</h1>
-        <p className="page-description">
+        <h1 className='page-title'>Monitoring</h1>
+        <p className='page-description'>
           Emails processed by your AI agent with Claude's analysis.
         </p>
       </div>
-      <div className="stats-grid-4">
+      <div className='stats-grid-4'>
         {[
           { label: "Processed", value: totalProcessed, icon: MailIcon },
           {
@@ -75,17 +75,17 @@ export default async function MonitoringPage() {
           { label: "Tasks Extracted", value: totalTasks, icon: ListTodoIcon },
         ].map(({ label, value, icon: Icon }) => (
           <Card key={label}>
-            <CardHeader className="stat-card-header">
-              <CardTitle className="text-sm font-medium">{label}</CardTitle>
-              <Icon className="stat-icon" />
+            <CardHeader className='stat-card-header'>
+              <CardTitle className='text-sm font-medium'>{label}</CardTitle>
+              <Icon className='stat-icon' />
             </CardHeader>
             <CardContent>
-              <div className="stat-value">{value}</div>
+              <div className='stat-value'>{value}</div>
             </CardContent>
           </Card>
         ))}
       </div>
-      <div className="space-y-3">
+      <div className='space-y-3'>
         {processedEmals.map((email, idx) => (
           <EmailDetail key={`${email.emailId}-${idx}`} email={email} />
         ))}

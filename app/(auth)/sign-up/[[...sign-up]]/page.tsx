@@ -1,8 +1,8 @@
-import { SignUp } from '@clerk/nextjs'
+import { SignUp } from "@clerk/nextjs";
 
 export default function Page() {
   return (
-    <div className="auth-container">
+    <div className='auth-container'>
       <SignUp
         appearance={{
           elements: {

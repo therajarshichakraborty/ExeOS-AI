@@ -2,11 +2,15 @@
 
 ## Use Case
 
-An extension that runs entirely in the background -- no UI, no popup, no side panel. It syncs auth state from a companion web app and acts on behalf of the signed-in user automatically.
+An extension that runs entirely in the background -- no UI, no popup, no side
+panel. It syncs auth state from a companion web app and acts on behalf of the
+signed-in user automatically.
 
 Examples:
+
 - Auto-fill tools that activate when the user visits certain pages
-- Extensions that sync data in the background when the user is signed in on the web app
+- Extensions that sync data in the background when the user is signed in on the
+  web app
 - Developer tools that call your API without user interaction
 
 ## Requirements
@@ -18,14 +22,15 @@ Examples:
 ## Background Service Worker
 
 `src/background/index.ts`:
-```typescript
-import { createClerkClient } from '@clerk/chrome-extension/client'
 
-const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY
-const syncHost = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST
+```typescript
+import { createClerkClient } from "@clerk/chrome-extension/client";
+
+const publishableKey = process.env.PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const syncHost = process.env.PLASMO_PUBLIC_CLERK_SYNC_HOST;
 
 if (!publishableKey || !syncHost) {
-  throw new Error('Missing publishable key or sync host')
+  throw new Error("Missing publishable key or sync host");
 }
 
 async function getAuthenticatedUser() {
@@ -33,9 +38,9 @@ async function getAuthenticatedUser() {
     publishableKey,
     syncHost,
     background: true,
-  })
+  });
 
-  return clerk.user
+  return clerk.user;
 }
 
 async function getSessionToken(): Promise<string | null> {
@@ -43,33 +48,34 @@ async function getSessionToken(): Promise<string | null> {
     publishableKey,
     syncHost,
     background: true,
-  })
+  });
 
-  if (!clerk.session) return null
+  if (!clerk.session) return null;
 
-  return await clerk.session.getToken()
+  return await clerk.session.getToken();
 }
 
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status !== 'complete') return
+  if (changeInfo.status !== "complete") return;
 
-  const token = await getSessionToken()
-  if (!token) return
+  const token = await getSessionToken();
+  if (!token) return;
 
-  await fetch('https://api.yourapp.com/page-visit', {
-    method: 'POST',
+  await fetch("https://api.yourapp.com/page-visit", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ url: tab.url }),
-  })
-})
+  });
+});
 ```
 
 ## Environment Variables
 
 `.env.development`:
+
 ```
 PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_FRONTEND_API=https://your-app.clerk.accounts.dev
@@ -77,6 +83,7 @@ PLASMO_PUBLIC_CLERK_SYNC_HOST=http://localhost
 ```
 
 `.env.production`:
+
 ```
 PLASMO_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_...
 CLERK_FRONTEND_API=https://clerk.your-domain.com
@@ -86,6 +93,7 @@ PLASMO_PUBLIC_CLERK_SYNC_HOST=https://clerk.your-domain.com
 ## Manifest Configuration
 
 `package.json`:
+
 ```json
 {
   "manifest": {
@@ -99,7 +107,8 @@ PLASMO_PUBLIC_CLERK_SYNC_HOST=https://clerk.your-domain.com
 }
 ```
 
-`host_permissions` for the sync host domain is what allows the extension to read the Clerk session cookie from the web app.
+`host_permissions` for the sync host domain is what allows the extension to read
+the Clerk session cookie from the web app.
 
 ## Register Extension in Clerk
 
@@ -114,19 +123,30 @@ curl -X PATCH https://api.clerk.com/v1/instance \
 
 ## Key Difference from Popup + syncHost
 
-In a popup extension with `syncHost`, the user can also sign in directly via the popup (email/password, OTP). In a headless extension, there is no UI at all -- the user MUST sign in via the web app. The extension only reads auth state.
+In a popup extension with `syncHost`, the user can also sign in directly via the
+popup (email/password, OTP). In a headless extension, there is no UI at all --
+the user MUST sign in via the web app. The extension only reads auth state.
 
 ## Debugging
 
 To verify auth state is syncing:
 
 ```typescript
-const clerk = await createClerkClient({ publishableKey, syncHost, background: true })
-console.log('User:', clerk.user?.emailAddresses[0]?.emailAddress ?? 'Not signed in')
-console.log('Session:', clerk.session?.id ?? 'No session')
+const clerk = await createClerkClient({
+  publishableKey,
+  syncHost,
+  background: true,
+});
+console.log(
+  "User:",
+  clerk.user?.emailAddresses[0]?.emailAddress ?? "Not signed in",
+);
+console.log("Session:", clerk.session?.id ?? "No session");
 ```
 
 If `user` is null despite being signed in on the web app, check:
+
 1. `host_permissions` includes the sync host domain
 2. The extension ID is in Clerk's allowed origins
-3. The `syncHost` value matches the Clerk Frontend API URL (not the web app's main domain)
+3. The `syncHost` value matches the Clerk Frontend API URL (not the web app's
+   main domain)
