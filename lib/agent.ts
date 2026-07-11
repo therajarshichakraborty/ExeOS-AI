@@ -32,7 +32,7 @@ export async function runAgent(userId: string) {
         summary: "Gmail not connected",
       };
     }
-    const emails = await fetchUnreadEmails(gmailClient, 10);
+    const emails = await fetchUnreadEmails(gmailClient, 1);
     if (emails.length === 0) {
       const run = await completeAgentRun(agentRun.id, {
         status: "success",

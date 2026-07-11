@@ -90,8 +90,7 @@ export async function anaylzeWithAI(
   }
   const result = await generateText({
     model: openrouter("tencent/hy3"),
-    //@ts-ignore
-    // maxTokens: 2000,
+    maxOutputTokens: 2000,
     prompt: `You are an AI assistant analyzing emails. Today's date is ${today}.
 
 Analyze the following email and extract structured information:
