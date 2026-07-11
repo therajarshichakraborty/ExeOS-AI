@@ -24,12 +24,10 @@ export default async function SettingsPage() {
 
   const userIntegrations = await getUserIntegrations(user.id);
   const gmailIntegration = userIntegrations.find(
-    (integration:any) => integration.provider === "gmail",
+    (integration) => integration.provider === "gmail",
   );
-
-  console.log(`database url is`, process.env.DATABASE_URL);
   const googleCalendarIntegration = userIntegrations.find(
-    (integration:any) => integration.provider === "google_calendar",
+    (integration) => integration.provider === "google_calendar",
   );
 
   const providers = [
@@ -80,7 +78,7 @@ export default async function SettingsPage() {
                   {/* <DisconnectButton provider={provider.key} /> */}
                 </div>
               ) : (
-                <Button >
+                <Button>
                   <a href={`/api/auth/google?provider=${provider.key}`}>
                     Connect
                   </a>
@@ -93,5 +91,3 @@ export default async function SettingsPage() {
     </div>
   );
 }
-
-export const dynamic = "force-dynamic";
