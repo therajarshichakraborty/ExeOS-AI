@@ -42,24 +42,99 @@ export async function fetchUnreadEmails(
   return emails;
 }
 
-function parseGmailMessage(message: gmail_v1.Schema$Message): ParsedEmail {
+export function stripHtml(html: string): string {
+  if (!html) return "";
+
+  let text = html;
+
+  // 1. Remove style, script and head tags with their content
+  text = text.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, "");
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+  text = text.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "");
+
+  // 2. Convert escaped brackets to real brackets first so escaped tags are caught
+  text = text.replace(/&lt;/gi, "<");
+  text = text.replace(/&gt;/gi, ">");
+
+  // 3. Replace block elements with spacing newlines
+  text = text.replace(/<\/p>/gi, "\n\n");
+  text = text.replace(/<\/tr>/gi, "\n");
+  text = text.replace(/<br\s*\/?>/gi, "\n");
+  text = text.replace(/<\/h[1-6]>/gi, "\n\n");
+  text = text.replace(/<\/div>/gi, "\n");
+
+  // 4. Strip all HTML tags
+  text = text.replace(/<[^>]+>/g, "");
+
+  // Remove all HTTP/HTTPS hyperlinks and optional surrounding parentheses
+  text = text.replace(/\(?\s*https?:\/\/[^\s)]+\s*\)?/gi, "");
+
+  // 5. Decode remaining common HTML entities
+  const entities: Record<string, string> = {
+    "&amp;": "&",
+    "&quot;": '"',
+    "&#39;": "'",
+    "&apos;": "'",
+    "&nbsp;": " ",
+    "&raquo;": "»",
+    "&laquo;": "«",
+    "&copy;": "©",
+    "&reg;": "®",
+    "&trade;": "™",
+  };
+  text = text.replace(
+    /&[a-z0-9#]+;/gi,
+    (match) => entities[match.toLowerCase()] ?? match,
+  );
+  text = text.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCharCode(parseInt(dec, 10)),
+  );
+
+  // 6. Clean up redundant line spacing
+  text = text
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(
+      (line, index, arr) => line !== "" || (index > 0 && arr[index - 1] !== ""),
+    )
+    .join("\n")
+    .trim();
+
+  return text;
+}
+
+export function parseGmailMessage(
+  message: gmail_v1.Schema$Message,
+): ParsedEmail {
   const headers = message.payload?.headers ?? [];
   const getHeader = (name: string) =>
     headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value ??
     "";
 
   let body = "";
+  let isHtmlBody = false;
   const payload = message.payload;
 
   if (payload?.body?.data) {
     body = Buffer.from(payload.body.data, "base64url").toString("utf-8");
+    if (payload.mimeType === "text/html") {
+      isHtmlBody = true;
+    }
   } else if (payload?.parts) {
     const textPart = payload.parts.find((p) => p.mimeType === "text/plain");
     const htmlPart = payload.parts.find((p) => p.mimeType === "text/html");
     const part = textPart ?? htmlPart;
     if (part?.body?.data) {
       body = Buffer.from(part.body.data, "base64url").toString("utf-8");
+      if (part.mimeType === "text/html") {
+        isHtmlBody = true;
+      }
     }
+  }
+
+  // Strip HTML if it is a text/html part or if it contains HTML markup tags
+  if (isHtmlBody || /<[a-z][\s\S]*>/i.test(body)) {
+    body = stripHtml(body);
   }
 
   // Truncate long emails to stay within token limits

@@ -14,11 +14,16 @@ export async function fetchUpcomingEvents(
   hoursAhead = 24,
 ): Promise<CalendarEvent[]> {
   const now = new Date();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  );
   const future = new Date(now.getTime() + hoursAhead * 60 * 60 * 1000);
 
   const response = await calendar.events.list({
     calendarId: "primary",
-    timeMin: now.toISOString(),
+    timeMin: startOfToday.toISOString(),
     timeMax: future.toISOString(),
     singleEvents: true,
     orderBy: "startTime",

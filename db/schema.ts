@@ -90,6 +90,8 @@ export interface ActionLogEntry {
   from: string;
   date: string;
   status: "success" | "error";
+  snippet?: string;
+  body?: string;
   summary?: string;
   priority?: string;
   category?: string;
@@ -99,6 +101,13 @@ export interface ActionLogEntry {
     title: string;
     description: string;
     dueDate: string | null;
+  }[];
+  calendarEvents?: {
+    title: string;
+    description: string;
+    date: string;
+    startTime: string | null;
+    endTime: string | null;
   }[];
   tasksCreated?: number;
   draftCreated?: boolean;

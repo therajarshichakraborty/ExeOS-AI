@@ -32,7 +32,7 @@ export async function runAgent(userId: string) {
         summary: "Gmail not connected",
       };
     }
-    const emails = await fetchUnreadEmails(gmailClient, 1);
+    const emails = await fetchUnreadEmails(gmailClient, 20);
     if (emails.length === 0) {
       const run = await completeAgentRun(agentRun.id, {
         status: "success",
@@ -49,6 +49,12 @@ export async function runAgent(userId: string) {
         summary: "No unread emails to process",
       };
     }
+
+    // Sort unread emails by date descending (latest first) to ensure the first 5 are the newest
+    emails.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
+
     const calendarClient = await getCalendarClient(userId);
 
     let upcomingEvents: CalendarEvent[] = [];
@@ -65,59 +71,96 @@ export async function runAgent(userId: string) {
     let totalDraftsCreated = 0;
     let totalEventsCreated = 0;
 
-    const results = await Promise.allSettled(
-      emails.map(async (email) => {
-        try {
-          const analysis = await anaylzeWithAI(email, upcomingEvents);
-          let emailTasksCreated = 0;
+    const results = [];
+    for (let index = 0; index < emails.length; index++) {
+      const email = emails[index];
+      try {
+        if (index >= 5) {
+          await markAsRead(gmailClient, email.id);
+          results.push({
+            status: "fulfilled" as const,
+            value: {
+              emailId: email.id,
+              subject: email.subject,
+              from: email.from,
+              date: email.date,
+              snippet: email.snippet,
+              body: email.body,
+              status: "success" as const,
+              summary: email.snippet,
+              priority: "low",
+              category: "other",
+              needsReply: false,
+              draftReply: null,
+              actionItems: [],
+              calendarEvents: [],
+              tasksCreated: 0,
+              draftCreated: false,
+              eventsCreated: 0,
+            },
+          });
+          continue;
+        }
 
-          for (const item of analysis.actionItems) {
-            await createTask({
-              userId,
-              title: item.title,
-              description: item.description,
-              priority: analysis.priority,
-              dueDate: item.dueDate ? new Date(item.dueDate) : null,
-              createdByAgent: true,
-            });
-            emailTasksCreated++;
-          }
+        // Add a small delay between AI requests to avoid rate limits
+        if (index > 0) {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
 
-          let draftCreated = false;
-          if (analysis.needsReply && analysis.draftReply) {
-            await createDraft(
-              gmailClient,
-              email.from,
-              email.subject,
-              analysis.draftReply,
-              email.threadId,
-            );
-            draftCreated = true;
-          }
+        const analysis = await anaylzeWithAI(email, upcomingEvents);
+        let emailTasksCreated = 0;
 
-          let emailEventsCreated = 0;
-          if (calendarClient && analysis.calendarEvents?.length > 0) {
-            for (const event of analysis.calendarEvents) {
-              try {
-                await createCalendarEvent(calendarClient, event);
-                emailEventsCreated++;
-              } catch (err) {
-                console.error(
-                  `[Agent] Failed to create calendar event "${event.title}":`,
-                  err,
-                );
-              }
+        for (const item of analysis.actionItems) {
+          await createTask({
+            userId,
+            title: item.title,
+            description: item.description,
+            priority: analysis.priority,
+            dueDate: item.dueDate ? new Date(item.dueDate) : null,
+            createdByAgent: true,
+          });
+          emailTasksCreated++;
+        }
+
+        let draftCreated = false;
+        if (analysis.needsReply && analysis.draftReply) {
+          await createDraft(
+            gmailClient,
+            email.from,
+            email.subject,
+            analysis.draftReply,
+            email.threadId,
+          );
+          draftCreated = true;
+        }
+
+        let emailEventsCreated = 0;
+        if (calendarClient && analysis.calendarEvents?.length > 0) {
+          for (const event of analysis.calendarEvents) {
+            try {
+              await createCalendarEvent(calendarClient, event);
+              emailEventsCreated++;
+            } catch (err) {
+              console.error(
+                `[Agent] Failed to create calendar event "${event.title}":`,
+                err,
+              );
             }
           }
+        }
 
-          await markAsRead(gmailClient, email.id);
+        await markAsRead(gmailClient, email.id);
 
-          return {
+        results.push({
+          status: "fulfilled" as const,
+          value: {
             emailId: email.id,
             subject: email.subject,
             from: email.from,
             date: email.date,
-            status: "success",
+            snippet: email.snippet,
+            body: email.body,
+            status: "success" as const,
             summary: analysis.summary,
             priority: analysis.priority,
             category: analysis.category,
@@ -128,20 +171,25 @@ export async function runAgent(userId: string) {
             tasksCreated: emailTasksCreated,
             draftCreated: draftCreated,
             eventsCreated: emailEventsCreated,
-          };
-        } catch (error) {
-          console.error("Email processing failed:", error);
-          return {
+          },
+        });
+      } catch (error) {
+        console.error("Email processing failed:", error);
+        results.push({
+          status: "fulfilled" as const,
+          value: {
             emailId: email.id,
             subject: email.subject,
             from: email.from,
             date: email.date,
-            status: "error",
+            snippet: email.snippet,
+            body: email.body,
+            status: "error" as const,
             error: error instanceof Error ? error.message : "Unknown error",
-          };
-        }
-      }),
-    );
+          },
+        });
+      }
+    }
 
     for (const result of results) {
       if (result.status === "fulfilled") {
@@ -152,15 +200,19 @@ export async function runAgent(userId: string) {
           from: entry.from,
           date: entry.date,
           status: entry.status as "success" | "error",
+          snippet: entry.snippet,
+          body: entry.body,
           summary: entry.summary,
           priority: entry.priority,
           category: entry.category,
           needsReply: entry.needsReply,
           draftReply: entry.draftReply,
           actionItems: entry.actionItems,
+          calendarEvents: entry.calendarEvents,
           tasksCreated: entry.tasksCreated,
           draftCreated: entry.draftCreated,
           eventsCreated: entry.eventsCreated,
+          error: entry.error,
         });
         if (entry.status === "success") {
           totalTasksCreated += entry.tasksCreated ?? 0;

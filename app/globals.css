@@ -127,11 +127,11 @@
   }
 
   .hero-description {
-    @apply mx-auto mb-8 max-w-2xl text-3xl text-white;
+    @apply mx-auto mb-8 max-w-2xl text-lg text-muted-foreground;
   }
 
   .page-description {
-    @apply mt-2 text-white;
+    @apply mt-2 text-muted-foreground;
   }
 
   .logo-container {
@@ -139,7 +139,7 @@
   }
 
   .logo-text {
-    @apply text-xl font-bold text-white;
+    @apply text-xl font-bold text-foreground;
   }
 
   .sidebar-container {
@@ -159,7 +159,7 @@
   }
 
   .sidebar-nav-button {
-    @apply w-full justify-start gap-3 text-white;
+    @apply w-full justify-start gap-3 text-muted-foreground hover:text-foreground transition-colors;
   }
 
   .sidebar-icon {
@@ -171,15 +171,15 @@
   }
 
   .upgrade-card {
-    @apply rounded-lg bg-primary/10 p-4 text-primary-foreground;
+    @apply rounded-lg bg-primary/5 border border-border p-4 text-foreground;
   }
 
   .upgrade-card-header {
-    @apply mb-2 flex items-center gap-2;
+    @apply mb-2 flex items-center gap-2 text-primary;
   }
 
   .upgrade-card-text {
-    @apply mb-3 text-sm opacity-90;
+    @apply mb-3 text-sm text-muted-foreground;
   }
 
   .user-profile {
@@ -187,7 +187,7 @@
   }
 
   .main-content {
-    @apply flex-1 overflow-y-auto;
+    @apply flex-1 overflow-y-auto bg-background;
   }
 
   .main-content-inner {
@@ -234,7 +234,7 @@
   }
 
   .page-title {
-    @apply text-white;
+    @apply text-foreground text-3xl font-extrabold tracking-tight;
   }
 
   .stats-grid-2 {
@@ -500,6 +500,11 @@
       transparent 45rem
     ),
     radial-gradient(
+      circle at 50% 55rem,
+      oklch(0.95 0.02 200 / 0.5),
+      transparent 40rem
+    ),
+    radial-gradient(
       circle at 10% 25rem,
       oklch(0.97 0.01 320 / 0.4),
       transparent 30rem
@@ -520,6 +525,11 @@
       transparent 45rem
     ),
     radial-gradient(
+      circle at 50% 55rem,
+      oklch(0.12 0.02 200 / 0.25),
+      transparent 40rem
+    ),
+    radial-gradient(
       circle at 5% 25rem,
       oklch(0.15 0.02 290 / 0.15),
       transparent 35rem
@@ -536,18 +546,18 @@
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 0;
   pointer-events: none;
   background-image:
     linear-gradient(to right, var(--border) 1px, transparent 1px),
     linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size: 5rem 5rem;
+  background-size: 2.5rem 2.5rem;
   mask-image: radial-gradient(circle at 50% 20rem, black 40%, transparent 95%);
-  opacity: 0.5;
+  opacity: 0.15;
 }
 
 .dark .landing-wrapper::before {
-  opacity: 0.25;
+  opacity: 0.07;
 }
 
 /* Header & Navigation Styling */
