@@ -306,7 +306,7 @@ export default function Home() {
           <p className="text-muted-foreground text-sm font-medium">Answers to common operational and privacy questions.</p>
         </div>
         {/* @ts-ignore */}
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" className="w-full">
           {[
             {
               q: "How does ExecOS access my email?",
