@@ -1,5 +1,5 @@
 import { and, count, desc, eq } from "drizzle-orm";
-import { db } from "./";
+import { db } from "../db/index";
 import {
   ActionLogEntry,
   agentRuns,
@@ -9,7 +9,6 @@ import {
 } from "./schema";
 import { GoogleProvider } from "@/lib/google";
 
-console.log(`database url is`,process.env.DATABASE_URL);
 
 export async function getUserByClerkId(clerkId: string) {
   try {

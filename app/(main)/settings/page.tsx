@@ -24,12 +24,12 @@ export default async function SettingsPage() {
 
   const userIntegrations = await getUserIntegrations(user.id);
   const gmailIntegration = userIntegrations.find(
-    (integration) => integration.provider === "gmail",
+    (integration:any) => integration.provider === "gmail",
   );
 
   console.log(`database url is`, process.env.DATABASE_URL);
   const googleCalendarIntegration = userIntegrations.find(
-    (integration) => integration.provider === "google_calendar",
+    (integration:any) => integration.provider === "google_calendar",
   );
 
   const providers = [

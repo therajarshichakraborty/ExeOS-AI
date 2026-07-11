@@ -34,15 +34,9 @@
 // Posted by Niloy Chowdhury, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-07-11, License - CC BY-SA 4.0
 
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "./schema";
+import dotenv from 'dotenv';
+dotenv.config();
 
-if (!process.env.NEXT_PUBLIC_DATABASE_URL) {
-  throw new Error("DATABASE_URL environment variable is not set");
-}
+import { drizzle } from 'drizzle-orm/node-postgres';
 
-// Create postgres connection
-const client = postgres(process.env.NEXT_PUBLIC_DATABASE_URL as string);
-
-export const db = drizzle(client, { schema });
+export const db = drizzle(process.env.NEXT_PUBLIC_DATABASE_URL!);
