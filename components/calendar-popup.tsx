@@ -132,7 +132,7 @@ export function CalendarPopup({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button
           variant="outline"
           className={cn("flex items-center gap-2", triggerClassName)}
