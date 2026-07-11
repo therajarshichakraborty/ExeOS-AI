@@ -16,6 +16,8 @@ import {
   ListTodoIcon,
   MailIcon,
 } from "lucide-react";
+import { getGmailClient } from "@/lib/google-client";
+import { CalendarPopup } from "@/components/calendar-popup";
 import { redirect } from "next/navigation";
 
 export default async function MonitoringPage() {
@@ -30,7 +32,7 @@ export default async function MonitoringPage() {
 
   const runs = await getAgentRuns(user.id);
 
-  const processedEmals = [];
+  const processedEmals: any[] = [];
   for (const run of runs) {
     const log = run.actionsLog ?? [];
     for (const entry of log) {
@@ -41,6 +43,32 @@ export default async function MonitoringPage() {
         });
       }
     }
+  }
+
+  // Dynamically fetch missing snippets from Gmail for past runs/failed runs
+  const gmailClient = await getGmailClient(user.id);
+  if (gmailClient) {
+    await Promise.allSettled(
+      processedEmals.map(async (emailEntry) => {
+        if (!emailEntry.summary && !emailEntry.snippet) {
+          try {
+            const msg = await gmailClient.users.messages.get({
+              userId: "me",
+              id: emailEntry.emailId,
+              format: "minimal",
+            });
+            emailEntry.snippet = msg.data.snippet ?? "";
+            if (!emailEntry.subject && msg.data.payload?.headers) {
+              emailEntry.subject = msg.data.payload.headers.find(
+                (h) => h.name?.toLowerCase() === "subject"
+              )?.value ?? "";
+            }
+          } catch (err) {
+            console.error(`Failed to fetch snippet fallback for ${emailEntry.emailId}:`, err);
+          }
+        }
+      })
+    );
   }
 
   const highPriority = processedEmals.filter(
@@ -57,11 +85,16 @@ export default async function MonitoringPage() {
 
   return (
     <div className="page-wrapper">
-      <div>
-        <h1 className="page-title">Monitoring</h1>
-        <p className="page-description">
-          Emails processed by your AI agent with Claude's analysis.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="page-title">Monitoring</h1>
+          <p className="page-description">
+            Emails processed by your AI agent with Claude's analysis.
+          </p>
+        </div>
+        <div className="shrink-0 flex items-center">
+          <CalendarPopup />
+        </div>
       </div>
       <div className="stats-grid-4">
         {[

@@ -1,0 +1,438 @@
+[
+  {
+    "date": "Sat, 11 Jul 2026 17:38:49 +0530",
+    "from": "Arghya <contact.the.arghya@gmail.com>",
+    "status": "success",
+    "emailId": "19f5114ba6bddb6f",
+    "subject": "",
+    "summary": "Arghya shares a tentative plan for an upcoming Manali trip (departing today, 2026-07-11, returning 2026-07-15) and asks Rajarshi to confirm if the dates work so they can book tickets before prices increase.",
+    "category": "personal",
+    "priority": "high",
+    "draftReply": "Hi Arghya,\n\nThanks for the update on the Manali trip! The dates (11–15 July) work for me, so we can go ahead and book the tickets before prices increase. Let me know once you’ve finalized the travel mode and stay options.\n\nBest,\nRajarshi",
+    "needsReply": true,
+    "actionItems": [
+      {
+        "title": "Confirm trip dates (2026-07-11 to 2026-07-15) work",
+        "dueDate": "2026-07-11",
+        "description": "Rajarshi needs to reply to Arghya confirming whether the proposed Manali trip dates are suitable."
+      },
+      {
+        "title": "Book travel tickets before prices go up",
+        "dueDate": "2026-07-11",
+        "description": "Once dates are confirmed, book Volvo bus / flight to Kullu / drive and stay (Old Manali cafes/homestays/hotels)."
+      }
+    ],
+    "draftCreated": true,
+    "tasksCreated": 2,
+    "eventsCreated": 2,
+    "processedAt": "2026-07-11T12:09:21.913Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:55:29 +0000",
+    "from": "Neon Changelog <changelog@neon.tech>",
+    "status": "error",
+    "emailId": "19f4d9973f263233",
+    "subject": "⌘+K Command Palette, neon api in CLI, New cells in 3 regions",
+    "processedAt": "2026-07-11T12:02:30.851Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 17:26:43 +0530",
+    "from": "Arghya <contact.the.arghya@gmail.com>",
+    "status": "error",
+    "emailId": "19f5109b29dc0725",
+    "subject": "",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f4ef0560dc939b",
+    "subject": "This is Feynman’s Thinking Habit. It Made Him a Genius | Thomas Oppong",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 00:11:14 +0000",
+    "from": "Aurinko Team <support@aurinko.io>",
+    "status": "error",
+    "emailId": "19f4e83acf821d43",
+    "subject": "Re: Your Aurinko Trial",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 21:11:05 +0000",
+    "from": "Make <info@make.com>",
+    "status": "error",
+    "emailId": "19f4ddeab894368f",
+    "subject": "Welcome, Rajarshi! Your automation forecast looks bright 🌤️",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:55:29 +0000",
+    "from": "Neon Changelog <changelog@neon.tech>",
+    "status": "error",
+    "emailId": "19f4d9973f263233",
+    "subject": "⌘+K Command Palette, neon api in CLI, New cells in 3 regions",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:17:57 +0000",
+    "from": "Kim from Resume Worded <kim@resumeworded.com>",
+    "status": "error",
+    "emailId": "19f4d771929b9a54",
+    "subject": "Rajarshi, what do you think of this line I wrote for your resume?",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:53:41 +0000 (UTC)",
+    "from": "Base44 <no-reply@marketing.base44.com>",
+    "status": "error",
+    "emailId": "19f4c8621a8362be",
+    "subject": "Fresh updates just landed on Base44",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:47:04 +0000",
+    "from": "Max from n8n <onboarding@info.n8n.io>",
+    "status": "error",
+    "emailId": "19f4c7f17d742e00",
+    "subject": "Welcome to n8n!",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 00:18:15 -0600",
+    "from": "HP India <crm-ccm.ap-ipg@newsgram.hp.com>",
+    "status": "error",
+    "emailId": "19f4b0f3d8658df1",
+    "subject": "Power your semester with OmniBook 5 Laptops",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f49c9f900d6140",
+    "subject": "Qwen3.6–35B Runs on a 16 GB M4 Mac mini — Fully in Memory, No Tricks | Manjunath Janardhan in Mac O’Clock",
+    "processedAt": "2026-07-11T11:57:20.784Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f4ef0560dc939b",
+    "subject": "This is Feynman’s Thinking Habit. It Made Him a Genius | Thomas Oppong",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 04:21:05 +0300 (MSK)",
+    "from": "noreply@codeforces.com",
+    "status": "error",
+    "emailId": "19f4ec38ef5d81f1",
+    "subject": "Codeforces Round 1108 (Div. 2)",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 00:11:14 +0000",
+    "from": "Aurinko Team <support@aurinko.io>",
+    "status": "error",
+    "emailId": "19f4e83acf821d43",
+    "subject": "Re: Your Aurinko Trial",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 21:11:05 +0000",
+    "from": "Make <info@make.com>",
+    "status": "error",
+    "emailId": "19f4ddeab894368f",
+    "subject": "Welcome, Rajarshi! Your automation forecast looks bright 🌤️",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:55:29 +0000",
+    "from": "Neon Changelog <changelog@neon.tech>",
+    "status": "error",
+    "emailId": "19f4d9973f263233",
+    "subject": "⌘+K Command Palette, neon api in CLI, New cells in 3 regions",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:17:57 +0000",
+    "from": "Kim from Resume Worded <kim@resumeworded.com>",
+    "status": "error",
+    "emailId": "19f4d771929b9a54",
+    "subject": "Rajarshi, what do you think of this line I wrote for your resume?",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:53:41 +0000 (UTC)",
+    "from": "Base44 <no-reply@marketing.base44.com>",
+    "status": "error",
+    "emailId": "19f4c8621a8362be",
+    "subject": "Fresh updates just landed on Base44",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:47:04 +0000",
+    "from": "Max from n8n <onboarding@info.n8n.io>",
+    "status": "error",
+    "emailId": "19f4c7f17d742e00",
+    "subject": "Welcome to n8n!",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 00:18:15 -0600",
+    "from": "HP India <crm-ccm.ap-ipg@newsgram.hp.com>",
+    "status": "error",
+    "emailId": "19f4b0f3d8658df1",
+    "subject": "Power your semester with OmniBook 5 Laptops",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f49c9f900d6140",
+    "subject": "Qwen3.6–35B Runs on a 16 GB M4 Mac mini — Fully in Memory, No Tricks | Manjunath Janardhan in Mac O’Clock",
+    "processedAt": "2026-07-11T11:53:15.591Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 17:21:07 +0530",
+    "from": "Arghya <contact.the.arghya@gmail.com>",
+    "status": "error",
+    "emailId": "19f51048b39945f3",
+    "subject": "",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f4ef0560dc939b",
+    "subject": "This is Feynman’s Thinking Habit. It Made Him a Genius | Thomas Oppong",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 04:21:05 +0300 (MSK)",
+    "from": "noreply@codeforces.com",
+    "status": "error",
+    "emailId": "19f4ec38ef5d81f1",
+    "subject": "Codeforces Round 1108 (Div. 2)",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 00:11:14 +0000",
+    "from": "Aurinko Team <support@aurinko.io>",
+    "status": "error",
+    "emailId": "19f4e83acf821d43",
+    "subject": "Re: Your Aurinko Trial",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 21:11:05 +0000",
+    "from": "Make <info@make.com>",
+    "status": "error",
+    "emailId": "19f4ddeab894368f",
+    "subject": "Welcome, Rajarshi! Your automation forecast looks bright 🌤️",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:55:29 +0000",
+    "from": "Neon Changelog <changelog@neon.tech>",
+    "status": "error",
+    "emailId": "19f4d9973f263233",
+    "subject": "⌘+K Command Palette, neon api in CLI, New cells in 3 regions",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:17:57 +0000",
+    "from": "Kim from Resume Worded <kim@resumeworded.com>",
+    "status": "error",
+    "emailId": "19f4d771929b9a54",
+    "subject": "Rajarshi, what do you think of this line I wrote for your resume?",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:53:41 +0000 (UTC)",
+    "from": "Base44 <no-reply@marketing.base44.com>",
+    "status": "error",
+    "emailId": "19f4c8621a8362be",
+    "subject": "Fresh updates just landed on Base44",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:47:04 +0000",
+    "from": "Max from n8n <onboarding@info.n8n.io>",
+    "status": "error",
+    "emailId": "19f4c7f17d742e00",
+    "subject": "Welcome to n8n!",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 00:18:15 -0600",
+    "from": "HP India <crm-ccm.ap-ipg@newsgram.hp.com>",
+    "status": "error",
+    "emailId": "19f4b0f3d8658df1",
+    "subject": "Power your semester with OmniBook 5 Laptops",
+    "processedAt": "2026-07-11T11:51:54.350Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f4ef0560dc939b",
+    "subject": "This is Feynman’s Thinking Habit. It Made Him a Genius | Thomas Oppong",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 04:21:05 +0300 (MSK)",
+    "from": "noreply@codeforces.com",
+    "status": "error",
+    "emailId": "19f4ec38ef5d81f1",
+    "subject": "Codeforces Round 1108 (Div. 2)",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 00:11:14 +0000",
+    "from": "Aurinko Team <support@aurinko.io>",
+    "status": "error",
+    "emailId": "19f4e83acf821d43",
+    "subject": "Re: Your Aurinko Trial",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 21:11:05 +0000",
+    "from": "Make <info@make.com>",
+    "status": "error",
+    "emailId": "19f4ddeab894368f",
+    "subject": "Welcome, Rajarshi! Your automation forecast looks bright 🌤️",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:55:29 +0000",
+    "from": "Neon Changelog <changelog@neon.tech>",
+    "status": "error",
+    "emailId": "19f4d9973f263233",
+    "subject": "⌘+K Command Palette, neon api in CLI, New cells in 3 regions",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:17:57 +0000",
+    "from": "Kim from Resume Worded <kim@resumeworded.com>",
+    "status": "error",
+    "emailId": "19f4d771929b9a54",
+    "subject": "Rajarshi, what do you think of this line I wrote for your resume?",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:53:41 +0000 (UTC)",
+    "from": "Base44 <no-reply@marketing.base44.com>",
+    "status": "error",
+    "emailId": "19f4c8621a8362be",
+    "subject": "Fresh updates just landed on Base44",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:47:04 +0000",
+    "from": "Max from n8n <onboarding@info.n8n.io>",
+    "status": "error",
+    "emailId": "19f4c7f17d742e00",
+    "subject": "Welcome to n8n!",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 00:18:15 -0600",
+    "from": "HP India <crm-ccm.ap-ipg@newsgram.hp.com>",
+    "status": "error",
+    "emailId": "19f4b0f3d8658df1",
+    "subject": "Power your semester with OmniBook 5 Laptops",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f49c9f900d6140",
+    "subject": "Qwen3.6–35B Runs on a 16 GB M4 Mac mini — Fully in Memory, No Tricks | Manjunath Janardhan in Mac O’Clock",
+    "processedAt": "2026-07-11T11:40:18.280Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f4ef0560dc939b",
+    "subject": "This is Feynman’s Thinking Habit. It Made Him a Genius | Thomas Oppong",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 04:21:05 +0300 (MSK)",
+    "from": "noreply@codeforces.com",
+    "status": "error",
+    "emailId": "19f4ec38ef5d81f1",
+    "subject": "Codeforces Round 1108 (Div. 2)",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Sat, 11 Jul 2026 00:11:14 +0000",
+    "from": "Aurinko Team <support@aurinko.io>",
+    "status": "error",
+    "emailId": "19f4e83acf821d43",
+    "subject": "Re: Your Aurinko Trial",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 21:11:05 +0000",
+    "from": "Make <info@make.com>",
+    "status": "error",
+    "emailId": "19f4ddeab894368f",
+    "subject": "Welcome, Rajarshi! Your automation forecast looks bright 🌤️",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:55:29 +0000",
+    "from": "Neon Changelog <changelog@neon.tech>",
+    "status": "error",
+    "emailId": "19f4d9973f263233",
+    "subject": "⌘+K Command Palette, neon api in CLI, New cells in 3 regions",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 19:17:57 +0000",
+    "from": "Kim from Resume Worded <kim@resumeworded.com>",
+    "status": "error",
+    "emailId": "19f4d771929b9a54",
+    "subject": "Rajarshi, what do you think of this line I wrote for your resume?",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:53:41 +0000 (UTC)",
+    "from": "Base44 <no-reply@marketing.base44.com>",
+    "status": "error",
+    "emailId": "19f4c8621a8362be",
+    "subject": "Fresh updates just landed on Base44",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 14:47:04 +0000",
+    "from": "Max from n8n <onboarding@info.n8n.io>",
+    "status": "error",
+    "emailId": "19f4c7f17d742e00",
+    "subject": "Welcome to n8n!",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 00:18:15 -0600",
+    "from": "HP India <crm-ccm.ap-ipg@newsgram.hp.com>",
+    "status": "error",
+    "emailId": "19f4b0f3d8658df1",
+    "subject": "Power your semester with OmniBook 5 Laptops",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  },
+  {
+    "date": "Fri, 10 Jul 2026 02:10:00 +0000 (UTC)",
+    "from": "Medium Daily Digest <noreply@medium.com>",
+    "status": "error",
+    "emailId": "19f49c9f900d6140",
+    "subject": "Qwen3.6–35B Runs on a 16 GB M4 Mac mini — Fully in Memory, No Tricks | Manjunath Janardhan in Mac O’Clock",
+    "processedAt": "2026-07-11T11:33:21.221Z"
+  }
+]

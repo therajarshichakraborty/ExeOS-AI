@@ -43,10 +43,18 @@ export function EmailDetail({ email }: { email: ProcessedEmail }) {
         <CardContent className="p-4">
           <div className="email-card-content">
             <div className="email-card-body">
-              <div className="email-subject-row">
+              <div className="email-subject-row flex-wrap">
                 <h3 className="email-subject">
                   {email.subject || "(No subject)"}
                 </h3>
+                {email.status === "error" && (
+                  <Badge
+                    variant="destructive"
+                    className="bg-destructive/80 text-white font-medium"
+                  >
+                    Failed
+                  </Badge>
+                )}
                 {email.priority && (
                   <Badge
                     variant="default"
@@ -96,9 +104,9 @@ export function EmailDetail({ email }: { email: ProcessedEmail }) {
                 </span>
               </div>
 
-              {/* Summary */}
-              {email.summary && (
-                <p className="email-summary">{email.summary}</p>
+              {/* Summary or Snippet */}
+              {(email.summary || email.snippet) && (
+                <p className="email-summary">{email.summary || email.snippet}</p>
               )}
             </div>
 
@@ -116,6 +124,15 @@ export function EmailDetail({ email }: { email: ProcessedEmail }) {
       {/* Expanded detail */}
       {expanded && (
         <div className="email-expanded">
+          {/* Error state */}
+          {email.status === "error" && (
+            <div className="email-error mb-4">
+              <p className="email-error-text font-medium">
+                Failed to process email: {email.error || "An unknown error occurred during AI analysis."}
+              </p>
+            </div>
+          )}
+
           <div className="email-expanded-grid">
             {/* Action Items */}
             {email.actionItems && email.actionItems.length > 0 && (
@@ -155,23 +172,31 @@ export function EmailDetail({ email }: { email: ProcessedEmail }) {
               </div>
             )}
 
-            {/* No details */}
+            {/* No details / Email Content fallback */}
             {(!email.actionItems || email.actionItems.length === 0) &&
               !email.draftReply && (
-                <div className="email-no-details">
-                  <p className="status-label">
-                    No action items or draft reply for this email.
-                  </p>
+                <div className="col-span-2 space-y-4">
+                  {(email.summary || email.snippet) && (
+                    <div>
+                      <h4 className="email-section-title">
+                        <FileText className="stat-icon" />
+                        Email Content Preview
+                      </h4>
+                      <div className="email-action-item bg-muted/50 p-4 rounded-lg">
+                        <p className="email-draft-text text-muted-foreground">
+                          {email.summary || email.snippet}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  <div className="text-center py-2">
+                    <p className="text-xs text-muted-foreground italic">
+                      No action items or draft reply were generated for this email.
+                    </p>
+                  </div>
                 </div>
               )}
           </div>
-
-          {/* Error state */}
-          {email.status === "error" && email.error && (
-            <div className="email-error">
-              <p className="email-error-text">Error: {email.error}</p>
-            </div>
-          )}
         </div>
       )}
     </Card>

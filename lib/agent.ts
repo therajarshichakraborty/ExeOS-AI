@@ -32,7 +32,7 @@ export async function runAgent(userId: string) {
         summary: "Gmail not connected",
       };
     }
-    const emails = await fetchUnreadEmails(gmailClient, 5);
+    const emails = await fetchUnreadEmails(gmailClient, 20);
     if (emails.length === 0) {
       const run = await completeAgentRun(agentRun.id, {
         status: "success",
@@ -49,6 +49,10 @@ export async function runAgent(userId: string) {
         summary: "No unread emails to process",
       };
     }
+
+    // Sort unread emails by date descending (latest first) to ensure the first 5 are the newest
+    emails.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
     const calendarClient = await getCalendarClient(userId);
 
     let upcomingEvents: CalendarEvent[] = [];
@@ -66,8 +70,31 @@ export async function runAgent(userId: string) {
     let totalEventsCreated = 0;
 
     const results = await Promise.allSettled(
-      emails.map(async (email) => {
+      emails.map(async (email, index) => {
         try {
+          // Process only the latest 5 emails with AI
+          if (index >= 5) {
+            await markAsRead(gmailClient, email.id);
+            return {
+              emailId: email.id,
+              subject: email.subject,
+              from: email.from,
+              date: email.date,
+              snippet: email.snippet,
+              status: "success" as const,
+              summary: email.snippet,
+              priority: "low",
+              category: "other",
+              needsReply: false,
+              draftReply: null,
+              actionItems: [],
+              calendarEvents: [],
+              tasksCreated: 0,
+              draftCreated: false,
+              eventsCreated: 0,
+            };
+          }
+
           const analysis = await anaylzeWithAI(email, upcomingEvents);
           let emailTasksCreated = 0;
 
@@ -117,6 +144,7 @@ export async function runAgent(userId: string) {
             subject: email.subject,
             from: email.from,
             date: email.date,
+            snippet: email.snippet,
             status: "success",
             summary: analysis.summary,
             priority: analysis.priority,
@@ -136,6 +164,7 @@ export async function runAgent(userId: string) {
             subject: email.subject,
             from: email.from,
             date: email.date,
+            snippet: email.snippet,
             status: "error",
             error: error instanceof Error ? error.message : "Unknown error",
           };
@@ -152,6 +181,7 @@ export async function runAgent(userId: string) {
           from: entry.from,
           date: entry.date,
           status: entry.status as "success" | "error",
+          snippet: entry.snippet,
           summary: entry.summary,
           priority: entry.priority,
           category: entry.category,
@@ -161,6 +191,7 @@ export async function runAgent(userId: string) {
           tasksCreated: entry.tasksCreated,
           draftCreated: entry.draftCreated,
           eventsCreated: entry.eventsCreated,
+          error: entry.error,
         });
         if (entry.status === "success") {
           totalTasksCreated += entry.tasksCreated ?? 0;

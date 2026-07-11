@@ -90,6 +90,7 @@ export interface ActionLogEntry {
   from: string;
   date: string;
   status: "success" | "error";
+  snippet?: string;
   summary?: string;
   priority?: string;
   category?: string;
