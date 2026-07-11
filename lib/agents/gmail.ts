@@ -42,7 +42,7 @@ export async function fetchUnreadEmails(
   return emails;
 }
 
-function parseGmailMessage(message: gmail_v1.Schema$Message): ParsedEmail {
+export function parseGmailMessage(message: gmail_v1.Schema$Message): ParsedEmail {
   const headers = message.payload?.headers ?? [];
   const getHeader = (name: string) =>
     headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value ??

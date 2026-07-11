@@ -1,0 +1,31 @@
+{
+  "success": true,
+  "analysis": {
+    "summary": "This email from Arghya to Rajarshi contains the output of an 'AI Mode' conversation where Arghya requested email templates about a Manali visit update. The body provides three template options (only Option 1 shown in detail) for informing someone about a planned Manali trip (depart July 11, return July 15, 2026) and asking for date confirmation to book tickets. No explicit personal instructions or direct tasks from Arghya to Rajarshi are present beyond forwarding the AI-generated content.",
+    "priority": "low",
+    "actionItems": [
+      {
+        "title": "Confirm if Manali trip dates (July 11-15) work",
+        "description": "Recipient (or template addressee) is asked to confirm availability for departure July 11 and return July 15, 2026, so travel tickets can be booked before prices increase.",
+        "dueDate": "2026-07-15T00:00:00+05:30"
+      },
+      {
+        "title": "Book travel tickets for Manali trip",
+        "description": "Book tickets prior to price increase, after date confirmation. Implied deadline: before July 11, 2026 (departure) or as early as possible.",
+        "dueDate": "2026-07-11T00:00:00+05:30"
+      }
+    ],
+    "needsReply": true,
+    "draftReply": "Hi Arghya,\n\nThanks for sharing the AI-generated templates regarding the Manali visit. Just to clarify—are you looking for me to confirm the proposed dates (July 11–15) for a trip we're planning, or was this forwarded for informational purposes?\n\nIf we are indeed planning the trip, I can confirm my availability for those dates and we can proceed to book tickets soon to avoid price hikes.\n\nBest,\nRajarshi",
+    "calendarEvents": [
+      {
+        "title": "Manali Trip - Departure",
+        "description": "Planned departure for Manali trip (per template). Confirm dates and book tickets beforehand.",
+        "date": "2026-07-11",
+        "startTime": "2026-07-11T00:00:00+05:30",
+        "endTime": "2026-07-15T23:59:59+05:30"
+      }
+    ],
+    "category": "personal"
+  }
+}

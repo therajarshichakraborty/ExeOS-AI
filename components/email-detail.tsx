@@ -176,15 +176,15 @@ export function EmailDetail({ email }: { email: ProcessedEmail }) {
             {(!email.actionItems || email.actionItems.length === 0) &&
               !email.draftReply && (
                 <div className="col-span-2 space-y-4">
-                  {(email.summary || email.snippet) && (
+                  {(email.body || email.summary || email.snippet) && (
                     <div>
                       <h4 className="email-section-title">
                         <FileText className="stat-icon" />
-                        Email Content Preview
+                        Original Email Content
                       </h4>
-                      <div className="email-action-item bg-muted/50 p-4 rounded-lg">
-                        <p className="email-draft-text text-muted-foreground">
-                          {email.summary || email.snippet}
+                      <div className="email-action-item bg-muted/50 p-4 rounded-lg max-h-96 overflow-y-auto">
+                        <p className="email-draft-text text-muted-foreground whitespace-pre-wrap font-sans break-words">
+                          {email.body || email.summary || email.snippet}
                         </p>
                       </div>
                     </div>

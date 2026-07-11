@@ -17,6 +17,7 @@ import {
   MailIcon,
 } from "lucide-react";
 import { getGmailClient } from "@/lib/google-client";
+import { parseGmailMessage } from "@/lib/agents/gmail";
 import { CalendarPopup } from "@/components/calendar-popup";
 import { redirect } from "next/navigation";
 
@@ -45,26 +46,26 @@ export default async function MonitoringPage() {
     }
   }
 
-  // Dynamically fetch missing snippets from Gmail for past runs/failed runs
+  // Dynamically fetch missing body/snippets from Gmail for past runs/failed runs
   const gmailClient = await getGmailClient(user.id);
   if (gmailClient) {
     await Promise.allSettled(
       processedEmals.map(async (emailEntry) => {
-        if (!emailEntry.summary && !emailEntry.snippet) {
+        if (!emailEntry.body) {
           try {
             const msg = await gmailClient.users.messages.get({
               userId: "me",
               id: emailEntry.emailId,
-              format: "minimal",
+              format: "full",
             });
-            emailEntry.snippet = msg.data.snippet ?? "";
-            if (!emailEntry.subject && msg.data.payload?.headers) {
-              emailEntry.subject = msg.data.payload.headers.find(
-                (h) => h.name?.toLowerCase() === "subject"
-              )?.value ?? "";
+            const parsed = parseGmailMessage(msg.data);
+            emailEntry.body = parsed.body ?? "";
+            emailEntry.snippet = parsed.snippet ?? "";
+            if (!emailEntry.subject) {
+              emailEntry.subject = parsed.subject ?? "";
             }
           } catch (err) {
-            console.error(`Failed to fetch snippet fallback for ${emailEntry.emailId}:`, err);
+            console.error(`Failed to fetch body fallback for ${emailEntry.emailId}:`, err);
           }
         }
       })
