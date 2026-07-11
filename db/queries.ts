@@ -12,12 +12,28 @@ import { GoogleProvider } from "@/lib/google";
 console.log(`database url is`,process.env.DATABASE_URL);
 
 export async function getUserByClerkId(clerkId: string) {
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.clerkId, clerkId))
-    .limit(1);
-  return user ?? null;
+  try {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.clerkId, clerkId))
+      .limit(1);
+    return user ?? null;
+  } catch (error: any) {
+    console.error("DRIZZLE QUERY ERROR DETAIL:", {
+      message: error.message,
+      cause: error.cause,
+      causeMessage: error.cause?.message,
+      causeDetail: error.cause?.detail,
+      errors: error.cause?.errors ? error.cause.errors.map((e: any) => ({
+        message: e.message,
+        code: e.code,
+        address: e.address,
+        port: e.port,
+      })) : null,
+    });
+    throw error;
+  }
 }
 
 export async function getOrCreateUser(
