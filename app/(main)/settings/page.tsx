@@ -26,6 +26,8 @@ export default async function SettingsPage() {
   const gmailIntegration = userIntegrations.find(
     (integration) => integration.provider === "gmail",
   );
+
+  console.log(`database url is`, process.env.DATABASE_URL);
   const googleCalendarIntegration = userIntegrations.find(
     (integration) => integration.provider === "google_calendar",
   );
@@ -78,7 +80,7 @@ export default async function SettingsPage() {
                   {/* <DisconnectButton provider={provider.key} /> */}
                 </div>
               ) : (
-                <Button asChild>
+                <Button >
                   <a href={`/api/auth/google?provider=${provider.key}`}>
                     Connect
                   </a>
