@@ -9,7 +9,6 @@ import {
 } from "./schema";
 import { GoogleProvider } from "@/lib/google";
 
-
 export async function getUserByClerkId(clerkId: string) {
   const [user] = await db
     .select()
@@ -179,6 +178,3 @@ export async function getUsersWithAgentEnabled() {
       and(eq(users.agentEnabled, true), eq(integrations.provider, "gmail")),
     );
 }
-
-
-

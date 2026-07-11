@@ -29,14 +29,13 @@
 //   },
 // });
 
-
 // Source - https://stackoverflow.com/a/79128356
 // Posted by Niloy Chowdhury, modified by community. See post 'Timeline' for change history
 // Retrieved 2026-07-11, License - CC BY-SA 4.0
 
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
-import { drizzle } from 'drizzle-orm/node-postgres';
+import { drizzle } from "drizzle-orm/node-postgres";
 
 export const db = drizzle(process.env.NEXT_PUBLIC_DATABASE_URL!);

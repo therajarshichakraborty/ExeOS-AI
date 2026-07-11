@@ -1,4 +1,4 @@
-import type { gmail_v1 } from 'googleapis';
+import type { gmail_v1 } from "googleapis";
 
 export interface ParsedEmail {
   id: string;
@@ -13,15 +13,17 @@ export interface ParsedEmail {
 
 export async function fetchUnreadEmails(
   gmail: gmail_v1.Gmail,
-  maxResults = 10
+  maxResults = 10,
 ): Promise<ParsedEmail[]> {
   const response = await gmail.users.messages.list({
-    userId: 'me',
-    q: 'is:unread newer_than:7d',
+    userId: "me",
+    q: "is:unread newer_than:7d",
     maxResults,
   });
 
-  console.log(`Gmail: found ${response.data.messages?.length ?? 0} unread emails`);
+  console.log(
+    `Gmail: found ${response.data.messages?.length ?? 0} unread emails`,
+  );
 
   const messageIds = response.data.messages ?? [];
   if (messageIds.length === 0) return [];
@@ -29,12 +31,12 @@ export async function fetchUnreadEmails(
   const emails = await Promise.all(
     messageIds.map(async (msg) => {
       const detail = await gmail.users.messages.get({
-        userId: 'me',
+        userId: "me",
         id: msg.id!,
-        format: 'full',
+        format: "full",
       });
       return parseGmailMessage(detail.data);
-    })
+    }),
   );
 
   return emails;
@@ -43,48 +45,49 @@ export async function fetchUnreadEmails(
 function parseGmailMessage(message: gmail_v1.Schema$Message): ParsedEmail {
   const headers = message.payload?.headers ?? [];
   const getHeader = (name: string) =>
-    headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value ?? '';
+    headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value ??
+    "";
 
-  let body = '';
+  let body = "";
   const payload = message.payload;
 
   if (payload?.body?.data) {
-    body = Buffer.from(payload.body.data, 'base64url').toString('utf-8');
+    body = Buffer.from(payload.body.data, "base64url").toString("utf-8");
   } else if (payload?.parts) {
-    const textPart = payload.parts.find((p) => p.mimeType === 'text/plain');
-    const htmlPart = payload.parts.find((p) => p.mimeType === 'text/html');
+    const textPart = payload.parts.find((p) => p.mimeType === "text/plain");
+    const htmlPart = payload.parts.find((p) => p.mimeType === "text/html");
     const part = textPart ?? htmlPart;
     if (part?.body?.data) {
-      body = Buffer.from(part.body.data, 'base64url').toString('utf-8');
+      body = Buffer.from(part.body.data, "base64url").toString("utf-8");
     }
   }
 
   // Truncate long emails to stay within token limits
   if (body.length > 5000) {
-    body = body.substring(0, 5000) + '\n\n[Email truncated for processing]';
+    body = body.substring(0, 5000) + "\n\n[Email truncated for processing]";
   }
 
   return {
-    id: message.id ?? '',
-    threadId: message.threadId ?? '',
-    from: getHeader('From'),
-    to: getHeader('To'),
-    subject: getHeader('Subject'),
+    id: message.id ?? "",
+    threadId: message.threadId ?? "",
+    from: getHeader("From"),
+    to: getHeader("To"),
+    subject: getHeader("Subject"),
     body,
-    date: getHeader('Date'),
-    snippet: message.snippet ?? '',
+    date: getHeader("Date"),
+    snippet: message.snippet ?? "",
   };
 }
 
 export async function markAsRead(
   gmail: gmail_v1.Gmail,
-  messageId: string
+  messageId: string,
 ): Promise<void> {
   await gmail.users.messages.modify({
-    userId: 'me',
+    userId: "me",
     id: messageId,
     requestBody: {
-      removeLabelIds: ['UNREAD'],
+      removeLabelIds: ["UNREAD"],
     },
   });
 }
@@ -94,20 +97,20 @@ export async function createDraft(
   to: string,
   subject: string,
   body: string,
-  threadId: string
+  threadId: string,
 ): Promise<string> {
   const rawEmail = [
     `To: ${to}`,
     `Subject: Re: ${subject}`,
     `Content-Type: text/plain; charset=utf-8`,
-    '',
+    "",
     body,
-  ].join('\r\n');
+  ].join("\r\n");
 
-  const encodedMessage = Buffer.from(rawEmail).toString('base64url');
+  const encodedMessage = Buffer.from(rawEmail).toString("base64url");
 
   const response = await gmail.users.drafts.create({
-    userId: 'me',
+    userId: "me",
     requestBody: {
       message: {
         raw: encodedMessage,
@@ -116,5 +119,5 @@ export async function createDraft(
     },
   });
 
-  return response.data.id ?? '';
+  return response.data.id ?? "";
 }

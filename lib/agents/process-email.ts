@@ -3,7 +3,7 @@ import { ParsedEmail } from "./gmail";
 import { generateText, Output } from "ai";
 
 import { z } from "zod";
-import {openrouter} from "./model"
+import { openrouter } from "./model";
 
 const emailAnalysisSchema = z.object({
   summary: z.string().describe("A 1-2 sentence summary of the email"),

@@ -30,14 +30,14 @@ export function RunAgentButton() {
   };
   return (
     <Button
-      className="w-full"
+      className='w-full'
       variant={"outline"}
       onClick={handleRunAgent}
       disabled={isPending}
     >
       {isPending ? (
         <>
-          <Loader2Icon className="spinner-icon" />
+          <Loader2Icon className='spinner-icon' />
           Running Agent...
         </>
       ) : (

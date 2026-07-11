@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   try {
     console.log("Database Setup starting...");
-    
+
     // 1. Create Enums
     await db.execute(sql`
       DO $$
@@ -98,9 +98,15 @@ export async function GET(request: NextRequest) {
     `);
     console.log("Agent runs table created/verified successfully.");
 
-    return NextResponse.json({ success: true, message: "Database tables created successfully!" });
+    return NextResponse.json({
+      success: true,
+      message: "Database tables created successfully!",
+    });
   } catch (error: any) {
     console.error("Database Setup error:", error);
-    return NextResponse.json({ success: false, error: error.message || String(error) }, { status: 500 });
+    return NextResponse.json(
+      { success: false, error: error.message || String(error) },
+      { status: 500 },
+    );
   }
 }

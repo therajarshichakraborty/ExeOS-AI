@@ -95,7 +95,6 @@ export async function runAgent(userId: string) {
             draftCreated = true;
           }
 
-
           let emailEventsCreated = 0;
           if (calendarClient && analysis.calendarEvents?.length > 0) {
             for (const event of analysis.calendarEvents) {
@@ -110,7 +109,6 @@ export async function runAgent(userId: string) {
               }
             }
           }
-
 
           await markAsRead(gmailClient, email.id);
 

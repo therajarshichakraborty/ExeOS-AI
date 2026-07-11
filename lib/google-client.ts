@@ -6,7 +6,7 @@ import { integrations } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getIntegration } from "@/db/queries";
 
-const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000; 
+const TOKEN_REFRESH_BUFFER_MS = 5 * 60 * 1000;
 
 export async function getGoogleClient(
   userId: string,
