@@ -47,10 +47,10 @@ export default async function SettingsPage() {
     },
   ];
   return (
-    <div className='page-wrapper'>
+    <div className="page-wrapper">
       <div>
-        <h1 className='page-title'>Settings</h1>
-        <p className='page-description'>
+        <h1 className="page-title">Settings</h1>
+        <p className="page-description">
           Manage your integrations and preferences.
         </p>
       </div>
@@ -62,23 +62,23 @@ export default async function SettingsPage() {
             Connect your accounts to enable AI assistance
           </CardDescription>
         </CardHeader>
-        <CardContent className='space-y-4'>
+        <CardContent className="space-y-4">
           {providers.map((provider) => (
-            <div key={provider.key} className='integration-row'>
-              <div className='integration-info'>
-                <provider.icon className='integration-icon' />
+            <div key={provider.key} className="integration-row">
+              <div className="integration-info">
+                <provider.icon className="integration-icon" />
                 <div>
-                  <p className='font-medium text-foreground'>{provider.name}</p>
-                  <p className='status-label'>{provider.description}</p>
+                  <p className="font-medium text-foreground">{provider.name}</p>
+                  <p className="status-label">{provider.description}</p>
                 </div>
               </div>
               {provider.integration ? (
-                <div className='integration-actions'>
-                  <Badge className='bg-primary'>Connected</Badge>
+                <div className="integration-actions">
+                  <Badge className="bg-primary">Connected</Badge>
                   {/* <DisconnectButton provider={provider.key} /> */}
                 </div>
               ) : (
-                <Button asChild>
+                <Button>
                   <a href={`/api/auth/google?provider=${provider.key}`}>
                     Connect
                   </a>
