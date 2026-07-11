@@ -12,6 +12,7 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
+import { stripHtml } from "@/lib/agents/gmail";
 
 const priorityColors: Record<string, string> = {
   high: "bg-destructive",
@@ -184,7 +185,7 @@ export function EmailDetail({ email }: { email: ProcessedEmail }) {
                       </h4>
                       <div className="email-action-item bg-muted/50 p-4 rounded-lg max-h-96 overflow-y-auto">
                         <p className="email-draft-text text-muted-foreground whitespace-pre-wrap font-sans break-words">
-                          {email.body || email.summary || email.snippet}
+                          {stripHtml(email.body || email.summary || email.snippet || "")}
                         </p>
                       </div>
                     </div>

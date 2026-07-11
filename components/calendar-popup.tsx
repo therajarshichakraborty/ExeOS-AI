@@ -30,9 +30,23 @@ interface CalendarEvent {
   description?: string;
 }
 
-export function CalendarPopup({ triggerClassName }: { triggerClassName?: string }) {
+interface EmailCalendarEvent {
+  title: string;
+  description: string;
+  date: string;
+  startTime: string | null;
+  endTime: string | null;
+}
+
+export function CalendarPopup({
+  triggerClassName,
+  emailEvents = [],
+}: {
+  triggerClassName?: string;
+  emailEvents?: EmailCalendarEvent[];
+}) {
   const [open, setOpen] = useState(false);
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+  const [googleEvents, setGoogleEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -46,7 +60,7 @@ export function CalendarPopup({ triggerClassName }: { triggerClassName?: string 
           const res = await fetch("/api/calendar/events");
           const data = await res.json();
           if (data.success) {
-            setEvents(data.events);
+            setGoogleEvents(data.events);
           } else {
             setError(data.error || "Failed to load Google Calendar data.");
           }
@@ -59,6 +73,32 @@ export function CalendarPopup({ triggerClassName }: { triggerClassName?: string 
       fetchEvents();
     }
   }, [open]);
+
+  // Merge Google Calendar events and Email-extracted events
+  const events: CalendarEvent[] = [...googleEvents];
+  
+  if (emailEvents) {
+    emailEvents.forEach((ee, idx) => {
+      const eeStart = ee.startTime || ee.date;
+      const eeEnd = ee.endTime || ee.startTime || ee.date;
+      
+      const exists = googleEvents.some(
+        (ge) =>
+          ge.summary.toLowerCase() === ee.title.toLowerCase() &&
+          new Date(ge.start).toDateString() === new Date(eeStart).toDateString()
+      );
+      
+      if (!exists) {
+        events.push({
+          id: `email-event-${idx}-${ee.title}`,
+          summary: ee.title,
+          start: eeStart,
+          end: eeEnd,
+          description: ee.description,
+        });
+      }
+    });
+  }
 
   // Helper to normalize date to check start/end ranges
   const isDateBlocked = (date: Date) => {

@@ -72,6 +72,14 @@ export default async function MonitoringPage() {
     );
   }
 
+  // Collect calendar events extracted from emails by the AI agent
+  const emailEvents: any[] = [];
+  for (const email of processedEmals) {
+    if (email.calendarEvents && email.calendarEvents.length > 0) {
+      emailEvents.push(...email.calendarEvents);
+    }
+  }
+
   const highPriority = processedEmals.filter(
     (email) => email.priority === "high",
   ).length;
@@ -94,7 +102,7 @@ export default async function MonitoringPage() {
           </p>
         </div>
         <div className="shrink-0 flex items-center">
-          <CalendarPopup />
+          <CalendarPopup emailEvents={emailEvents} />
         </div>
       </div>
       <div className="stats-grid-4">
