@@ -6,12 +6,12 @@ import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/ui/themes";
 
-export const inter = Inter({
+const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
 
-export const nanumPenScript = Nanum_Pen_Script({
+const nanumPenScript = Nanum_Pen_Script({
   subsets: ["latin"],
   variable: "--font-nanum-pen",
   weight: "400",

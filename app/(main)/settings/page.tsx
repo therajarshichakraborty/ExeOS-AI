@@ -10,6 +10,7 @@ import {
 import { getOrCreateUser, getUserIntegrations } from "@/db/queries";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { CalendarIcon, MailIcon, CheckCircle2, ChevronRight, Settings } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export default async function SettingsPage() {

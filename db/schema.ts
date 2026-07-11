@@ -102,6 +102,13 @@ export interface ActionLogEntry {
     description: string;
     dueDate: string | null;
   }[];
+  calendarEvents?: {
+    title: string;
+    description: string;
+    date: string;
+    startTime: string | null;
+    endTime: string | null;
+  }[];
   tasksCreated?: number;
   draftCreated?: boolean;
   eventsCreated?: number;

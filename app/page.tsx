@@ -65,8 +65,7 @@ export default function Home() {
                   </Button>
                 </Link>
                 <div className="h-8 w-8 flex items-center justify-center">
-                  {/* @ts-ignore */}
-                  <UserButton afterSignOutUrl="/" />
+                  <UserButton />
                 </div>
               </Show>
               <Show when="signed-out">
