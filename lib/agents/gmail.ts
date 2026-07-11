@@ -82,20 +82,30 @@ export function stripHtml(html: string): string {
     "&reg;": "®",
     "&trade;": "™",
   };
-  text = text.replace(/&[a-z0-9#]+;/gi, (match) => entities[match.toLowerCase()] ?? match);
-  text = text.replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(parseInt(dec, 10)));
+  text = text.replace(
+    /&[a-z0-9#]+;/gi,
+    (match) => entities[match.toLowerCase()] ?? match,
+  );
+  text = text.replace(/&#(\d+);/g, (_, dec) =>
+    String.fromCharCode(parseInt(dec, 10)),
+  );
 
   // 6. Clean up redundant line spacing
-  text = text.split("\n")
+  text = text
+    .split("\n")
     .map((line) => line.trim())
-    .filter((line, index, arr) => line !== "" || (index > 0 && arr[index - 1] !== ""))
+    .filter(
+      (line, index, arr) => line !== "" || (index > 0 && arr[index - 1] !== ""),
+    )
     .join("\n")
     .trim();
 
   return text;
 }
 
-export function parseGmailMessage(message: gmail_v1.Schema$Message): ParsedEmail {
+export function parseGmailMessage(
+  message: gmail_v1.Schema$Message,
+): ParsedEmail {
   const headers = message.payload?.headers ?? [];
   const getHeader = (name: string) =>
     headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value ??

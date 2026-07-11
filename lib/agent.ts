@@ -51,7 +51,9 @@ export async function runAgent(userId: string) {
     }
 
     // Sort unread emails by date descending (latest first) to ensure the first 5 are the newest
-    emails.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    emails.sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+    );
 
     const calendarClient = await getCalendarClient(userId);
 

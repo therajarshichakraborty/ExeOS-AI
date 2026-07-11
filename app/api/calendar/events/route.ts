@@ -17,7 +17,10 @@ export async function GET() {
 
   const calendarClient = await getCalendarClient(user.id);
   if (!calendarClient) {
-    return NextResponse.json({ error: "Google Calendar not connected" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Google Calendar not connected" },
+      { status: 400 },
+    );
   }
 
   try {
