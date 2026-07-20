@@ -24,9 +24,9 @@ export default async function MainLayout({
   const isPaidUser = has({ plan: "pro_plan" });
 
   return (
-    <div className="layout-wrapper flex h-screen bg-background overflow-hidden">
+    <div className="layout-wrapper flex min-h-screen bg-background">
       {/* Premium Sidebar */}
-      <aside className="sidebar-container w-64 border-r border-border/40 bg-card flex flex-col h-full shrink-0">
+      <aside className="sidebar-container w-64 border-r border-border/40 bg-card flex flex-col sticky top-0 h-screen shrink-0 overflow-y-auto">
         <div className="sidebar-inner flex flex-col h-full">
           {/* Workspace Name & Logo Header */}
           <div className="logo-container h-16 border-b border-border/40 flex items-center px-6 gap-2">
@@ -64,7 +64,7 @@ export default async function MainLayout({
           )}
 
           {/* User Profile Footer */}
-          <div className="sidebar-section p-4 border-t border-border/40 bg-muted/10">
+          <div className="sidebar-section p-4 border-t border-border/40 bg-muted/10 mt-auto">
             <div className="user-profile flex items-center justify-between gap-3 bg-muted/40 p-2.5 rounded-xl border border-border/60">
               <div className="flex items-center gap-2.5 min-w-0">
                 <div className="h-8 w-8 flex items-center justify-center">
@@ -82,7 +82,7 @@ export default async function MainLayout({
       </aside>
 
       {/* Main Content Viewport */}
-      <main className="main-content flex-1 overflow-y-auto bg-background/50">
+      <main className="main-content flex-1 bg-background/50 min-w-0">
         <div className="main-content-inner mx-auto max-w-5xl px-6 py-8 md:px-8">
           {children}
         </div>
