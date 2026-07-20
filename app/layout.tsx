@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   description: "Your autonomous AI assistant for email and calendar management",
 };
 
+import { Toaster } from "sonner";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,6 +47,7 @@ export default function RootLayout({
               <AnimatedThemeToggler />
             </div>
             {children}
+            <Toaster position="top-right" richColors />
             <footer className='footer-wrapper'>
               <div className='section-heading'>
                 <p className='text-center text-sm text-muted-foreground'>
