@@ -15,7 +15,9 @@ export const GOOGLE_SCOPES = {
 export type GoogleProvider = keyof typeof GOOGLE_SCOPES;
 
 export function createOAuth2Client() {
-  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4040").replace(/\/+$/, "");
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:4040"
+  ).replace(/\/+$/, "");
   return new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
