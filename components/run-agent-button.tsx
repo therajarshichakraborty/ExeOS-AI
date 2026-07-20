@@ -7,7 +7,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface RunAgentButtonProps {
-  variant?: "default" | "outline" | "secondary" | "destructive" | "ghost" | "link";
+  variant?:
+    "default" | "outline" | "secondary" | "destructive" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
   className?: string;
   label?: string;
@@ -56,12 +57,12 @@ export function RunAgentButton({
     >
       {isPending ? (
         <>
-          <Loader2Icon className="h-4 w-4 animate-spin mr-2" />
+          <Loader2Icon className='h-4 w-4 animate-spin mr-2' />
           Running Agent...
         </>
       ) : (
         <>
-          <PlayIcon className="h-3.5 w-3.5 mr-2 text-primary" />
+          <PlayIcon className='h-3.5 w-3.5 mr-2 text-primary' />
           {label}
         </>
       )}
