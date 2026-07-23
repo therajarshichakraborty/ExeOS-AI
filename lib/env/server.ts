@@ -8,8 +8,9 @@ const schema = z.object({
 
   API_URL: z.string(),
   DATABASE_URL: z.string(),
-  ANTHROPIC_API_KEY: z.string().min(1),
+  ANTHROPIC_API_KEY: z.string().optional(),
   OPENAI_API_KEY: z.string().min(1),
+  OPENROUTER_API_KEY: z.string().optional(),
   CLERK_FRONTEND_API: z.string().min(1),
   CLERK_OAUTH_CLIENT_SECRET: z.string().min(1),
   CLERK_OAUTH_CLIENT_ID: z.string().min(1),

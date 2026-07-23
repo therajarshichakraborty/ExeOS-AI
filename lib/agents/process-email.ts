@@ -3,7 +3,7 @@ import { ParsedEmail } from "./gmail";
 import { generateText, Output } from "ai";
 
 import { z } from "zod";
-import { openrouter } from "./model";
+import { aiModel } from "./model";
 
 const emailAnalysisSchema = z.object({
   summary: z.string().describe("A 1-2 sentence summary of the email"),
@@ -73,12 +73,60 @@ const emailAnalysisSchema = z.object({
 
 export type EmailAnalysis = z.infer<typeof emailAnalysisSchema>;
 
+// ---------------------------------------------------------------------------
+// Safe fallback returned when all retries fail
+// ---------------------------------------------------------------------------
+
+function makeFallback(reason: string): EmailAnalysis {
+  return {
+    summary: `Could not analyze this email automatically. Reason: ${reason}`,
+    priority: "low",
+    actionItems: [],
+    needsReply: false,
+    draftReply: null,
+    calendarEvents: [],
+    category: "other",
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Truncate email body to keep prompt within token budget
+// Rough estimate: 1 token ≈ 4 chars. gpt-4o-mini context = 128k tokens.
+// We budget 3000 tokens max for the body (≈12 000 chars).
+// ---------------------------------------------------------------------------
+
+const MAX_BODY_CHARS = 12_000;
+
+function sanitizeBody(body: string): string {
+  // Remove invisible Unicode characters (zero-width spaces, joiners, etc.)
+  // eslint-disable-next-line no-control-regex
+  let clean = body.replace(/[\u200B-\u200D\uFEFF\u00AD]/g, "");
+  // Remove any leftover HTML entity sequences like &zwnj; &nbsp; etc.
+  clean = clean.replace(/&[a-z]{2,8};/gi, " ");
+  // Collapse excessive whitespace
+  clean = clean.replace(/[ \t]{3,}/g, "  ").replace(/\n{4,}/g, "\n\n");
+  // Hard-truncate
+  if (clean.length > MAX_BODY_CHARS) {
+    clean =
+      clean.substring(0, MAX_BODY_CHARS) + "\n\n[Email truncated for AI processing]";
+  }
+  return clean.trim();
+}
+
+// ---------------------------------------------------------------------------
+// Main analysis function with automatic retries
+// ---------------------------------------------------------------------------
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
+
 export async function anaylzeWithAI(
   email: ParsedEmail,
   upcomingEvents: CalendarEvent[],
 ): Promise<EmailAnalysis> {
-  let calendarContext = "";
   const today = new Date().toISOString().split("T")[0];
+
+  let calendarContext = "";
   if (upcomingEvents.length > 0) {
     const eventsList = upcomingEvents
       .map(
@@ -86,14 +134,14 @@ export async function anaylzeWithAI(
           `- ${e.summary} (${e.start} to ${e.end}${e.location ? `, at ${e.location}` : ""})`,
       )
       .join("\n");
-    calendarContext = `\n\nUpcoming calendar events (next 24 hours):\n${eventsList}\n\nUse these events to inform your analysis. For example, if the email mentions a meeting that's already on the calendar, don't create a duplicate task. If someone proposes a time that conflicts with an existing event, note the conflict in the draft reply.`;
+    calendarContext = `\n\nUpcoming calendar events (next 24 hours):\n${eventsList}\n\nUse these events to inform your analysis. If the email mentions a meeting already on the calendar, do not create a duplicate task. If someone proposes a time conflicting with an existing event, note the conflict in the draft reply.`;
   }
-  const result = await generateText({
-    model: openrouter("tencent/hy3"),
-    maxOutputTokens: 2000,
-    prompt: `You are an AI assistant analyzing emails. Today's date is ${today}.
 
-Analyze the following email and extract structured information:
+  const body = sanitizeBody(email.body);
+
+  const systemPrompt = `You are an AI email assistant. Today's date is ${today}. Analyze the email and extract structured data exactly matching the required JSON schema. Do not include markdown formatting, code fences, or any text outside the JSON object.`;
+
+  const userPrompt = `Analyze the following email and extract structured information.
 
 From: ${email.from}
 To: ${email.to}
@@ -101,14 +149,46 @@ Subject: ${email.subject}
 Date: ${email.date}
 
 Body:
-${email.body}${calendarContext}
+${body}${calendarContext}
 
 Instructions:
 - Extract action items for any tasks or requests mentioned.
-- If the email mentions ANY deadline, meeting, or time-sensitive event (e.g. "by Friday", "next Tuesday", "schedule a call"), you MUST create a calendar event for it. Convert relative dates like "Friday" to actual ISO dates based on today's date (${today}).
+- If the email mentions ANY deadline, meeting, or time-sensitive event (e.g. "by Friday", "next Tuesday", "schedule a call"), you MUST create a calendar event. Convert relative dates like "Friday" to actual ISO dates based on today (${today}).
 - If a reply is needed, draft a professional response.
-- Categorize the email and set priority based on urgency.`,
-    output: Output.object({ schema: emailAnalysisSchema }),
-  });
-  return result.output;
+- Categorize the email and set priority based on urgency.
+- For newsletters, promotions, or automated emails: set category to "newsletter" or "notification", priority to "low", needsReply to false, and skip action items.`;
+
+  let lastError: unknown;
+
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const result = await generateText({
+        model: aiModel,
+        maxOutputTokens: 2000,
+        output: Output.object({ schema: emailAnalysisSchema }),
+        system: systemPrompt,
+        prompt: userPrompt,
+      });
+
+      return result.output;
+    } catch (err) {
+      lastError = err;
+      console.error(
+        `[AI] anaylzeWithAI attempt ${attempt}/${MAX_RETRIES} failed:`,
+        err instanceof Error ? err.message : err,
+      );
+
+      if (attempt < MAX_RETRIES) {
+        await new Promise((resolve) =>
+          setTimeout(resolve, RETRY_DELAY_MS * attempt),
+        );
+      }
+    }
+  }
+
+  // All retries exhausted — return a safe fallback so the agent doesn't crash
+  console.error("[AI] All retries exhausted. Returning fallback analysis.", lastError);
+  return makeFallback(
+    lastError instanceof Error ? lastError.message : "Unknown AI error",
+  );
 }
