@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "-": "^0.0.1-security.1",
+    "@ai-sdk/openai": "^4.0.0",
     "@base-ui/react": "^1.6.0",
     "@clerk/nextjs": "^7.5.12",
     "@clerk/ui": "^1.24.1",

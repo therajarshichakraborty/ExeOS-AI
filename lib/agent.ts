@@ -75,7 +75,7 @@ export async function runAgent(userId: string) {
     for (let index = 0; index < emails.length; index++) {
       const email = emails[index];
       try {
-        if (index >= 5) {
+        if (index >= 10) {
           await markAsRead(gmailClient, email.id);
           results.push({
             status: "fulfilled" as const,

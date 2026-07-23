@@ -36,7 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <ClerkProvider appearance={{ theme: dark }}>
-        <body className='min-h-full flex flex-col'>
+        <body className='h-screen overflow-hidden flex flex-col'>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'
@@ -48,13 +48,6 @@ export default function RootLayout({
             </div>
             {children}
             <Toaster position='top-right' richColors />
-            <footer className='footer-wrapper'>
-              <div className='section-heading'>
-                <p className='text-center text-sm text-muted-foreground'>
-                  © {new Date().getFullYear()} ExeOS- AI.
-                </p>
-              </div>
-            </footer>
           </ThemeProvider>
         </body>
       </ClerkProvider>

@@ -17,6 +17,7 @@ export async function fetchUnreadEmails(
 ): Promise<ParsedEmail[]> {
   const response = await gmail.users.messages.list({
     userId: "me",
+    labelIds: ["INBOX"],
     q: "is:unread newer_than:7d",
     maxResults,
   });
@@ -81,14 +82,34 @@ export function stripHtml(html: string): string {
     "&copy;": "©",
     "&reg;": "®",
     "&trade;": "™",
+    // Zero-width / invisible characters — common in marketing emails
+    "&zwnj;": "",   // zero-width non-joiner
+    "&zwsp;": "",   // zero-width space
+    "&zwj;": "",    // zero-width joiner
+    "&shy;": "",    // soft hyphen
+    "&lrm;": "",    // left-to-right mark
+    "&rlm;": "",    // right-to-left mark
+    "&ensp;": " ",
+    "&emsp;": " ",
+    "&thinsp;": " ",
+    "&mdash;": "—",
+    "&ndash;": "–",
+    "&hellip;": "...",
+    "&bull;": "•",
+    "&lt;": "<",
+    "&gt;": ">",
   };
   text = text.replace(
     /&[a-z0-9#]+;/gi,
-    (match) => entities[match.toLowerCase()] ?? match,
+    (match) => entities[match.toLowerCase()] ?? "",
   );
   text = text.replace(/&#(\d+);/g, (_, dec) =>
     String.fromCharCode(parseInt(dec, 10)),
   );
+  // Remove leftover invisible Unicode characters (zero-width spaces etc.)
+  // eslint-disable-next-line no-control-regex
+  text = text.replace(/[\u200B-\u200D\uFEFF\u00AD]/g, "");
+
 
   // 6. Clean up redundant line spacing
   text = text
