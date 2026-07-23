@@ -24,7 +24,7 @@ export default async function MainLayout({
   const isPaidUser = has({ plan: "pro_plan" });
 
   return (
-    <div className='layout-wrapper flex min-h-screen bg-background'>
+    <div className='layout-wrapper flex h-screen overflow-hidden bg-background'>
       {/* Premium Sidebar */}
       <aside className='sidebar-container w-64 border-r border-border/40 bg-card flex flex-col sticky top-0 h-screen shrink-0 overflow-y-auto'>
         <div className='sidebar-inner flex flex-col h-full'>
@@ -100,7 +100,7 @@ export default async function MainLayout({
       </aside>
 
       {/* Main Content Viewport */}
-      <main className='main-content flex-1 bg-background/50 min-w-0'>
+      <main className='main-content flex-1 bg-background/50 min-w-0 overflow-y-auto'>
         <div className='main-content-inner mx-auto max-w-5xl px-6 py-8 md:px-8'>
           {children}
         </div>
