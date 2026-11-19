@@ -111,6 +111,10 @@ export interface ActionLogEntry {
   }[];
   tasksCreated?: number;
   draftCreated?: boolean;
+  /** Gmail draft holding the reply; the app edits and sends this same draft. */
+  draftId?: string | null;
+  /** ISO timestamp set when the reply was sent from ExeOS. */
+  replySentAt?: string | null;
   eventsCreated?: number;
   notified?: boolean;
   error?: string;

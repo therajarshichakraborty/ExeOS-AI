@@ -9,7 +9,11 @@ import type { ActionLogEntry } from "@/db/schema";
 import { runInboxPipeline } from "@/agents";
 import { LIMITS } from "@/agents/config";
 import { getCalendarClient, getGmailClient } from "@/lib/google/client";
-import { createDraft, fetchUnreadEmails, markAsRead } from "@/lib/google/gmail";
+import {
+  fetchUnreadEmails,
+  markAsRead,
+  saveReplyDraft,
+} from "@/lib/google/gmail";
 import {
   type CalendarEvent,
   createCalendarEvent,
@@ -98,18 +102,15 @@ export async function runAgent(userId: string) {
           tasksCreated++;
         }
 
-        let draftCreated = false;
+        let draftId: string | null = null;
         if (draftReply) {
-          await createDraft(
-            gmailClient,
-            email.from,
-            email.subject,
-            draftReply,
-            email.threadId,
-          );
-          draftCreated = true;
+          draftId = await saveReplyDraft(gmailClient, {
+            messageId: email.id,
+            body: draftReply,
+          });
           draftsCreated++;
         }
+        const draftCreated = Boolean(draftId);
 
         let emailEvents = 0;
         if (calendarClient) {
@@ -146,6 +147,7 @@ export async function runAgent(userId: string) {
           calendarEvents: analysis.calendarEvents,
           tasksCreated: analysis.actionItems.length,
           draftCreated,
+          draftId,
           eventsCreated: emailEvents,
           notified: pipeline.notifications.some((n) => n.emailId === email.id),
         });

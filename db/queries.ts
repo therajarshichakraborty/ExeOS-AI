@@ -240,3 +240,27 @@ export async function markNotificationsRead(userId: string, ids?: string[]) {
     .set({ read: true })
     .where(ids?.length ? and(scope, inArray(notifications.id, ids)) : scope);
 }
+
+/** Patches one email entry inside a run's actionsLog (scoped to the owner). */
+export async function updateActionLogEntry(
+  userId: string,
+  runId: string,
+  emailId: string,
+  patch: Partial<ActionLogEntry>,
+) {
+  const [run] = await db
+    .select({ actionsLog: agentRuns.actionsLog })
+    .from(agentRuns)
+    .where(and(eq(agentRuns.id, runId), eq(agentRuns.userId, userId)))
+    .limit(1);
+  if (!run) return false;
+  await db
+    .update(agentRuns)
+    .set({
+      actionsLog: run.actionsLog.map((entry) =>
+        entry.emailId === emailId ? { ...entry, ...patch } : entry,
+      ),
+    })
+    .where(eq(agentRuns.id, runId));
+  return true;
+}

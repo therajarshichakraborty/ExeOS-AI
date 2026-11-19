@@ -171,32 +171,108 @@ export async function markAsRead(
   });
 }
 
-export async function createDraft(
+// ---------------------------------------------------------------------------
+// Replies: one Gmail draft per email is the single source of truth. The app
+// edits that draft and sends it, so Gmail and ExeOS always show the same text.
+// ---------------------------------------------------------------------------
+
+interface ReplyContext {
+  threadId: string;
+  to: string;
+  subject: string;
+  inReplyTo: string;
+  references: string;
+}
+
+/** RFC 2047 encode non-ASCII header values (e.g. subjects with emoji). */
+function encodeHeader(value: string) {
+  return /^[\x20-\x7e]*$/.test(value)
+    ? value
+    : `=?UTF-8?B?${Buffer.from(value).toString("base64")}?=`;
+}
+
+async function getReplyContext(
   gmail: gmail_v1.Gmail,
-  to: string,
-  subject: string,
-  body: string,
-  threadId: string,
-): Promise<string> {
-  const rawEmail = [
-    `To: ${to}`,
-    `Subject: ${/^re:/i.test(subject) ? subject : `Re: ${subject}`}`,
-    `Content-Type: text/plain; charset=utf-8`,
-    "",
-    body,
-  ].join("\r\n");
-
-  const encodedMessage = Buffer.from(rawEmail).toString("base64url");
-
-  const response = await gmail.users.drafts.create({
+  messageId: string,
+): Promise<ReplyContext> {
+  const { data } = await gmail.users.messages.get({
     userId: "me",
-    requestBody: {
-      message: {
-        raw: encodedMessage,
-        threadId,
-      },
-    },
+    id: messageId,
+    format: "metadata",
+    metadataHeaders: ["From", "Reply-To", "Subject", "Message-ID", "References"],
   });
+  const header = (name: string) =>
+    data.payload?.headers?.find((h) => h.name?.toLowerCase() === name.toLowerCase())
+      ?.value ?? "";
+  const subject = header("Subject");
+  const inReplyTo = header("Message-ID");
+  return {
+    threadId: data.threadId ?? "",
+    to: header("Reply-To") || header("From"),
+    subject: /^re:/i.test(subject) ? subject : `Re: ${subject}`,
+    inReplyTo,
+    references: [header("References"), inReplyTo].filter(Boolean).join(" "),
+  };
+}
 
-  return response.data.id ?? "";
+function buildReply(ctx: ReplyContext, body: string): gmail_v1.Schema$Message {
+  const encodedBody = Buffer.from(body, "utf-8")
+    .toString("base64")
+    .replace(/.{76}/g, "$&\r\n");
+  const raw = [
+    `To: ${ctx.to}`,
+    `Subject: ${encodeHeader(ctx.subject)}`,
+    ...(ctx.inReplyTo
+      ? [`In-Reply-To: ${ctx.inReplyTo}`, `References: ${ctx.references}`]
+      : []),
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=utf-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    encodedBody,
+  ].join("\r\n");
+  return { raw: Buffer.from(raw).toString("base64url"), threadId: ctx.threadId };
+}
+
+const isNotFound = (error: unknown) =>
+  (error as { code?: number; status?: number })?.code === 404 ||
+  (error as { status?: number })?.status === 404;
+
+/** Creates or updates the threaded reply draft and returns its id. */
+export async function saveReplyDraft(
+  gmail: gmail_v1.Gmail,
+  { messageId, body, draftId }: { messageId: string; body: string; draftId?: string | null },
+): Promise<string> {
+  const message = buildReply(await getReplyContext(gmail, messageId), body);
+  if (draftId) {
+    try {
+      const { data } = await gmail.users.drafts.update({
+        userId: "me",
+        id: draftId,
+        requestBody: { id: draftId, message },
+      });
+      return data.id ?? draftId;
+    } catch (error) {
+      // Draft deleted in Gmail — fall through and create a fresh one.
+      if (!isNotFound(error)) throw error;
+    }
+  }
+  const { data } = await gmail.users.drafts.create({
+    userId: "me",
+    requestBody: { message },
+  });
+  return data.id ?? "";
+}
+
+/** Sends the reply (via its draft when one exists) and returns the sent message id. */
+export async function sendReply(
+  gmail: gmail_v1.Gmail,
+  args: { messageId: string; body: string; draftId?: string | null },
+): Promise<string> {
+  const draftId = await saveReplyDraft(gmail, args);
+  const { data } = await gmail.users.drafts.send({
+    userId: "me",
+    requestBody: { id: draftId },
+  });
+  return data.id ?? "";
 }
