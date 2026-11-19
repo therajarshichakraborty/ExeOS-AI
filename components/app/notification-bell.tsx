@@ -103,13 +103,14 @@ export function NotificationBell() {
       <button
         type='button'
         onClick={() => setOpen((v) => !v)}
-        className='relative grid size-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground'
+        className='press relative grid size-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-card/60 hover:text-foreground [&>svg]:transition-transform hover:[&>svg]:-rotate-12'
         aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}
       >
         {unread ? <BellRingIcon className='size-5' /> : <BellIcon className='size-5' />}
         {unread > 0 && (
           <span className='absolute top-1.5 right-1.5 grid min-w-4 place-items-center rounded-full bg-high px-1 text-[10px] font-semibold text-white'>
-            {unread}
+            <span className='absolute inset-0 animate-ping-soft rounded-full bg-high' />
+            <span className='relative'>{unread}</span>
           </span>
         )}
       </button>

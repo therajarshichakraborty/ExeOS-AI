@@ -51,9 +51,9 @@ export default async function ActivityPage() {
         </div>
       </div>
 
-      <div className='grid grid-cols-2 gap-px overflow-hidden rounded-2xl border bg-border lg:grid-cols-4'>
+      <div className='stagger grid grid-cols-2 gap-px overflow-hidden rounded-2xl border bg-border lg:grid-cols-4'>
         {stats.map((s) => (
-          <div key={s.label} className='bg-card p-5'>
+          <div key={s.label} className='group bg-card p-5 transition-colors hover:bg-surface'>
             <p className='text-xs text-muted-foreground'>{s.label}</p>
             <p className={cn("mt-1 text-3xl font-semibold tracking-tight tabular-nums", s.accent)}>
               {s.value}

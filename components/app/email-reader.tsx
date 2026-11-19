@@ -48,7 +48,7 @@ export function EmailReader({ email, backHref }: { email: InboxEmail; backHref: 
         </a>
       </div>
 
-      <div className='mx-auto w-full max-w-3xl space-y-6 px-6 py-8'>
+      <div className='stagger mx-auto w-full max-w-3xl space-y-6 px-6 py-8'>
         <header className='space-y-4'>
           <div className='flex flex-wrap items-center gap-2'>
             <h1 className='text-2xl font-semibold tracking-tight'>{email.subject || "(No subject)"}</h1>
