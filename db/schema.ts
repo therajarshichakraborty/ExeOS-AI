@@ -112,6 +112,7 @@ export interface ActionLogEntry {
   tasksCreated?: number;
   draftCreated?: boolean;
   eventsCreated?: number;
+  notified?: boolean;
   error?: string;
 }
 

@@ -1,22 +1,39 @@
-import { completeAgentRun, createAgentRun, createTask } from "@/db/queries";
+import {
+  completeAgentRun,
+  createAgentRun,
+  createNotifications,
+  createTask,
+  getUserById,
+} from "@/db/queries";
+import type { ActionLogEntry } from "@/db/schema";
+import { runInboxPipeline } from "@/agents";
+import { LIMITS } from "@/agents/config";
 import { getCalendarClient, getGmailClient } from "./google-client";
 import { createDraft, fetchUnreadEmails, markAsRead } from "./agents/gmail";
 import {
-  CalendarEvent,
+  type CalendarEvent,
   createCalendarEvent,
   fetchUpcomingEvents,
 } from "./agents/calender";
-import { ActionLogEntry } from "@/db/schema";
-import { anaylzeWithAI } from "./agents/process-email";
+
+const plural = (n: number, word: string, many = `${word}s`) =>
+  `${n} ${n === 1 ? word : many}`;
 
 export async function runAgent(userId: string) {
   const startTime = Date.now();
   const agentRun = await createAgentRun(userId);
+  const finish = (
+    data: Omit<Parameters<typeof completeAgentRun>[1], "durationMs">,
+  ) =>
+    completeAgentRun(agentRun.id, {
+      ...data,
+      durationMs: Date.now() - startTime,
+    });
 
   try {
     const gmailClient = await getGmailClient(userId);
     if (!gmailClient) {
-      const run = await completeAgentRun(agentRun.id, {
+      const run = await finish({
         status: "failed",
         summary: "Gmail not connected",
         actionsLog: [],
@@ -24,92 +41,51 @@ export async function runAgent(userId: string) {
         tasksCreated: 0,
         draftsCreated: 0,
         errorMessage: "Gmail integration not found or token expired",
-        durationMs: Date.now() - startTime,
       });
-      return {
-        runId: run.id,
-        status: "failed" as const,
-        summary: "Gmail not connected",
-      };
+      return { runId: run.id, status: "failed" as const, summary: run.summary };
     }
-    const emails = await fetchUnreadEmails(gmailClient, 20);
+
+    const emails = await fetchUnreadEmails(gmailClient, LIMITS.emailsPerRun);
     if (emails.length === 0) {
-      const run = await completeAgentRun(agentRun.id, {
+      const run = await finish({
         status: "success",
-        summary: "No unread emails to process",
+        summary: "Inbox zero — no unread emails to process",
         actionsLog: [],
         emailsProcessed: 0,
         tasksCreated: 0,
         draftsCreated: 0,
-        durationMs: Date.now() - startTime,
       });
-      return {
-        runId: run.id,
-        status: "success" as const,
-        summary: "No unread emails to process",
-      };
+      return { runId: run.id, status: "success" as const, summary: run.summary };
     }
-
-    // Sort unread emails by date descending (latest first) to ensure the first 5 are the newest
-    emails.sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-    );
+    emails.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     const calendarClient = await getCalendarClient(userId);
-
-    let upcomingEvents: CalendarEvent[] = [];
+    let upcoming: CalendarEvent[] = [];
     if (calendarClient) {
-      try {
-        upcomingEvents = await fetchUpcomingEvents(calendarClient, 24);
-      } catch (error) {
-        console.error("Calendar fetch failed (non-fatal):", error);
-      }
+      upcoming = await fetchUpcomingEvents(calendarClient, 24 * 14).catch(
+        (error) => {
+          console.error("Calendar fetch failed (non-fatal):", error);
+          return [];
+        },
+      );
     }
+    const alreadyScheduled = new Set(
+      upcoming.map((e) => `${e.summary.toLowerCase()}|${e.start.slice(0, 10)}`),
+    );
+
+    const user = await getUserById(userId);
+    const pipeline = await runInboxPipeline(emails, {
+      userName: user?.name ?? "",
+    });
 
     const actionsLog: ActionLogEntry[] = [];
-    let totalTasksCreated = 0;
-    let totalDraftsCreated = 0;
-    let totalEventsCreated = 0;
+    let tasksCreated = 0;
+    let draftsCreated = 0;
+    let eventsCreated = 0;
 
-    const results = [];
-    for (let index = 0; index < emails.length; index++) {
+    for (const [index, { analysis, draftReply }] of pipeline.items.entries()) {
       const email = emails[index];
       try {
-        if (index >= 5) {
-          await markAsRead(gmailClient, email.id);
-          results.push({
-            status: "fulfilled" as const,
-            value: {
-              emailId: email.id,
-              subject: email.subject,
-              from: email.from,
-              date: email.date,
-              snippet: email.snippet,
-              body: email.body,
-              status: "success" as const,
-              summary: email.snippet,
-              priority: "low",
-              category: "other",
-              needsReply: false,
-              draftReply: null,
-              actionItems: [],
-              calendarEvents: [],
-              tasksCreated: 0,
-              draftCreated: false,
-              eventsCreated: 0,
-            },
-          });
-          continue;
-        }
-
-        // Add a small delay between AI requests to avoid rate limits
-        if (index > 0) {
-          await new Promise((resolve) => setTimeout(resolve, 500));
-        }
-
-        const analysis = await anaylzeWithAI(email, upcomingEvents);
-        let emailTasksCreated = 0;
-
         for (const item of analysis.actionItems) {
           await createTask({
             userId,
@@ -119,172 +95,127 @@ export async function runAgent(userId: string) {
             dueDate: item.dueDate ? new Date(item.dueDate) : null,
             createdByAgent: true,
           });
-          emailTasksCreated++;
+          tasksCreated++;
         }
 
         let draftCreated = false;
-        if (analysis.needsReply && analysis.draftReply) {
+        if (draftReply) {
           await createDraft(
             gmailClient,
             email.from,
             email.subject,
-            analysis.draftReply,
+            draftReply,
             email.threadId,
           );
           draftCreated = true;
+          draftsCreated++;
         }
 
-        let emailEventsCreated = 0;
-        if (calendarClient && analysis.calendarEvents?.length > 0) {
+        let emailEvents = 0;
+        if (calendarClient) {
           for (const event of analysis.calendarEvents) {
+            const key = `${event.title.toLowerCase()}|${event.date}`;
+            if (alreadyScheduled.has(key)) continue;
             try {
               await createCalendarEvent(calendarClient, event);
-              emailEventsCreated++;
+              alreadyScheduled.add(key);
+              emailEvents++;
             } catch (err) {
-              console.error(
-                `[Agent] Failed to create calendar event "${event.title}":`,
-                err,
-              );
+              console.error(`[Agent] Calendar event "${event.title}":`, err);
             }
           }
         }
+        eventsCreated += emailEvents;
 
         await markAsRead(gmailClient, email.id);
 
-        results.push({
-          status: "fulfilled" as const,
-          value: {
-            emailId: email.id,
-            subject: email.subject,
-            from: email.from,
-            date: email.date,
-            snippet: email.snippet,
-            body: email.body,
-            status: "success" as const,
-            summary: analysis.summary,
-            priority: analysis.priority,
-            category: analysis.category,
-            needsReply: analysis.needsReply,
-            draftReply: analysis.draftReply,
-            actionItems: analysis.actionItems,
-            calendarEvents: analysis.calendarEvents,
-            tasksCreated: emailTasksCreated,
-            draftCreated: draftCreated,
-            eventsCreated: emailEventsCreated,
-          },
+        actionsLog.push({
+          emailId: email.id,
+          subject: email.subject,
+          from: email.from,
+          date: email.date,
+          status: "success",
+          snippet: email.snippet,
+          body: email.body,
+          summary: analysis.summary,
+          priority: analysis.priority,
+          category: analysis.category,
+          needsReply: analysis.needsReply,
+          draftReply,
+          actionItems: analysis.actionItems,
+          calendarEvents: analysis.calendarEvents,
+          tasksCreated: analysis.actionItems.length,
+          draftCreated,
+          eventsCreated: emailEvents,
+          notified: pipeline.notifications.some((n) => n.emailId === email.id),
         });
       } catch (error) {
         console.error("Email processing failed:", error);
-        results.push({
-          status: "fulfilled" as const,
-          value: {
-            emailId: email.id,
-            subject: email.subject,
-            from: email.from,
-            date: email.date,
-            snippet: email.snippet,
-            body: email.body,
-            status: "error" as const,
-            error: error instanceof Error ? error.message : "Unknown error",
-          },
-        });
-      }
-    }
-
-    for (const result of results) {
-      if (result.status === "fulfilled") {
-        const entry = result.value;
         actionsLog.push({
-          emailId: entry.emailId,
-          subject: entry.subject,
-          from: entry.from,
-          date: entry.date,
-          status: entry.status as "success" | "error",
-          snippet: entry.snippet,
-          body: entry.body,
-          summary: entry.summary,
-          priority: entry.priority,
-          category: entry.category,
-          needsReply: entry.needsReply,
-          draftReply: entry.draftReply,
-          actionItems: entry.actionItems,
-          calendarEvents: entry.calendarEvents,
-          tasksCreated: entry.tasksCreated,
-          draftCreated: entry.draftCreated,
-          eventsCreated: entry.eventsCreated,
-          error: entry.error,
+          emailId: email.id,
+          subject: email.subject,
+          from: email.from,
+          date: email.date,
+          status: "error",
+          snippet: email.snippet,
+          body: email.body,
+          priority: analysis.priority,
+          category: analysis.category,
+          error: error instanceof Error ? error.message : "Unknown error",
         });
-        if (entry.status === "success") {
-          totalTasksCreated += entry.tasksCreated ?? 0;
-          totalDraftsCreated += entry.draftCreated ? 1 : 0;
-          totalEventsCreated += entry.eventsCreated ?? 0;
-        }
       }
     }
-    const successCount = actionsLog.filter(
-      (entry) => entry.status === "success",
-    ).length;
-    const errorCount = actionsLog.filter(
-      (entry) => entry.status === "error",
-    ).length;
-    const overallStatus = successCount > 0 ? "success" : "failed";
 
+    if (pipeline.notifications.length > 0) {
+      await createNotifications(
+        pipeline.notifications.map((n) => ({ userId, ...n })),
+      ).catch((error) => console.error("Saving notifications failed:", error));
+    }
+
+    const ok = actionsLog.filter((e) => e.status === "success").length;
+    const failed = actionsLog.length - ok;
     const summary = [
-      `Processed ${successCount} email${successCount !== 1 ? "s" : ""}`,
-      totalTasksCreated > 0
-        ? `created ${totalTasksCreated} task${totalTasksCreated !== 1 ? "s" : ""}`
-        : null,
-      totalDraftsCreated > 0
-        ? `drafted ${totalDraftsCreated} repl${totalDraftsCreated !== 1 ? "ies" : "y"}`
-        : null,
-      totalEventsCreated > 0
-        ? `created ${totalEventsCreated} calendar event${totalEventsCreated !== 1 ? "s" : ""}`
-        : null,
-      errorCount > 0
-        ? `${errorCount} error${errorCount !== 1 ? "s" : ""}`
-        : null,
-      upcomingEvents.length > 0
-        ? `${upcomingEvents.length} upcoming event${upcomingEvents.length !== 1 ? "s" : ""}`
-        : null,
+      `Processed ${plural(ok, "email")}`,
+      tasksCreated && `created ${plural(tasksCreated, "task")}`,
+      draftsCreated && `drafted ${plural(draftsCreated, "reply", "replies")}`,
+      eventsCreated && `scheduled ${plural(eventsCreated, "event")}`,
+      pipeline.notifications.length &&
+        `sent ${plural(pipeline.notifications.length, "notification")}`,
+      failed && plural(failed, "error"),
+      pipeline.mode === "heuristic" && "heuristic mode",
     ]
       .filter(Boolean)
       .join(", ");
 
-    //10. log completed Agent run
-    const run = await completeAgentRun(agentRun.id, {
-      status: overallStatus,
-      summary: summary,
-      actionsLog: actionsLog,
-      emailsProcessed: successCount,
-      tasksCreated: totalTasksCreated,
-      draftsCreated: totalDraftsCreated,
-      durationMs: Date.now() - startTime,
-      errorMessage:
-        errorCount > 0 ? `${errorCount} email(s) failed to process` : undefined,
-    });
-    // 11. and return the result
-    return {
-      runId: run.id,
-      status: overallStatus,
+    console.log(
+      `[Agent] ${summary} · tokens in=${pipeline.usage.inputTokens} out=${pipeline.usage.outputTokens}`,
+    );
+
+    const run = await finish({
+      status: ok > 0 ? "success" : "failed",
       summary,
-    };
+      actionsLog,
+      emailsProcessed: ok,
+      tasksCreated,
+      draftsCreated,
+      errorMessage:
+        [failed > 0 && `${failed} email(s) failed`, ...pipeline.warnings]
+          .filter(Boolean)
+          .join("; ") || undefined,
+    });
+    return { runId: run.id, status: run.status, summary };
   } catch (error) {
     console.error("Agent run error:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Unknown error";
-    const run = await completeAgentRun(agentRun.id, {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const run = await finish({
       status: "failed",
       summary: "Agent run failed",
       actionsLog: [],
       emailsProcessed: 0,
       tasksCreated: 0,
       draftsCreated: 0,
-      durationMs: Date.now() - startTime,
+      errorMessage,
     });
-    return {
-      runId: run.id,
-      status: "failed",
-      summary: errorMessage,
-    };
+    return { runId: run.id, status: "failed" as const, summary: errorMessage };
   }
 }
