@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
-import {
-  CheckCircle2Icon,
-  CircleDashedIcon,
-  ClockIcon,
-  XCircleIcon,
-} from "lucide-react";
+import { ClockIcon } from "lucide-react";
 import { CalendarPopup } from "@/components/calendar-popup";
 import { RunAgentButton } from "@/components/run-agent-button";
 import { getInbox, getSessionUser } from "@/lib/inbox";
@@ -13,10 +8,21 @@ import { cn } from "@/lib/utils";
 export const metadata: Metadata = { title: "Activity" };
 
 const STATUS = {
-  success: { icon: CheckCircle2Icon, className: "text-brand", label: "Completed" },
-  failed: { icon: XCircleIcon, className: "text-high", label: "Failed" },
-  running: { icon: CircleDashedIcon, className: "animate-spin text-medium", label: "Running" },
+  success: { label: "Completed", pill: "bg-brand-soft text-brand", dot: "bg-brand" },
+  failed: { label: "Failed", pill: "bg-high-soft text-high", dot: "bg-high" },
+  running: { label: "Running", pill: "bg-medium-soft text-medium", dot: "bg-medium animate-pulse" },
 } as const;
+
+/** Quiet status pill: a dot and a word, no glyph icons. */
+function StatusPill({ status }: { status: keyof typeof STATUS }) {
+  const s = STATUS[status];
+  return (
+    <span className={cn("inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium", s.pill)}>
+      <span className={cn("size-1.5 rounded-full", s.dot)} />
+      {s.label}
+    </span>
+  );
+}
 
 export default async function ActivityPage() {
   const { user } = await getSessionUser();
@@ -68,7 +74,7 @@ export default async function ActivityPage() {
               const s = STATUS[run.status];
               return (
                 <li key={run.id} className='flex items-start gap-4 px-5 py-4 transition-colors hover:bg-card'>
-                  <s.icon className={cn("mt-0.5 size-5 shrink-0", s.className)} />
+                  <StatusPill status={run.status} />
                   <div className='min-w-0 flex-1'>
                     <p className='text-sm font-medium'>{run.summary || s.label}</p>
                     {run.errorMessage && (
