@@ -10,7 +10,7 @@ export function Topbar({ isPro }: { isPro: boolean }) {
       <Logo href='/dashboard' className='w-60 shrink-0 pl-2 max-md:w-auto' />
 
       <form action='/dashboard' className='max-w-3xl flex-1'>
-        <label className='flex h-12 items-center gap-3 rounded-full bg-muted/80 px-4 text-muted-foreground transition-all focus-within:bg-card focus-within:shadow-md focus-within:ring-1 focus-within:ring-border'>
+        <label className='glass-panel flex h-12 items-center gap-3 rounded-full px-4 text-muted-foreground transition-all duration-300 focus-within:bg-card focus-within:shadow-lg focus-within:ring-2 focus-within:ring-brand/25'>
           <SearchIcon className='size-5 shrink-0' />
           <input
             name='q'
@@ -27,7 +27,7 @@ export function Topbar({ isPro }: { isPro: boolean }) {
             Pro
           </span>
         )}
-        <ThemeToggle className='size-10 max-sm:hidden' />
+        <ThemeToggle className='size-10 hover:bg-card/60 max-sm:hidden' />
         <NotificationBell />
         <div className='ml-1 grid size-10 place-items-center'>
           <UserButton />

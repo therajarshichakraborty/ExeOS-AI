@@ -58,7 +58,7 @@ export function AppSidebar({
 
   return (
     <aside className={cn("flex w-64 shrink-0 flex-col gap-1 pr-3", className)}>
-      <RunAgentButton className='mb-4 ml-1 self-start' />
+      <RunAgentButton className='mb-5 ml-1 self-start' />
 
       <nav className='space-y-0.5'>
         {items.map(({ href, label, icon: Icon, count, active }) => (
@@ -66,13 +66,18 @@ export function AppSidebar({
             key={href}
             href={href}
             className={cn(
-              "flex h-9 items-center gap-4 rounded-r-full pr-4 pl-5 text-sm transition-colors",
+              "group flex h-9 items-center gap-4 rounded-full pr-4 pl-5 text-sm transition-all duration-200",
               active
-                ? "bg-accent font-semibold text-accent-foreground"
-                : "text-foreground/80 hover:bg-muted",
+                ? "bg-card/90 font-semibold text-foreground shadow-sm ring-1 ring-border/60"
+                : "text-foreground/75 hover:bg-card/50 hover:text-foreground",
             )}
           >
-            <Icon className='size-4 shrink-0' />
+            <Icon
+              className={cn(
+                "size-4 shrink-0 transition-transform duration-200 group-hover:scale-110",
+                active && "text-brand",
+              )}
+            />
             <span className='flex-1 truncate'>{label}</span>
             {!!count && <span className='text-xs tabular-nums'>{count}</span>}
           </Link>
@@ -86,13 +91,13 @@ export function AppSidebar({
             key={c.key}
             href={`/dashboard?cat=${c.key}`}
             className={cn(
-              "flex h-8 items-center gap-4 rounded-r-full pr-4 pl-5 text-sm transition-colors",
+              "group flex h-8 items-center gap-4 rounded-full pr-4 pl-5 text-sm transition-all duration-200",
               onInbox && cat === c.key
-                ? "bg-accent font-semibold text-accent-foreground"
-                : "text-foreground/80 hover:bg-muted",
+                ? "bg-card/90 font-semibold shadow-sm ring-1 ring-border/60"
+                : "text-foreground/75 hover:bg-card/50 hover:text-foreground",
             )}
           >
-            <span className={cn("size-2.5 rounded-full", c.dot)} />
+            <span className={cn("size-2.5 rounded-full transition-transform group-hover:scale-125", c.dot)} />
             {c.label}
           </Link>
         ))}
@@ -101,7 +106,7 @@ export function AppSidebar({
       {!isPro && (
         <Link
           href='/pricing'
-          className='group mt-auto ml-2 rounded-2xl border bg-card p-4 transition-shadow hover:shadow-md'
+          className='glass-panel lift mt-auto ml-2 rounded-2xl p-4 hover:shadow-lg'
         >
           <span className='flex items-center gap-2 text-xs font-semibold text-brand'>
             <ZapIcon className='size-3.5' /> Upgrade to Pro

@@ -14,9 +14,8 @@ export default async function MainLayout({
   const { counts } = await getInbox(user.id);
 
   return (
-    <div className='relative min-h-screen bg-surface'>
-      <div className='spotlight pointer-events-none fixed inset-x-0 top-0 h-96 opacity-60' />
-      <div className='relative'>
+    <div className='backdrop-app min-h-screen bg-fixed'>
+      <div>
         <Topbar isPro={isPro} />
 
         {/* Mobile nav */}
@@ -32,7 +31,7 @@ export default async function MainLayout({
             <Link
               key={href}
               href={href}
-              className='shrink-0 rounded-full border bg-card px-3.5 py-1.5 text-sm'
+              className='glass-panel press shrink-0 rounded-full px-3.5 py-1.5 text-sm'
             >
               {label}
             </Link>
@@ -47,7 +46,7 @@ export default async function MainLayout({
               className='sticky top-4 h-[calc(100vh-6rem)] max-md:hidden'
             />
           </Suspense>
-          <main className='min-h-[calc(100vh-5rem)] min-w-0 flex-1 overflow-hidden rounded-2xl border bg-card shadow-xs'>
+          <main className='glass-panel min-h-[calc(100vh-5rem)] min-w-0 flex-1 overflow-hidden rounded-3xl shadow-[0_8px_40px_-12px_rgb(15_23_42/0.18)]'>
             {children}
           </main>
         </div>

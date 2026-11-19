@@ -42,14 +42,14 @@ export function RunAgentButton({
       onClick={run}
       disabled={isPending}
       className={cn(
-        "inline-flex h-12 items-center gap-3 rounded-2xl bg-card px-5 text-sm font-medium shadow-sm ring-1 ring-border transition-all hover:shadow-md disabled:opacity-70",
+        "group inline-flex h-14 items-center gap-3 rounded-2xl bg-card px-6 text-sm font-semibold shadow-md ring-1 ring-border/70 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:scale-[0.98] disabled:opacity-70",
         className,
       )}
     >
       {isPending ? (
         <Loader2Icon className='size-4 animate-spin text-brand' />
       ) : (
-        <SparklesIcon className='size-4 text-brand' />
+        <SparklesIcon className='size-4 text-brand transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110' />
       )}
       {isPending ? "Running agents…" : label}
     </button>
