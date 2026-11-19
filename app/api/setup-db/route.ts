@@ -1,5 +1,6 @@
 import { db } from "@/db";
 import { sql } from "drizzle-orm";
+import { ensureNotificationsTable } from "@/db/queries";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -97,6 +98,9 @@ export async function GET(request: NextRequest) {
       );
     `);
     console.log("Agent runs table created/verified successfully.");
+
+    await ensureNotificationsTable();
+    console.log("Notifications table created/verified successfully.");
 
     return NextResponse.json({
       success: true,
