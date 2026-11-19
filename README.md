@@ -19,7 +19,7 @@ puts deadlines on your Google Calendar and notifies you only when something trul
 
 <br />
 
-<img src="docs/screenshots/landing.png" alt="ExeOS landing page" width="100%" />
+<img src="public/landing.png" alt="ExeOS landing page" width="100%" />
 
 </div>
 
@@ -63,6 +63,14 @@ Every run is recorded, so you can always see what was processed, drafted and sch
 ---
 
 ## Screenshots
+
+### Priority inbox
+
+<img src="public/dashboard.png" alt="ExeOS priority inbox with High, Medium and Low tabs, smart views and category labels" width="100%" />
+
+The signed in inbox: every email ranked High, Medium or Low, smart views for high priority, needs reply, drafted and scheduled mail, category labels and one click triage.
+
+### Product pages
 
 <table>
   <tr>
