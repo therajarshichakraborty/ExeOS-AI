@@ -408,7 +408,24 @@ Built on the [OpenAI Agents SDK](https://openai.github.io/openai-agents-js/). Ea
 
 **No API key? It still works.** If `OPENAI_API_KEY` is missing or a call fails, `agents/fallback.ts` triages with zero-token heuristics. Optional overrides: `OPENAI_CLASSIFIER_MODEL`, `OPENAI_REPLY_MODEL`, `OPENAI_NOTIFIER_MODEL`.
 
+**Token budget:** bulk mail (no-reply senders, newsletters, promotions) that the heuristics rate low priority is triaged locally and never reaches the model; only real conversations are batched to the classifier.
+
+**Replies:** each suggested reply is stored as a threaded Gmail draft (`In-Reply-To`/`References` set). The reading pane edits that same draft and sends it via `POST /api/emails/:emailId/reply` (`mode: "draft" | "send"`), so the text in ExeOS and in Gmail never diverges.
+
 **Push notifications:** notifier output is stored in the `notifications` table (created on first use, or via `/api/setup-db`). The bell in the app top bar polls `/api/notifications` and shows browser notifications once permission is granted.
+
+## Project layout
+
+```
+agents/          OpenAI Agents SDK: classifier, reply suggester, notifier, pipeline, fallbacks
+app/(marketing)  public site: landing, features, pricing, about, security
+app/(main)       signed-in app: inbox, activity, settings
+app/api          agent runs, Google OAuth, replies, notifications, calendar
+components/      app shell, marketing sections, shadcn ui primitives
+db/              drizzle schema and queries
+lib/google/      OAuth, authed clients, Gmail and Calendar helpers
+lib/agent.ts     run orchestration: Gmail -> agents -> drafts, events, notifications
+```
 
 ## Routes
 
