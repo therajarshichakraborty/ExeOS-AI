@@ -50,7 +50,7 @@ export function clip(text: string | null | undefined, max: number) {
 
 /** Models love em dashes; the product voice doesn't use them. */
 export function tidy(text: string) {
-  return text.replace(/\s*—\s*/g, ", ").replace(/–/g, "-");
+  return text.replace(/\s*\u2014\s*/g, ", ").replace(/\u2013/g, "-");
 }
 
 /** "Jane Doe <jane@x.com>" -> "Jane Doe" */
