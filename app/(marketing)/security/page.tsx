@@ -30,7 +30,7 @@ const ITEMS = [
   {
     icon: DatabaseIcon,
     title: "Scoped storage",
-    body: "We keep run summaries, priorities and drafts metadata — enough to show your history, nothing more.",
+    body: "We keep run summaries, priorities and drafts metadata: enough to show your history, nothing more.",
   },
   {
     icon: ScrollTextIcon,

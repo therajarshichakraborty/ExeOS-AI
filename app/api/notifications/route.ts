@@ -29,7 +29,7 @@ export async function GET() {
   }
 }
 
-/** Body: { ids?: string[] } — omit ids to mark everything read. */
+/** Body: { ids?: string[] }. Omit ids to mark everything read. */
 export async function POST(request: NextRequest) {
   const user = await currentDbUser();
   if (!user) {

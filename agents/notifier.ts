@@ -1,6 +1,6 @@
 import { Agent, run } from "@openai/agents";
 import { z } from "zod";
-import { clip, LIMITS, MODELS, senderName } from "./config";
+import { clip, LIMITS, MODELS, senderName, tidy } from "./config";
 import type {
   AgentEmail,
   AgentUsage,
@@ -67,8 +67,8 @@ export async function composeNotifications(
     if (!match || notifications.length >= LIMITS.notificationsPerRun) continue;
     notifications.push({
       emailId: match.email.id,
-      title: clip(t, 60),
-      body: clip(b, 160),
+      title: clip(tidy(t), 60),
+      body: clip(tidy(b), 160),
       priority: match.analysis.priority,
     });
   }

@@ -153,7 +153,7 @@ export default function PricingPage() {
             <Link href='/sign-up' className='font-medium text-foreground underline underline-offset-4'>
               Create an account
             </Link>{" "}
-            to upgrade — it takes about 20 seconds.
+            to upgrade. It takes about 20 seconds.
           </p>
         </Show>
       </section>

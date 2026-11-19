@@ -111,7 +111,7 @@ export default async function SettingsPage({
               <p className='text-xs text-muted-foreground'>
                 {aiReady
                   ? "Classifier, reply suggester and notifier run on the OpenAI Agents SDK."
-                  : "No OpenAI key configured — runs use the built-in heuristic triage."}
+                  : "No OpenAI key configured, so runs use the built-in heuristic triage."}
               </p>
             </div>
             <span
@@ -140,7 +140,7 @@ export default async function SettingsPage({
       <section className='flex items-center justify-between rounded-2xl border p-5'>
         <div>
           <p className='text-sm font-medium'>Plan</p>
-          <p className='text-xs text-muted-foreground'>{isPro ? "Pro — thank you!" : "Free"}</p>
+          <p className='text-xs text-muted-foreground'>{isPro ? "Pro. Thank you!" : "Free"}</p>
         </div>
         <Link href='/pricing' className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full px-4")}>
           {isPro ? "Manage plan" : "Upgrade"}

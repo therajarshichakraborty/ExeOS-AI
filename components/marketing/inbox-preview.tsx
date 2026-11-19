@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 const ROWS = [
   {
-    from: "Priya — Northwind",
+    from: "Priya, Northwind",
     subject: "Contract redlines needed by Thursday",
     summary: "Legal wants final redlines before the Thursday board call.",
     priority: "high",

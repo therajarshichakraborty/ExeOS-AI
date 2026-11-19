@@ -21,7 +21,7 @@ const PILLARS = [
   {
     icon: MessageSquareReplyIcon,
     title: "Replies, already drafted",
-    body: "Careful drafts land in the right Gmail thread. Edit and send from ExeOS or Gmail — it's the same draft.",
+    body: "Careful drafts land in the right Gmail thread. Edit and send from ExeOS or Gmail, it's the same draft.",
   },
   {
     icon: BellRingIcon,
@@ -67,7 +67,7 @@ export default function HomePage() {
             <p className='mx-auto max-w-2xl text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl'>
               ExeOS reads your <span className='font-semibold text-foreground'>Gmail</span>, ranks it by
               priority, drafts the replies and puts deadlines on your{" "}
-              <span className='font-semibold text-foreground'>Google Calendar</span> — then pings you only
+              <span className='font-semibold text-foreground'>Google Calendar</span>, then pings you only
               when it truly matters.
             </p>
             <div className='flex flex-wrap justify-center gap-3'>
@@ -117,7 +117,7 @@ export default function HomePage() {
         <SectionHeading
           eyebrow='Built on the OpenAI Agents SDK'
           title={<>Three specialists, one tidy run.</>}
-          description='Each agent does one job and sees only what it needs — fast, accurate and remarkably cheap to run.'
+          description='Each agent does one job and sees only what it needs: fast, accurate and remarkably cheap to run.'
         />
         <AgentCards />
       </section>

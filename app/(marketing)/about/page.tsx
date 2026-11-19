@@ -13,7 +13,7 @@ const VALUES = [
   {
     icon: ShieldCheckIcon,
     title: "You stay in control",
-    body: "ExeOS drafts, suggests and schedules — it never sends. Every action is visible in your run history.",
+    body: "ExeOS drafts, suggests and schedules. It never sends. Every action is visible in your run history.",
   },
   {
     icon: CompassIcon,
@@ -43,10 +43,10 @@ export default function AboutPage() {
         </p>
         <p>
           Those are exactly the questions small, focused AI agents answer well.
-          So ExeOS splits the job in three — a{" "}
+          So ExeOS splits the job in three: a{" "}
           <span className='text-foreground'>classifier</span>, a{" "}
           <span className='text-foreground'>reply suggester</span> and a{" "}
-          <span className='text-foreground'>notifier</span> — and wraps them in
+          <span className='text-foreground'>notifier</span>, and wraps them in
           an inbox that feels like the one you already use.
         </p>
       </section>
@@ -66,7 +66,7 @@ export default function AboutPage() {
       <section id='contact' className='mx-auto max-w-3xl scroll-mt-24 px-5 pb-24 text-center'>
         <h2 className='text-2xl font-semibold tracking-tight'>Say hello</h2>
         <p className='mt-2 text-muted-foreground'>
-          Questions, feedback or team plans — reach out from your account
+          Questions, feedback or team plans? Reach out from your account
           settings and a human will get back to you.
         </p>
       </section>

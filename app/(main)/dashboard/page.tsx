@@ -172,7 +172,7 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
                   <span className={cn(email.priority !== "low" && "font-semibold")}>
                     {email.subject || "(No subject)"}
                   </span>
-                  <span className='text-muted-foreground'> — {email.summary || email.snippet}</span>
+                  <span className='text-muted-foreground'> · {email.summary || email.snippet}</span>
                 </span>
                 <span className='hidden shrink-0 items-center gap-1.5 lg:flex'>
                   {email.replySentAt && (

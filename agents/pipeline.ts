@@ -47,9 +47,9 @@ export async function runInboxPipeline(
   };
 
   const aiEnabled = configureOpenAI();
-  if (!aiEnabled) warnings.push("OPENAI_API_KEY not set — using heuristics");
+  if (!aiEnabled) warnings.push("OPENAI_API_KEY not set, using heuristics");
 
-  // 1. Classification — bulk mail is triaged locally; only the rest hits the model.
+  // 1. Classification: bulk mail is triaged locally; only the rest hits the model.
   const items: PipelineItem[] = emails.map((email) => ({
     email,
     analysis: classifyHeuristically(email),
@@ -76,7 +76,7 @@ export async function runInboxPipeline(
     }
   }
 
-  // 2. Reply suggestions (AI only — a canned reply is worse than none)
+  // 2. Reply suggestions (AI only: a canned reply is worse than none)
   if (aiEnabled) {
     const needing = items
       .map((item, index) => ({ index, ...item }))

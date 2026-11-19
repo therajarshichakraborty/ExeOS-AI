@@ -20,7 +20,7 @@ const instrument = Instrument_Serif({
 
 export const metadata: Metadata = {
   title: {
-    default: "ExeOS — The calm inbox that runs itself",
+    default: "ExeOS · The calm inbox that runs itself",
     template: "%s · ExeOS",
   },
   description:

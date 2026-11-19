@@ -1,6 +1,6 @@
 import { Agent, run } from "@openai/agents";
 import { z } from "zod";
-import { clip, LIMITS, MODELS } from "./config";
+import { clip, LIMITS, MODELS, tidy } from "./config";
 import {
   CATEGORIES,
   type AgentEmail,
@@ -62,7 +62,7 @@ export async function classifyEmails(
     results.set(item.i, {
       priority: item.p,
       category: item.c,
-      summary: item.s,
+      summary: tidy(item.s),
       needsReply: item.rp,
       actionItems: item.a.slice(0, 2).map((title) => ({
         title,

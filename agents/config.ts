@@ -48,6 +48,11 @@ export function clip(text: string | null | undefined, max: number) {
   return flat.length > max ? `${flat.slice(0, max)}…` : flat;
 }
 
+/** Models love em dashes; the product voice doesn't use them. */
+export function tidy(text: string) {
+  return text.replace(/\s*—\s*/g, ", ").replace(/–/g, "-");
+}
+
 /** "Jane Doe <jane@x.com>" -> "Jane Doe" */
 export function senderName(from: string) {
   return from.split("<")[0].replace(/"/g, "").trim() || from;

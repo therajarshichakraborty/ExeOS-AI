@@ -253,7 +253,7 @@ export async function saveReplyDraft(
       });
       return data.id ?? draftId;
     } catch (error) {
-      // Draft deleted in Gmail — fall through and create a fresh one.
+      // Draft deleted in Gmail: fall through and create a fresh one.
       if (!isNotFound(error)) throw error;
     }
   }

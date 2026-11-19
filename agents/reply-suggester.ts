@@ -1,6 +1,6 @@
 import { Agent, run } from "@openai/agents";
 import { z } from "zod";
-import { clip, LIMITS, MODELS, senderName } from "./config";
+import { clip, LIMITS, MODELS, senderName, tidy } from "./config";
 import type { AgentEmail, AgentUsage } from "./types";
 
 const output = z.object({
@@ -11,7 +11,7 @@ export const replySuggesterAgent = new Agent({
   name: "Reply suggester",
   model: MODELS.reply,
   instructions: `Draft a reply for each #i email, written as the user.
-Rules: max 80 words, warm and professional, answer what was asked, never invent facts, dates or commitments; if info is missing, ask briefly. No subject line. End with "Best,\\n<USER>".`,
+Rules: max 80 words, warm and professional, answer what was asked, never invent facts, dates or commitments; if info is missing, ask briefly. No subject line, no em dashes. End with "Best,\\n<USER>".`,
   outputType: output,
   modelSettings: { maxTokens: 900 },
 });
@@ -39,7 +39,7 @@ export async function suggestReplies(
   const allowed = new Set(batch.map((b) => b.index));
   for (const { i, t } of result.finalOutput?.r ?? []) {
     if (allowed.has(i) && t.trim()) {
-      replies.set(i, t.replace(/<USER>/g, userName || "Me").trim());
+      replies.set(i, tidy(t.replace(/<USER>/g, userName || "Me")).trim());
     }
   }
 

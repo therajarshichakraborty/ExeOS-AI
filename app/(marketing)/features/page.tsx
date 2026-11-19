@@ -25,7 +25,7 @@ const FEATURES = [
   {
     icon: FilterIcon,
     title: "Priority inbox",
-    body: "High, medium and low lanes with categories like work, finance and newsletters — filter in one click.",
+    body: "High, medium and low lanes with categories like work, finance and newsletters. Filter in one click.",
   },
   {
     icon: PenLineIcon,
@@ -50,7 +50,7 @@ const FEATURES = [
   {
     icon: HistoryIcon,
     title: "Run history",
-    body: "Every run is logged with what was read, drafted and scheduled — full transparency.",
+    body: "Every run is logged with what was read, drafted and scheduled, for full transparency.",
   },
   {
     icon: GaugeIcon,

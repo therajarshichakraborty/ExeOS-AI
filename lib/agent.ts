@@ -53,7 +53,7 @@ export async function runAgent(userId: string) {
     if (emails.length === 0) {
       const run = await finish({
         status: "success",
-        summary: "Inbox zero — no unread emails to process",
+        summary: "Inbox zero, no unread emails to process",
         actionsLog: [],
         emailsProcessed: 0,
         tasksCreated: 0,

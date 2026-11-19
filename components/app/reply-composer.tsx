@@ -22,7 +22,7 @@ interface Props {
 }
 
 /**
- * Edits the email's Gmail draft in place and sends it — the text here and the
+ * Edits the email's Gmail draft in place and sends it. The text here and the
  * draft in Gmail are the same object, so they can never drift apart.
  */
 export function ReplyComposer({ emailId, to, initialBody, hasDraft, sentAt }: Props) {

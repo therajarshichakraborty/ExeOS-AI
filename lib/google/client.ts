@@ -54,7 +54,7 @@ export async function getGoogleClient(
     } catch (error) {
       console.error(`Token refresh failed for ${provider}:`, error);
 
-      // Token was likely revoked — remove the integration
+      // Token was likely revoked, so remove the integration
       await db.delete(integrations).where(eq(integrations.id, integration.id));
 
       return null;
