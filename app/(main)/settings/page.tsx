@@ -1,141 +1,151 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { getOrCreateUser, getUserIntegrations } from "@/db/queries";
-import { auth, currentUser } from "@clerk/nextjs/server";
-import {
-  CalendarIcon,
-  MailIcon,
-  CheckCircle2,
-  ChevronRight,
-  Settings,
-} from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import {
+  BellRingIcon,
+  CalendarIcon,
+  CheckCircle2Icon,
+  CpuIcon,
+  MailIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { getInbox, getSessionUser } from "@/lib/inbox";
+import { cn } from "@/lib/utils";
 
-export default async function SettingsPage() {
-  const { userId: clerkId } = await auth();
-  if (!clerkId) {
-    redirect("/sign-in");
-  }
-  const clerkUser = await currentUser();
-  const email = clerkUser?.emailAddresses[0].emailAddress ?? "";
-  const name = clerkUser?.fullName ?? "";
-  const user = await getOrCreateUser(clerkId, email, name);
+export const metadata: Metadata = { title: "Settings" };
 
-  const userIntegrations = await getUserIntegrations(user.id);
-  const gmailIntegration = userIntegrations.find(
-    (integration) => integration.provider === "gmail",
-  );
-  const googleCalendarIntegration = userIntegrations.find(
-    (integration) => integration.provider === "google_calendar",
-  );
+const ERRORS: Record<string, string> = {
+  consent_denied: "Google access was declined.",
+  missing_params: "Google didn't return an authorization code. Please try again.",
+  invalid_state: "The sign-in link expired. Please try connecting again.",
+  no_tokens: "Google didn't issue a refresh token. Remove ExeOS from your Google account permissions and reconnect.",
+  user_not_found: "We couldn't find your account. Refresh and try again.",
+  callback_failed: "Something went wrong while connecting Google.",
+};
+
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; connected?: string }>;
+}) {
+  const { error, connected } = await searchParams;
+  const { user, email, isPro } = await getSessionUser();
+  const inbox = await getInbox(user.id);
+  const aiReady = Boolean(process.env.OPENAI_API_KEY?.trim());
 
   const providers = [
     {
       key: "gmail",
-      name: "Gmail Connector",
-      description:
-        "Allows the background ExecOS agent to fetch unread emails and create template drafts.",
+      name: "Gmail",
+      description: "Read unread mail, mark it as triaged and save suggested replies as drafts.",
       icon: MailIcon,
-      integration: gmailIntegration,
-      color: "text-blue-500 bg-blue-500/10",
+      connected: inbox.gmailConnected,
     },
     {
       key: "google_calendar",
       name: "Google Calendar",
-      description:
-        "Allows ExecOS to inspect busy slots and insert confirmed meeting events.",
+      description: "Check your schedule and add holds for deadlines and meetings.",
       icon: CalendarIcon,
-      integration: googleCalendarIntegration,
-      color: "text-purple-500 bg-purple-500/10",
+      connected: inbox.calendarConnected,
     },
   ];
 
   return (
-    <div className='page-wrapper space-y-8'>
-      {/* Header Container */}
-      <div className='border-b border-border/40 pb-5'>
-        <h1 className='page-title text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2'>
-          <Settings className='h-7 w-7 text-primary' /> Settings
-        </h1>
-        <p className='page-description text-sm text-muted-foreground mt-1.5'>
-          Configure API integrations, Google authentication, and agent
-          properties.
-        </p>
+    <div className='mx-auto max-w-3xl space-y-8 p-6 sm:p-8'>
+      <div>
+        <h1 className='text-2xl font-semibold tracking-tight'>Settings</h1>
+        <p className='mt-1 text-sm text-muted-foreground'>Signed in as {email}</p>
       </div>
 
-      {/* Integration Connections Panel */}
-      <Card className='border border-border/80 bg-card overflow-hidden'>
-        <CardHeader className='border-b border-border/40 pb-4'>
-          <CardTitle className='text-base font-bold text-foreground'>
-            Google Workspace Connectors
-          </CardTitle>
-          <CardDescription className='text-xs text-muted-foreground mt-0.5'>
-            Connect your accounts securely via Google OAuth to enable executive
-            automation capabilities
-          </CardDescription>
-        </CardHeader>
-        <CardContent className='pt-6 space-y-4'>
-          <div className='grid gap-4 sm:grid-cols-2'>
-            {providers.map((provider) => (
-              <div
-                key={provider.key}
-                className='border border-border/60 rounded-2xl p-5 flex flex-col justify-between gap-5 bg-muted/10 hover:border-foreground/10 transition-colors'
-              >
-                <div className='space-y-3'>
-                  <div className='flex items-center gap-2.5'>
-                    <div
-                      className={`h-9 w-9 rounded-xl flex items-center justify-center ${provider.color}`}
-                    >
-                      <provider.icon className='h-4.5 w-4.5' />
-                    </div>
-                    <span className='font-bold text-sm text-foreground'>
-                      {provider.name}
-                    </span>
-                  </div>
-                  <p className='text-xs text-muted-foreground leading-relaxed'>
-                    {provider.description}
-                  </p>
-                </div>
+      {error && (
+        <div className='flex gap-3 rounded-xl border border-high/30 bg-high-soft p-4 text-sm text-high'>
+          <TriangleAlertIcon className='size-4 shrink-0' />
+          {ERRORS[error] ?? "Couldn't connect your Google account."}
+        </div>
+      )}
+      {connected && (
+        <div className='flex gap-3 rounded-xl border border-brand/30 bg-brand-soft p-4 text-sm text-brand'>
+          <CheckCircle2Icon className='size-4 shrink-0' />
+          {connected === "gmail" ? "Gmail" : "Google Calendar"} connected.
+        </div>
+      )}
 
-                <div className='flex items-center justify-between border-t border-border/40 pt-4'>
-                  <div className='flex items-center gap-1.5'>
-                    <span className='text-xs text-muted-foreground font-medium'>
-                      Status
-                    </span>
-                  </div>
-
-                  {provider.integration ? (
-                    <Badge
-                      variant='secondary'
-                      className='bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-none font-bold text-[10px] uppercase py-0.5 px-2 gap-1 select-none'
-                    >
-                      <CheckCircle2 className='h-3 w-3' />
-                      Connected
-                    </Badge>
-                  ) : (
-                    <Link href={`/api/auth/google?provider=${provider.key}`}>
-                      <Button
-                        size='sm'
-                        className='text-xs font-semibold gap-1 select-none'
-                      >
-                        Connect <ChevronRight className='h-3 w-3' />
-                      </Button>
-                    </Link>
-                  )}
-                </div>
+      <section className='space-y-3'>
+        <h2 className='text-sm font-semibold'>Integrations</h2>
+        <div className='divide-y overflow-hidden rounded-2xl border'>
+          {providers.map((p) => (
+            <div key={p.key} className='flex items-center gap-4 p-5'>
+              <span className='grid size-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand'>
+                <p.icon className='size-5' />
+              </span>
+              <div className='min-w-0 flex-1'>
+                <p className='text-sm font-medium'>{p.name}</p>
+                <p className='text-xs leading-relaxed text-muted-foreground'>{p.description}</p>
               </div>
-            ))}
+              {p.connected ? (
+                <span className='inline-flex items-center gap-1.5 rounded-full bg-brand-soft px-3 py-1 text-xs font-medium text-brand'>
+                  <CheckCircle2Icon className='size-3.5' /> Connected
+                </span>
+              ) : (
+                <a
+                  href={`/api/auth/google?provider=${p.key}`}
+                  className={cn(buttonVariants({ size: "lg" }), "rounded-full px-4")}
+                >
+                  Connect
+                </a>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className='space-y-3'>
+        <h2 className='text-sm font-semibold'>Agents</h2>
+        <div className='divide-y overflow-hidden rounded-2xl border'>
+          <div className='flex items-center gap-4 p-5'>
+            <span className='grid size-10 shrink-0 place-items-center rounded-xl bg-muted'>
+              <CpuIcon className='size-5' />
+            </span>
+            <div className='min-w-0 flex-1'>
+              <p className='text-sm font-medium'>AI mode</p>
+              <p className='text-xs text-muted-foreground'>
+                {aiReady
+                  ? "Classifier, reply suggester and notifier run on the OpenAI Agents SDK."
+                  : "No OpenAI key configured — runs use the built-in heuristic triage."}
+              </p>
+            </div>
+            <span
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-medium",
+                aiReady ? "bg-brand-soft text-brand" : "bg-medium-soft text-medium",
+              )}
+            >
+              {aiReady ? "Active" : "Heuristic"}
+            </span>
           </div>
-        </CardContent>
-      </Card>
+          <div className='flex items-center gap-4 p-5'>
+            <span className='grid size-10 shrink-0 place-items-center rounded-xl bg-muted'>
+              <BellRingIcon className='size-5' />
+            </span>
+            <div className='min-w-0 flex-1'>
+              <p className='text-sm font-medium'>Push notifications</p>
+              <p className='text-xs text-muted-foreground'>
+                Enable browser push from the bell in the top bar. Only urgent mail notifies you.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className='flex items-center justify-between rounded-2xl border p-5'>
+        <div>
+          <p className='text-sm font-medium'>Plan</p>
+          <p className='text-xs text-muted-foreground'>{isPro ? "Pro — thank you!" : "Free"}</p>
+        </div>
+        <Link href='/pricing' className={cn(buttonVariants({ variant: "outline", size: "lg" }), "rounded-full px-4")}>
+          {isPro ? "Manage plan" : "Upgrade"}
+        </Link>
+      </section>
     </div>
   );
 }
