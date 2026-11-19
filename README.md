@@ -1,395 +1,420 @@
-# ExeOS-AI 🚀
+<div align="center">
 
-### _Autonomous AI Executive Assistant & Workflow Automation Engine_
+# ExeOS
 
-[![Next.js](https://img.shields.io/badge/Next.js-16.2-black?style=flat-square&logo=next.js)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-19.0-61DAFB?style=flat-square&logo=react)](https://react.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
-[![Drizzle ORM](https://img.shields.io/badge/Drizzle_ORM-1.0-C5F74F?style=flat-square&logo=drizzle)](https://orm.drizzle.team/)
-[![Neon Postgres](https://img.shields.io/badge/Neon_Postgres-Database-00E599?style=flat-square&logo=postgresql)](https://neon.tech/)
-[![Clerk Auth](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=flat-square&logo=clerk)](https://clerk.com/)
-[![OpenRouter AI](https://img.shields.io/badge/OpenRouter-AI_SDK-FF6464?style=flat-square)](https://openrouter.ai/)
-[![Bun](https://img.shields.io/badge/Bun-Runtime-fbf0df?style=flat-square&logo=bun)](https://bun.sh/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](LICENSE)
+**The calm inbox that runs itself.**
 
----
+ExeOS reads your Gmail, ranks every unread email by priority, drafts the replies,
+puts deadlines on your Google Calendar and notifies you only when something truly matters.
 
-## 💡 What is ExeOS-AI?
+[![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![OpenAI Agents SDK](https://img.shields.io/badge/OpenAI-Agents_SDK-412991?style=flat-square&logo=openai&logoColor=white)](https://openai.github.io/openai-agents-js/)
+[![Drizzle ORM](https://img.shields.io/badge/Drizzle-ORM-C5F74F?style=flat-square&logo=drizzle&logoColor=black)](https://orm.drizzle.team/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://neon.tech/)
+[![Clerk](https://img.shields.io/badge/Auth-Clerk-6C47FF?style=flat-square&logo=clerk&logoColor=white)](https://clerk.com/)
+[![Bun](https://img.shields.io/badge/Runtime-Bun-000000?style=flat-square&logo=bun)](https://bun.sh/)
 
-**ExeOS-AI** (Executive Operating System AI) is a production-ready, full-stack
-autonomous AI assistant engineered to reclaim hours of manual executive
-management. Inspired by n8n workflow automation and modern agentic
-architectures, ExeOS-AI seamlessly connects your **Gmail** and **Google
-Calendar** with state-of-the-art LLMs (Gemini 2.5, Claude 3.5, GPT-4o via
-OpenRouter) to automatically triage incoming emails, draft contextual replies,
-extract actionable task items, and schedule calendar events in real time.
+<br />
+
+<img src="docs/screenshots/landing.png" alt="ExeOS landing page" width="100%" />
+
+</div>
 
 ---
 
-## ✨ Core Features
+## Table of contents
 
-### 📬 1. Autonomous Inbox Intelligence
-
-- **Intelligent Email Processing**: Scans unread messages and analyzes context,
-  sentiment, and urgency using Vercel AI SDK and OpenRouter.
-- **Smart Categorization**: Categorizes emails into _High Priority_, _Standard_,
-  or _Low Priority_.
-- **Auto-Draft Replies**: Generates high-quality, professional response drafts
-  directly inside Gmail without auto-sending without your final review.
-- **Concise Summaries**: Provides TL;DR executive summaries for rapid scanning.
-
-### 📅 2. Automated Google Calendar Scheduling
-
-- **Event Detection**: Identifies meeting requests, time slots, and agenda items
-  buried inside emails.
-- **Instant Booking**: Automatically constructs and schedules events on Google
-  Calendar with proper start/end timestamps and attendee detail parsing.
-
-### ✅ 3. Actionable Task Extraction
-
-- **Task Parsing**: Converts email action items into structured tasks.
-- **Priority & Due Dates**: Assigns priority levels (`low`, `medium`, `high`)
-  and target completion dates automatically.
-- **Task Tracker Dashboard**: Provides complete management to review, filter,
-  and complete tasks.
-
-### 📊 4. Monitoring & Telemetry Dashboard
-
-- **Live Run Metrics**: Tracks total emails scanned, tasks created, response
-  drafts created, duration, and success rates.
-- **Execution History Logs**: Detailed step-by-step action logs per agent run
-  with diagnostic error handling and execution timestamps.
-- **System Health Monitoring**: Built-in inspection endpoints
-  (`/api/inspect-db`, `/monitoring`) for production reliability.
-
-### 🔐 5. Enterprise Security & Privacy
-
-- **AES-256-GCM Encryption**: Secure zero-leak storage for user OAuth tokens
-  (`access_token`, `refresh_token`).
-- **Clerk Authentication**: Full identity management with Clerk Next.js SDK,
-  protected routes, and middleware auth enforcement.
-- **CRON / API Auth**: Secured background execution trigger with secret
-  verification.
+- [Overview](#overview)
+- [Screenshots](#screenshots)
+- [Features](#features)
+- [How it works](#how-it-works)
+- [AI agents](#ai-agents)
+- [Tech stack](#tech-stack)
+- [Getting started](#getting-started)
+- [Environment variables](#environment-variables)
+- [Scripts](#scripts)
+- [Project structure](#project-structure)
+- [Routes and API](#routes-and-api)
+- [Data model](#data-model)
+- [Security](#security)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [Author](#author)
 
 ---
 
-## 📖 How to Use ExeOS-AI (User Guide)
+## Overview
 
-ExeOS-AI transforms email management into an effortless **3-step executive
-workflow**:
+Most inboxes are sorted by time. ExeOS sorts yours by importance.
 
-### 1️⃣ Step 1: One-Time Onboarding
+ExeOS pairs the Gmail layout you already know with a small team of AI agents. On every run it:
 
-1. Sign in to your **ExeOS-AI** account.
-2. Navigate to **Settings** (`/settings`).
-3. Click **Connect Gmail** and **Connect Google Calendar** to authorize Google
-   OAuth integration.
+1. Fetches unread mail from your Gmail inbox (last 7 days).
+2. Classifies each email by priority (high, medium, low) and category, with a one line summary.
+3. Drafts short, careful replies for the emails that need one and saves them as threaded Gmail drafts.
+4. Extracts action items into tasks and puts dated events and deadlines on Google Calendar, skipping anything already scheduled.
+5. Sends a push notification for the few emails that are actually urgent.
 
-### 2️⃣ Step 2: Triggering the AI Agent
-
-1. Go to your **Dashboard** (`/dashboard`) or **Monitoring Hub**
-   (`/monitoring`).
-2. Click the **"Run Agent Now"** (or **"Trigger AI Scan"**) button.
-3. The AI agent scans your unread inbox, categorizes emails, drafts reply
-   responses in Gmail, extracts task action items, and schedules calendar
-   events.
-
-### 3️⃣ Step 3: Executive Daily Review
-
-1. **Read AI Summaries**: View the **Monitoring Hub** for instant TL;DR
-   summaries and priority tags (`High Priority`, `Newsletter`, etc.).
-2. **Send Gmail Drafts**: Open your Gmail **Drafts** folder. Review pre-written
-   response drafts prepared by ExeOS-AI and click **Send**.
-3. **Track Action Items**: View extracted tasks on your **Dashboard** task list
-   and check newly scheduled events on **Google Calendar**.
-
-| Task                           | Without ExeOS-AI ❌ | With ExeOS-AI ⚡                                  |
-| :----------------------------- | :------------------ | :------------------------------------------------ |
-| **Reading Emails**             | 45+ minutes         | **1 minute** _(Read AI summaries)_                |
-| **Writing Replies**            | 60+ minutes         | **1 minute** _(Review & send pre-written drafts)_ |
-| **Task Creation & Scheduling** | 25+ minutes         | **0 minutes** _(100% automated)_                  |
+Every run is recorded, so you can always see what was processed, drafted and scheduled.
 
 ---
 
-## 🏗️ System Architecture
+## Screenshots
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/features.png" alt="Features page with the inbox preview" /></td>
+    <td width="50%"><img src="docs/screenshots/pricing.png" alt="Pricing page" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Features</b>: Gmail style priority inbox with agent status</td>
+    <td align="center"><b>Pricing</b>: Free, Pro and Team plans</td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/security.png" alt="Security page" /></td>
+    <td width="50%"><img src="docs/screenshots/signin.png" alt="Sign in page" /></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Security</b>: how ExeOS treats your data</td>
+    <td align="center"><b>Sign in</b>: Clerk authentication with Google</td>
+  </tr>
+</table>
+
+---
+
+## Features
+
+### Priority inbox
+
+- Every unread email is ranked **high**, **medium** or **low**, with a one line summary.
+- Smart views: high priority, needs reply, drafts, scheduled, plus filters by category and full text search.
+- A reading pane with the original email, the AI summary, extracted tasks and calendar events side by side.
+
+### Replies, already drafted
+
+- Suggested replies are saved as **threaded Gmail drafts** (`In-Reply-To` and `References` headers set correctly).
+- Edit and send from ExeOS or from Gmail. Both edit the same draft, so the text never diverges.
+- Nothing is sent without you pressing send.
+
+### Calendar on autopilot
+
+- Deadlines, meetings and time sensitive requests become Google Calendar events.
+- Relative dates such as "by Friday" are resolved to real dates.
+- Events that already exist on your calendar are detected and not duplicated.
+
+### Alerts that earn it
+
+- The notifier agent writes short push notifications for the urgent few (at most 5 per run).
+- Receipts, newsletters and promotions never interrupt you.
+- In-app notification bell plus native browser notifications once permission is granted.
+
+### Activity and run history
+
+- Each agent run stores emails processed, tasks created, drafts created, duration, status and a per email action log.
+- Failures are isolated per email, so one bad message never breaks a whole run.
+
+### Works without an API key
+
+- If `OPENAI_API_KEY` is missing or a model call fails, a zero token heuristic triage takes over, so the app keeps working.
+
+---
+
+## How it works
 
 ```mermaid
-flowchart TD
-    subgraph User Interface & Auth
-        Client[Next.js App Router Client]
-        Clerk[Clerk Auth Provider]
-        Client <--> Clerk
-    end
-
-    subgraph Core Application Server
-        API["/api/agents/run Endpoint"]
-        Dashboard["Executive Dashboard & Monitoring"]
-        AgentEngine["Agent Orchestration Engine (lib/agent.ts)"]
-    end
-
-    subgraph External Services & AI Models
-        OpenRouter["Vercel AI SDK + OpenRouter (Gemini / Claude / GPT)"]
-        Gmail["Google Gmail API"]
-        GCal["Google Calendar API"]
-    end
-
-    subgraph Storage Layer
-        DB[("Neon Serverless PostgreSQL")]
-        Drizzle["Drizzle ORM + AES-256 Encryption"]
-    end
-
-    Client -->|Trigger Run / View Stats| Dashboard
-    Dashboard --> API
-    API --> AgentEngine
-    AgentEngine -->|Read OAuth Tokens| Drizzle
-    Drizzle --> DB
-    AgentEngine -->|Scan Inbox / Write Drafts| Gmail
-    AgentEngine -->|Analyze & Extract Actions| OpenRouter
-    AgentEngine -->|Create Calendar Events| GCal
-    AgentEngine -->|Save Run Metrics & Tasks| Drizzle
+flowchart LR
+    U[User or cron] -->|POST /api/agents/run| R[Run orchestrator<br/>lib/agent.ts]
+    R -->|OAuth tokens, decrypted| DB[(PostgreSQL<br/>Drizzle ORM)]
+    R -->|Unread inbox mail| G[Gmail API]
+    R --> P[Agent pipeline<br/>agents/pipeline.ts]
+    P --> C[Classifier]
+    C --> S[Reply suggester]
+    C --> N[Notifier]
+    S -->|Threaded drafts| G
+    R -->|New events| CAL[Google Calendar API]
+    R -->|Tasks, run log, notifications| DB
+    DB --> UI[Inbox, Activity, Notifications UI]
 ```
 
----
-
-## 🛠️ Tech Stack
-
-| Category               | Technology                                                                       | Description                                                |
-| :--------------------- | :------------------------------------------------------------------------------- | :--------------------------------------------------------- |
-| **Framework**          | [Next.js 16 (App Router)](https://nextjs.org/)                                   | Server Actions, Streaming UI, React Server Components      |
-| **Language**           | [TypeScript 5](https://www.typescriptlang.org/)                                  | Full-stack strict type safety                              |
-| **UI & Styling**       | [Tailwind CSS v4](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/) | Dark mode, animations, accessible Radix components         |
-| **Runtime**            | [Bun](https://bun.sh/) / Node.js                                                 | Ultra-fast package management and execution                |
-| **Authentication**     | [@clerk/nextjs](https://clerk.com/)                                              | Secure authentication, sign-in/up flows & route protection |
-| **Database**           | [Neon PostgreSQL](https://neon.tech/)                                            | Serverless cloud PostgreSQL database                       |
-| **ORM**                | [Drizzle ORM](https://orm.drizzle.team/)                                         | Type-safe SQL query builder and schema management          |
-| **AI Integration**     | Vercel AI SDK (`ai`), `@openrouter/ai-sdk-provider`                              | OpenRouter multi-model LLM integration                     |
-| **Google APIs**        | [googleapis](https://github.com/googleapis/google-api-nodejs-client)             | OAuth2, Gmail API & Google Calendar API integration        |
-| **Logging & Security** | [Winston](https://github.com/winstonjs/winston), `crypto` AES-256-GCM            | Token encryption, rotating file logger                     |
+A run is triggered either by a signed in user from the app, or by a scheduler calling the same endpoint with `Authorization: Bearer $CRON_SECRET`, which runs the agent for every user who has it enabled.
 
 ---
 
-## 📂 Project Structure
+## AI agents
 
-```text
-exeos-ai/
-├── app/
-│   ├── (auth)/                 # Clerk Sign-in & Sign-up pages
-│   ├── (main)/
-│   │   ├── dashboard/          # Main Executive Control Dashboard
-│   │   ├── monitoring/         # Live Telemetry & Agent Execution Logs
-│   │   ├── settings/           # OAuth Integrations & User Preferences
-│   │   └── layout.tsx          # Authenticated App Shell & Sidebar Navigation
-│   ├── api/
-│   │   ├── agents/run/         # Core Agent Runner Endpoint
-│   │   ├── auth/google/        # Google OAuth Integration & Callback
-│   │   ├── calendar/events/    # Google Calendar Data Sync Endpoint
-│   │   ├── inspect-db/         # Database Health Diagnostics
-│   │   ├── setup-db/           # DB Schema Push / Seeding Endpoint
-│   │   └── test-ai/            # AI Model Diagnostic Tool
-│   ├── layout.tsx              # Root Layout & Theme/Clerk Providers
-│   └── page.tsx                # Public Landing Page & Feature Showcase
-├── components/
-│   ├── animated-theme-toggler.tsx # Smooth Dark/Light Mode Switcher
-│   ├── calendar-popup.tsx      # Interactive Calendar Modal Component
-│   ├── email-detail.tsx        # Email Processed Card & Action View
-│   ├── run-agent-button.tsx    # Manual Trigger Button with Status Feedback
-│   ├── sidebar-nav.tsx         # Main Dashboard Navigation Sidebar
-│   └── ui/                     # Shadcn UI Design System Primitives
-├── db/
-│   ├── index.ts                # Neon Database Connection Pool
-│   ├── queries.ts              # Database Helper Queries & Mutators
-│   └── schema.ts               # Drizzle Schema (Users, Tasks, Integrations, AgentRuns)
-├── lib/
-│   ├── agent.ts                # Main Execution Workflow Pipeline
-│   ├── agents/                 # Gmail, Calendar, & AI Processing Modules
-│   ├── encryption.ts           # AES-256-GCM Encryption / Decryption Utilities
-│   ├── google-client.ts        # Google OAuth Client Initializer
-│   ├── logger/                 # Winston Logger Configuration
-│   └── utils.ts                # Class Variance & Formatting Helpers
-├── providers/                  # Application Context & Theme Providers
-├── proxy.ts                    # Middleware Proxy Helper
-├── drizzle.config.ts           # Drizzle ORM Configuration
-├── next.config.ts              # Next.js Server & Build Configuration
-└── package.json                # Project Dependencies & CLI Scripts
-```
+The agents live in [`agents/`](agents) and are built on the [OpenAI Agents SDK](https://openai.github.io/openai-agents-js/). A run makes **at most three model calls**, no matter how many emails it processes.
+
+| Agent           | File                                                     | Default model  | Input                                                   | Output                                                         |
+| :-------------- | :------------------------------------------------------- | :------------- | :------------------------------------------------------ | :------------------------------------------------------------- |
+| Classifier      | [`agents/classifier.ts`](agents/classifier.ts)           | `gpt-4.1-nano` | Up to 15 unread emails, 450 character excerpts, batched | Priority, category, summary, reply flag, action items, events  |
+| Reply suggester | [`agents/reply-suggester.ts`](agents/reply-suggester.ts) | `gpt-4.1-mini` | Only emails flagged as needing a reply (up to 5)        | Short drafts (about 80 words) saved as Gmail drafts            |
+| Notifier        | [`agents/notifier.ts`](agents/notifier.ts)               | `gpt-4.1-nano` | Only high and medium priority summaries                 | Short push notification title and body (up to 5)               |
+
+[`agents/pipeline.ts`](agents/pipeline.ts) runs them in order and [`agents/fallback.ts`](agents/fallback.ts) provides the heuristic triage used when no model is available.
+
+**Keeping token use low**
+
+- Bulk mail (no-reply senders, newsletters, promotions) is triaged locally and never reaches the model.
+- Input is clipped and whitespace collapsed; output is short keyed JSON with `maxTokens` caps.
+- SDK tracing is disabled for production runs.
+
+All limits are tunable in [`agents/config.ts`](agents/config.ts), and each model can be overridden with an environment variable.
 
 ---
 
-## ⚡ Getting Started
+## Tech stack
+
+| Layer          | Technology                                                                                   |
+| :------------- | :------------------------------------------------------------------------------------------- |
+| Framework      | [Next.js 16](https://nextjs.org/) App Router, React Server Components, React 19              |
+| Language       | [TypeScript 5](https://www.typescriptlang.org/) in strict mode                               |
+| UI             | [Tailwind CSS 4](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), Base UI, Lucide icons, Sonner |
+| AI             | [OpenAI Agents SDK](https://openai.github.io/openai-agents-js/) with Zod structured output   |
+| Auth           | [Clerk](https://clerk.com/) for sign in, sessions and plan gating                            |
+| Database       | PostgreSQL ([Neon](https://neon.tech/) recommended) with [Drizzle ORM](https://orm.drizzle.team/) |
+| Google APIs    | [`googleapis`](https://github.com/googleapis/google-api-nodejs-client) for OAuth 2.0, Gmail and Calendar |
+| Security       | AES-256-GCM token encryption with Node `crypto`                                              |
+| Tooling        | Bun, ESLint, Prettier, Husky, lint-staged, Commitlint (Conventional Commits)                 |
+
+---
+
+## Getting started
 
 ### Prerequisites
 
-Ensure you have installed:
+- [Bun](https://bun.sh/) 1.1 or newer (Node.js 20 or newer also works)
+- A PostgreSQL database, for example a free [Neon](https://neon.tech/) project
+- A [Clerk](https://clerk.com/) application
+- A [Google Cloud](https://console.cloud.google.com/) project with the **Gmail API** and **Google Calendar API** enabled
+- An [OpenAI](https://platform.openai.com/) API key (optional, the heuristic fallback runs without it)
 
-- [Bun](https://bun.sh/) (Recommended) or [Node.js v20+](https://nodejs.org/)
-- A [Neon PostgreSQL](https://neon.tech/) database instance
-- A [Clerk](https://clerk.com/) account for authentication
-- A [Google Cloud Console](https://console.cloud.google.com/) Project with Gmail
-  & Google Calendar APIs enabled
-- An [OpenRouter](https://openrouter.ai/) API key for AI generation
-
-### 1. Clone the Repository
+### 1. Clone and install
 
 ```bash
-git clone https://github.com/yourusername/exeos-ai.git
-cd exeos-ai
-```
-
-### 2. Install Dependencies
-
-```bash
+git clone https://github.com/therajarshichakraborty/ExeOS-AI.git
+cd ExeOS-AI
 bun install
 ```
 
-### 3. Configure Environment Variables
+### 2. Configure Google OAuth
 
-Create a `.env` file in the root directory and populate it with your keys:
+In Google Cloud Console, create an **OAuth client ID** of type *Web application* and add this authorized redirect URI:
+
+```
+http://localhost:4040/api/auth/google/callback
+```
+
+Add your own Google account as a test user on the OAuth consent screen while the app is in testing mode.
+
+### 3. Set environment variables
+
+Create a `.env` file in the project root. See [Environment variables](#environment-variables) for the full list.
+
+### 4. Create the database schema
+
+```bash
+bunx drizzle-kit push
+```
+
+### 5. Run the app
+
+```bash
+bun run dev
+```
+
+Open [http://localhost:4040](http://localhost:4040), sign in, then go to **Settings** and connect Gmail and Google Calendar. Press **Run** to trigger your first triage.
+
+---
+
+## Environment variables
+
+| Variable                            | Required | Description                                                               |
+| :---------------------------------- | :------: | :------------------------------------------------------------------------ |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` |   Yes    | Clerk publishable key                                                     |
+| `CLERK_SECRET_KEY`                  |   Yes    | Clerk secret key                                                          |
+| `NEXT_PUBLIC_CLERK_SIGN_IN_URL`     |   Yes    | Sign in route, usually `/sign-in`                                         |
+| `NEXT_PUBLIC_CLERK_SIGN_UP_URL`     |   Yes    | Sign up route, usually `/sign-up`                                         |
+| `NEXT_PUBLIC_DATABASE_URL`          |   Yes    | PostgreSQL connection string (used by the app and by Drizzle Kit)         |
+| `GOOGLE_CLIENT_ID`                  |   Yes    | Google OAuth client ID                                                    |
+| `GOOGLE_CLIENT_SECRET`              |   Yes    | Google OAuth client secret                                                |
+| `NEXT_PUBLIC_APP_URL`               |   Yes    | Public base URL, for example `http://localhost:4040`                      |
+| `ENCRYPTION_KEY`                    |   Yes    | Secret used to derive the AES-256-GCM key for OAuth tokens (32+ characters) |
+| `CRON_SECRET`                       |   Yes    | Bearer token that authorizes scheduled agent runs                         |
+| `OPENAI_API_KEY`                    |    No    | Enables the AI agents; without it the heuristic triage is used            |
+| `OPENAI_CLASSIFIER_MODEL`           |    No    | Overrides the classifier model (default `gpt-4.1-nano`)                   |
+| `OPENAI_REPLY_MODEL`                |    No    | Overrides the reply model (default `gpt-4.1-mini`)                        |
+| `OPENAI_NOTIFIER_MODEL`             |    No    | Overrides the notifier model (default `gpt-4.1-nano`)                     |
+
+Example:
 
 ```env
-# Clerk Auth Configuration
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
+CLERK_SECRET_KEY=sk_test_xxx
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
-NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/
-NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/
 
-# Neon Database Connection
-NEXT_PUBLIC_DATABASE_URL=postgres://neondb_owner:...@ep-...neon.tech/neondb?sslmode=require
-DATABASE_URL=postgres://neondb_owner:...@ep-...neon.tech/neondb?sslmode=require
+NEXT_PUBLIC_DATABASE_URL=postgresql://user:password@host/db?sslmode=require
 
-# Google Cloud OAuth Credentials
-GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=GOCSPX-...
+GOOGLE_CLIENT_ID=xxx.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=xxx
 NEXT_PUBLIC_APP_URL=http://localhost:4040
 
-# Security Encryption Key (Minimum 32 Characters)
-ENCRYPTION_KEY=your-32-character-secret-encryption-key
+ENCRYPTION_KEY=replace-with-a-long-random-string
+CRON_SECRET=replace-with-another-long-random-string
 
-# OpenRouter AI Key
-OPENROUTER_API_KEY=sk-or-v1-...
-
-# Background Job / CRON Authentication
-CRON_SECRET=your-random-cron-secret-hash
+OPENAI_API_KEY=sk-xxx
 ```
 
-### 4. Setup Database Schema
-
-Push the Drizzle schema to your Neon PostgreSQL instance:
-
-```bash
-bun drizzle-kit push
-```
-
-_(Alternatively, hit the `/api/setup-db` route after starting the server to
-verify tables)._
-
-### 5. Run Development Server
-
-```bash
-bun dev
-```
-
-Open [http://localhost:4040](http://localhost:4040) in your browser to launch
-**ExeOS-AI**.
+Generate strong secrets with `openssl rand -hex 32`. Never commit `.env`.
 
 ---
 
-## ⚙️ Available Scripts
+## Scripts
 
-| Script               | Command             | Description                                     |
-| :------------------- | :------------------ | :---------------------------------------------- |
-| **Development**      | `bun run dev`       | Launches Next.js dev server on port `4040`      |
-| **Build**            | `bun run build`     | Builds optimized production bundle              |
-| **Production Start** | `bun run start`     | Runs the compiled production application        |
-| **Type Check**       | `bun run typecheck` | Runs TypeScript compiler check without emitting |
-| **Lint**             | `bun run lint`      | Runs ESLint analysis                            |
-| **Format**           | `bun run format`    | Formats codebase using Prettier                 |
-| **Clean**            | `bun run clean`     | Deletes `.next` build cache                     |
-| **Full Check**       | `bun run check`     | Runs linting and typechecking sequentially      |
+| Command                 | Description                                     |
+| :---------------------- | :---------------------------------------------- |
+| `bun run dev`           | Start the development server on port 4040       |
+| `bun run build`         | Create an optimized production build            |
+| `bun run start`         | Serve the production build                      |
+| `bun run lint`          | Run ESLint                                      |
+| `bun run typecheck`     | Type check the project with `tsc --noEmit`      |
+| `bun run check`         | Lint and type check in one step                 |
+| `bun run format`        | Format the codebase with Prettier               |
+| `bun run format:check`  | Verify formatting without writing changes       |
+| `bun run clean`         | Remove the `.next` build cache                  |
 
 ---
 
-## 🗄️ Database Schema Overview
-
-ExeOS-AI relies on 4 core tables managed via Drizzle ORM:
+## Project structure
 
 ```text
-┌───────────────────────┐       ┌───────────────────────┐
-│        users          │       │     integrations      │
-├───────────────────────┤       ├───────────────────────┤
-│ id (UUID, PK)         │──┐    │ id (UUID, PK)         │
-│ clerk_id (TEXT)       │  │    │ user_id (UUID, FK)    │◄───┐
-│ email (TEXT)          │  ├───►│ provider (ENUM)       │    │
-│ subscription_status   │  │    │ access_token (AES)    │    │
-│ agent_enabled (BOOL)  │  │    │ refresh_token (AES)   │    │
-└───────────────────────┘  │    │ expires_at (TIMESTAMP)│    │
-                           │    └───────────────────────┘    │
-                           │                                 │
-                           │    ┌───────────────────────┐    │
-                           │    │         tasks         │    │
-                           │    ├───────────────────────┤    │
-                           ├───►│ id (UUID, PK)         │    │
-                           │    │ user_id (UUID, FK)    │────┤
-                           │    │ title (TEXT)          │    │
-                           │    │ status (ENUM)         │    │
-                           │    │ priority (ENUM)       │    │
-                           │    │ created_by_agent      │    │
-                           │    └───────────────────────┘    │
-                           │                                 │
-                           │    ┌───────────────────────┐    │
-                           │    │      agent_runs       │    │
-                           │    ├───────────────────────┤    │
-                           └───►│ id (UUID, PK)         │    │
-                                │ user_id (UUID, FK)    │────┘
-                                │ status (ENUM)         │
-                                │ actions_log (JSONB)   │
-                                │ emails_processed (INT)│
-                                │ tasks_created (INT)   │
-                                │ drafts_created (INT)  │
-                                └───────────────────────┘
+.
+├── agents/                 AI agents: classifier, reply suggester, notifier, pipeline, fallback, config
+├── app/
+│   ├── (marketing)/        Public site: landing, features, pricing, about, security
+│   ├── (auth)/             Clerk sign in and sign up
+│   ├── (main)/             Signed in app: dashboard (inbox), monitoring (activity), settings
+│   └── api/                Agent runs, Google OAuth, replies, notifications, calendar, setup
+├── components/
+│   ├── app/                App shell: sidebar, top bar, email reader, reply composer, notification bell
+│   ├── marketing/          Landing page sections
+│   ├── motion/             Scroll reveal, count up and ambient animations
+│   └── ui/                 shadcn/ui primitives
+├── db/                     Drizzle schema and queries
+├── docs/screenshots/       Images used in this README
+├── lib/
+│   ├── agent.ts            Run orchestration: Gmail, agents, drafts, events, notifications
+│   ├── google/             OAuth, authenticated clients, Gmail and Calendar helpers
+│   ├── inbox.ts            Inbox queries and session helpers
+│   └── encryption.ts       AES-256-GCM encrypt and decrypt
+├── providers/              Theme provider
+├── proxy.ts                Clerk middleware and public route matcher
+└── drizzle.config.ts       Drizzle Kit configuration
 ```
 
 ---
 
-## 🔒 Security & OAuth Best Practices
+## Routes and API
 
-1. **Token Cryptography**: All OAuth tokens exchanged during Google
-   authorization are encrypted at rest using `AES-256-GCM` with initialization
-   vectors (`iv`) before being saved to PostgreSQL.
-2. **Clerk Protected Routes**: API endpoints and executive views verify session
-   headers before granting data access.
-3. **Draft Safety**: ExeOS-AI builds draft responses in Gmail and creates
-   calendar invitations, but never sends outward emails directly without
-   explicit user intervention.
+### Pages
+
+| Route          | Access  | Description                                                                                   |
+| :------------- | :------ | :-------------------------------------------------------------------------------------------- |
+| `/`            | Public  | Landing page                                                                                  |
+| `/features`    | Public  | Product features                                                                              |
+| `/pricing`     | Public  | Plans                                                                                         |
+| `/about`       | Public  | About ExeOS                                                                                   |
+| `/security`    | Public  | Data handling and security                                                                    |
+| `/dashboard`   | Signed in | Priority inbox. Supports `?p=high\|medium\|low`, `?view=high\|reply\|drafts\|scheduled`, `?cat=`, `?q=`, `?id=` |
+| `/monitoring`  | Signed in | Activity and run history                                                                    |
+| `/settings`    | Signed in | Google connections and agent settings                                                       |
+
+### API
+
+| Method     | Endpoint                          | Description                                                                 |
+| :--------- | :-------------------------------- | :-------------------------------------------------------------------------- |
+| `POST`     | `/api/agents/run`                 | Run the agent for the signed in user, or for all enabled users with `CRON_SECRET` |
+| `GET`      | `/api/auth/google`                | Start the Google OAuth flow for Gmail or Calendar                           |
+| `GET`      | `/api/auth/google/callback`       | OAuth callback; stores encrypted tokens                                     |
+| `POST`     | `/api/emails/:emailId/reply`      | Save (`mode: "draft"`) or send (`mode: "send"`) the reply for an email      |
+| `GET`      | `/api/calendar/events`            | Upcoming Google Calendar events                                             |
+| `GET POST` | `/api/notifications`              | List notifications and mark them as read                                    |
+| `GET`      | `/api/setup-db`                   | Create missing tables (for example `notifications`) on first use            |
+
+### Scheduled runs
+
+Point any scheduler (Vercel Cron, GitHub Actions, a server cron job) at the run endpoint:
+
+```bash
+curl -X POST "$NEXT_PUBLIC_APP_URL/api/agents/run" \
+  -H "Authorization: Bearer $CRON_SECRET"
+```
 
 ---
 
-## 🤝 Contributing
+## Data model
 
-Contributions, issues, and feature requests are welcome!
+Defined in [`db/schema.ts`](db/schema.ts) with Drizzle ORM.
 
-1. **Fork** the repository.
-2. **Create** your feature branch (`git checkout -b feature/amazing-feature`).
-3. **Commit** your changes (`git commit -m 'feat: add amazing feature'`).
-4. **Push** to the branch (`git push origin feature/amazing-feature`).
-5. **Open** a Pull Request.
-
----
-
-## 📄 License
-
-Distributed under the **MIT License**. See `LICENSE` for details.
+| Table           | Purpose                                                                                       |
+| :-------------- | :-------------------------------------------------------------------------------------------- |
+| `users`         | Clerk linked users, subscription status and whether the agent is enabled                      |
+| `integrations`  | Google connections per provider (`gmail`, `google_calendar`) with encrypted access and refresh tokens |
+| `tasks`         | Action items with status, priority, due date and whether the agent created them               |
+| `agent_runs`    | One row per run: status, counts, duration, summary, error and a JSONB per email action log    |
+| `notifications` | Push notifications produced by the notifier agent                                             |
 
 ---
 
-## 👤 Author
+## Security
+
+- **Encrypted tokens.** Google access and refresh tokens are encrypted with AES-256-GCM (random IV and auth tag per value) before they are written to the database.
+- **Least privilege scopes.** Gmail `readonly`, `modify` and `compose`, plus Calendar `readonly` and `events`. ExeOS cannot delete your account data.
+- **You stay in control.** Replies are saved as drafts and are only sent when you choose to send them.
+- **Minimal model exposure.** Agents receive clipped excerpts, not full mailboxes, and bulk mail is handled locally.
+- **Protected routes.** All app pages and APIs require a Clerk session, except the public marketing pages and the OAuth callback. Scheduled runs require the `CRON_SECRET` bearer token.
+- **Auditable.** Every run is logged and visible on the Activity page.
+
+If you discover a vulnerability, please open a private security advisory on GitHub instead of a public issue.
+
+---
+
+## Deployment
+
+### Vercel
+
+1. Import the repository in Vercel.
+2. Add every variable from [Environment variables](#environment-variables), with `NEXT_PUBLIC_APP_URL` set to your production URL.
+3. Add `https://your-domain/api/auth/google/callback` as an authorized redirect URI in Google Cloud.
+4. Add a cron job that calls `POST /api/agents/run` with the `CRON_SECRET` bearer token.
+
+### Docker
+
+A multi stage [`DockerFile`](DockerFile) based on `oven/bun` is included:
+
+```bash
+docker build -f DockerFile -t exeos .
+docker run --env-file .env -p 3000:3000 exeos
+```
+
+---
+
+## Contributing
+
+Contributions are welcome.
+
+1. Fork the repository and create a branch: `git checkout -b feat/short-description`.
+2. Make your changes and run `bun run check`.
+3. Commit using [Conventional Commits](https://www.conventionalcommits.org/), for example `feat(inbox): add snooze`. Commit messages are checked by Commitlint.
+4. Push and open a pull request against `main`.
+
+---
+
+## Author
 
 **Rajarshi Chakraborty (Arghya)**
 
-- GitHub: [@therajarshichakraborty](https://github.com/therajarshichakraborty)
-
-<p align="center">
-  Crafted with ❤️ for modern professionals, powered by <b>Next.js</b>, <b>Clerk</b>, <b>Drizzle ORM</b>, and <b>OpenRouter AI</b>.
-</p>
+GitHub: [@therajarshichakraborty](https://github.com/therajarshichakraborty)

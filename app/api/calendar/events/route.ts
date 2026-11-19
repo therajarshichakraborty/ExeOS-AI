@@ -1,6 +1,6 @@
 import { getUserByClerkId } from "@/db/queries";
-import { fetchUpcomingEvents } from "@/lib/agents/calender";
-import { getCalendarClient } from "@/lib/google-client";
+import { fetchUpcomingEvents } from "@/lib/google/calendar";
+import { getCalendarClient } from "@/lib/google/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -27,10 +27,13 @@ export async function GET() {
     // Fetch upcoming events for the next 10 days (240 hours)
     const events = await fetchUpcomingEvents(calendarClient, 240);
     return NextResponse.json({ success: true, events });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to fetch Google Calendar events:", error);
     return NextResponse.json(
-      { success: false, error: error.message || String(error) },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 },
     );
   }

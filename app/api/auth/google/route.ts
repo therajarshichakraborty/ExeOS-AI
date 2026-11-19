@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
-import { getAuthUrl, GoogleProvider } from "@/lib/google";
+import { getAuthUrl, GoogleProvider } from "@/lib/google/oauth";
 
 export async function GET(request: NextRequest) {
   const { userId } = await auth();
@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
   }
   const state = Buffer.from(
     JSON.stringify({ nonce: crypto.randomUUID(), provider }),
-  ).toString("base64");
+  ).toString("base64url");
   const cookieStore = await cookies();
   cookieStore.set("google_oauth_state", state, {
     httpOnly: true,

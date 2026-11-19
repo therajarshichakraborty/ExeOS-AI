@@ -1,13 +1,14 @@
-import { and, count, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { db } from "../db/index";
 import {
   ActionLogEntry,
   agentRuns,
   integrations,
+  notifications,
   tasks,
   users,
 } from "./schema";
-import { GoogleProvider } from "@/lib/google";
+import { GoogleProvider } from "@/lib/google/oauth";
 
 export async function getUserByClerkId(clerkId: string) {
   const [user] = await db
@@ -15,6 +16,11 @@ export async function getUserByClerkId(clerkId: string) {
     .from(users)
     .where(eq(users.clerkId, clerkId))
     .limit(1);
+  return user ?? null;
+}
+
+export async function getUserById(id: string) {
+  const [user] = await db.select().from(users).where(eq(users.id, id)).limit(1);
   return user ?? null;
 }
 
@@ -177,4 +183,84 @@ export async function getUsersWithAgentEnabled() {
     .where(
       and(eq(users.agentEnabled, true), eq(integrations.provider, "gmail")),
     );
+}
+
+// Created lazily so existing deployments keep working without a manual migration.
+let notificationsReady: Promise<unknown> | null = null;
+export function ensureNotificationsTable() {
+  notificationsReady ??= db
+    .execute(
+      sql`CREATE TABLE IF NOT EXISTS "notifications" (
+        "id" uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        "user_id" uuid NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
+        "email_id" text,
+        "title" text NOT NULL,
+        "body" text NOT NULL,
+        "priority" "task_priority" NOT NULL DEFAULT 'medium',
+        "read" boolean NOT NULL DEFAULT false,
+        "created_at" timestamp NOT NULL DEFAULT now()
+      )`,
+    )
+    .catch((error) => {
+      notificationsReady = null;
+      throw error;
+    });
+  return notificationsReady;
+}
+
+export async function createNotifications(
+  rows: {
+    userId: string;
+    emailId?: string | null;
+    title: string;
+    body: string;
+    priority: "low" | "medium" | "high";
+  }[],
+) {
+  if (rows.length === 0) return [];
+  await ensureNotificationsTable();
+  return db.insert(notifications).values(rows).returning();
+}
+
+export async function getNotifications(userId: string, limit = 20) {
+  await ensureNotificationsTable();
+  return db
+    .select()
+    .from(notifications)
+    .where(eq(notifications.userId, userId))
+    .orderBy(desc(notifications.createdAt))
+    .limit(limit);
+}
+
+export async function markNotificationsRead(userId: string, ids?: string[]) {
+  await ensureNotificationsTable();
+  const scope = eq(notifications.userId, userId);
+  await db
+    .update(notifications)
+    .set({ read: true })
+    .where(ids?.length ? and(scope, inArray(notifications.id, ids)) : scope);
+}
+
+/** Patches one email entry inside a run's actionsLog (scoped to the owner). */
+export async function updateActionLogEntry(
+  userId: string,
+  runId: string,
+  emailId: string,
+  patch: Partial<ActionLogEntry>,
+) {
+  const [run] = await db
+    .select({ actionsLog: agentRuns.actionsLog })
+    .from(agentRuns)
+    .where(and(eq(agentRuns.id, runId), eq(agentRuns.userId, userId)))
+    .limit(1);
+  if (!run) return false;
+  await db
+    .update(agentRuns)
+    .set({
+      actionsLog: run.actionsLog.map((entry) =>
+        entry.emailId === emailId ? { ...entry, ...patch } : entry,
+      ),
+    })
+    .where(eq(agentRuns.id, runId));
+  return true;
 }

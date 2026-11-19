@@ -11,6 +11,7 @@
 !.yarn/versions
 
 # testing
+design/
 /coverage
 
 # next.js
@@ -42,4 +43,5 @@ next-env.d.ts
 
 progress.md
 
-docs/
+docs/*
+!docs/screenshots/
