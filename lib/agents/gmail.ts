@@ -111,26 +111,30 @@ export function parseGmailMessage(
     headers.find((h) => h.name?.toLowerCase() === name.toLowerCase())?.value ??
     "";
 
-  let body = "";
-  let isHtmlBody = false;
-  const payload = message.payload;
+  // Gmail nests bodies arbitrarily deep (multipart/mixed > multipart/alternative > text/*),
+  // so walk the tree and prefer text/plain over text/html.
+  const findPart = (
+    part: gmail_v1.Schema$MessagePart | undefined,
+    mime: string,
+  ): gmail_v1.Schema$MessagePart | undefined => {
+    if (!part) return undefined;
+    if (part.mimeType === mime && part.body?.data) return part;
+    for (const child of part.parts ?? []) {
+      const found = findPart(child, mime);
+      if (found) return found;
+    }
+    return undefined;
+  };
 
-  if (payload?.body?.data) {
-    body = Buffer.from(payload.body.data, "base64url").toString("utf-8");
-    if (payload.mimeType === "text/html") {
-      isHtmlBody = true;
-    }
-  } else if (payload?.parts) {
-    const textPart = payload.parts.find((p) => p.mimeType === "text/plain");
-    const htmlPart = payload.parts.find((p) => p.mimeType === "text/html");
-    const part = textPart ?? htmlPart;
-    if (part?.body?.data) {
-      body = Buffer.from(part.body.data, "base64url").toString("utf-8");
-      if (part.mimeType === "text/html") {
-        isHtmlBody = true;
-      }
-    }
-  }
+  const payload = message.payload;
+  const part =
+    findPart(payload, "text/plain") ??
+    findPart(payload, "text/html") ??
+    (payload?.body?.data ? payload : undefined);
+  let body = part?.body?.data
+    ? Buffer.from(part.body.data, "base64url").toString("utf-8")
+    : "";
+  const isHtmlBody = part?.mimeType === "text/html";
 
   // Strip HTML if it is a text/html part or if it contains HTML markup tags
   if (isHtmlBody || /<[a-z][\s\S]*>/i.test(body)) {
@@ -176,7 +180,7 @@ export async function createDraft(
 ): Promise<string> {
   const rawEmail = [
     `To: ${to}`,
-    `Subject: Re: ${subject}`,
+    `Subject: ${/^re:/i.test(subject) ? subject : `Re: ${subject}`}`,
     `Content-Type: text/plain; charset=utf-8`,
     "",
     body,
