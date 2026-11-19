@@ -219,6 +219,103 @@
   }
 }
 
+/* ---------- Design language: gradient type, glow pills, frosted app ---------- */
+@layer utilities {
+  .text-gradient {
+    background: linear-gradient(100deg, oklch(0.62 0.12 180) 0%, oklch(0.62 0.14 225) 55%, oklch(0.7 0.13 165) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-pan 8s ease-in-out infinite alternate;
+  }
+  .dark .text-gradient {
+    background-image: linear-gradient(100deg, oklch(0.82 0.12 180) 0%, oklch(0.8 0.11 225) 55%, oklch(0.85 0.12 165) 100%);
+  }
+
+  /* Pill with a soft gradient halo, like the reference's "Contact" button */
+  .glow-pill {
+    position: relative;
+    isolation: isolate;
+  }
+  .glow-pill::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    z-index: -1;
+    border-radius: 9999px;
+    background: linear-gradient(110deg, oklch(0.8 0.1 180), oklch(0.78 0.1 225), oklch(0.85 0.1 165));
+    opacity: 0.55;
+    filter: blur(1px);
+    transition: opacity 0.3s, inset 0.3s;
+  }
+  .glow-pill:hover::before {
+    opacity: 0.95;
+    inset: -4px;
+  }
+
+  /* Dark grid panel used by the CTA */
+  .panel-grid {
+    background-color: oklch(0.25 0.03 255);
+    background-image:
+      linear-gradient(to right, oklch(1 0 0 / 5%) 1px, transparent 1px),
+      linear-gradient(to bottom, oklch(1 0 0 / 5%) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .dark .panel-grid {
+    background-color: oklch(0.21 0.02 250);
+  }
+
+  /* Calm mesh backdrop behind the app — the "wallpaper" under the frosted inbox */
+  .backdrop-app {
+    background:
+      radial-gradient(60rem 40rem at 0% 0%, oklch(0.93 0.05 180 / 0.9), transparent 60%),
+      radial-gradient(50rem 36rem at 100% 0%, oklch(0.93 0.04 230 / 0.9), transparent 60%),
+      radial-gradient(60rem 40rem at 60% 100%, oklch(0.95 0.035 80 / 0.8), transparent 60%),
+      var(--background);
+  }
+  .dark .backdrop-app {
+    background:
+      radial-gradient(60rem 40rem at 0% 0%, oklch(0.3 0.06 185 / 0.55), transparent 60%),
+      radial-gradient(50rem 36rem at 100% 0%, oklch(0.28 0.05 235 / 0.5), transparent 60%),
+      radial-gradient(60rem 40rem at 60% 100%, oklch(0.26 0.03 60 / 0.35), transparent 60%),
+      var(--background);
+  }
+  .glass-panel {
+    background: color-mix(in oklch, var(--card) 78%, transparent);
+    backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid color-mix(in oklch, var(--border) 70%, white 30%);
+  }
+  .dark .glass-panel {
+    border-color: oklch(1 0 0 / 8%);
+  }
+
+  /* Micro-interactions */
+  .lift {
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s;
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+  .stagger > * {
+    animation: var(--animate-fade-up);
+  }
+  .stagger > *:nth-child(2) { animation-delay: 40ms; }
+  .stagger > *:nth-child(3) { animation-delay: 80ms; }
+  .stagger > *:nth-child(4) { animation-delay: 120ms; }
+  .stagger > *:nth-child(5) { animation-delay: 160ms; }
+  .stagger > *:nth-child(6) { animation-delay: 200ms; }
+  .stagger > *:nth-child(n + 7) { animation-delay: 240ms; }
+}
+
+@keyframes gradient-pan {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
 @keyframes fade-up {
   from {
     opacity: 0;
