@@ -1,7 +1,11 @@
 import "server-only";
 import { classifyEmails } from "./classifier";
 import { configureOpenAI } from "./config";
-import { classifyHeuristically, notifyHeuristically } from "./fallback";
+import {
+  classifyHeuristically,
+  isSafeToSkipModel,
+  notifyHeuristically,
+} from "./fallback";
 import { composeNotifications } from "./notifier";
 import { suggestReplies } from "./reply-suggester";
 import type {
@@ -45,22 +49,32 @@ export async function runInboxPipeline(
   const aiEnabled = configureOpenAI();
   if (!aiEnabled) warnings.push("OPENAI_API_KEY not set — using heuristics");
 
-  // 1. Classification
-  let classified = new Map<number, Classification>();
-  if (aiEnabled && emails.length > 0) {
+  // 1. Classification — bulk mail is triaged locally; only the rest hits the model.
+  const items: PipelineItem[] = emails.map((email) => ({
+    email,
+    analysis: classifyHeuristically(email),
+    draftReply: null,
+  }));
+  const forModel = items
+    .map((item, index) => index)
+    .filter((i) => !isSafeToSkipModel(items[i].email, items[i].analysis));
+
+  let modelClassified = 0;
+  if (aiEnabled && forModel.length > 0) {
     try {
-      const res = await classifyEmails(emails, today);
-      classified = res.results;
+      const res = await classifyEmails(
+        forModel.map((i) => emails[i]),
+        today,
+      );
+      res.results.forEach((analysis: Classification, local) => {
+        items[forModel[local]].analysis = analysis;
+        modelClassified++;
+      });
       add(res.usage);
     } catch (error) {
       warnings.push(`classifier: ${errorText(error)}`);
     }
   }
-  const items: PipelineItem[] = emails.map((email, i) => ({
-    email,
-    analysis: classified.get(i) ?? classifyHeuristically(email),
-    draftReply: null,
-  }));
 
   // 2. Reply suggestions (AI only — a canned reply is worse than none)
   if (aiEnabled) {
@@ -98,7 +112,7 @@ export async function runInboxPipeline(
     items,
     notifications,
     usage,
-    mode: aiEnabled && classified.size > 0 ? "ai" : "heuristic",
+    mode: modelClassified > 0 || (aiEnabled && forModel.length === 0) ? "ai" : "heuristic",
     warnings,
   };
 }

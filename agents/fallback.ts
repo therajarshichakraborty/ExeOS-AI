@@ -43,6 +43,18 @@ export function classifyHeuristically(email: AgentEmail): Classification {
   };
 }
 
+/**
+ * True for bulk/automated mail the heuristics already rate low priority.
+ * These never reach the model, which is where most token savings come from.
+ */
+export function isSafeToSkipModel(email: AgentEmail, analysis: Classification) {
+  const bulk =
+    AUTOMATED.test(email.from) ||
+    analysis.category === "promotion" ||
+    analysis.category === "newsletter";
+  return bulk && analysis.priority === "low";
+}
+
 export function notifyHeuristically(
   items: { email: AgentEmail; analysis: Classification }[],
 ): PushNotification[] {
