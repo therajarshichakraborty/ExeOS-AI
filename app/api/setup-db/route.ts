@@ -1,9 +1,9 @@
 import { db } from "@/db";
 import { sql } from "drizzle-orm";
 import { ensureNotificationsTable } from "@/db/queries";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     console.log("Database Setup starting...");
 
@@ -106,10 +106,13 @@ export async function GET(request: NextRequest) {
       success: true,
       message: "Database tables created successfully!",
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Database Setup error:", error);
     return NextResponse.json(
-      { success: false, error: error.message || String(error) },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 },
     );
   }

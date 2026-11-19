@@ -66,8 +66,12 @@ export function CalendarPopup({
           } else {
             setError(data.error || "Failed to load Google Calendar data.");
           }
-        } catch (err: any) {
-          setError(err.message || "An error occurred fetching events.");
+        } catch (err) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "An error occurred fetching events.",
+          );
         } finally {
           setLoading(false);
         }
@@ -133,14 +137,17 @@ export function CalendarPopup({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <Button
-          variant='outline'
-          className={cn("flex items-center gap-2", triggerClassName)}
-        >
-          <CalendarIcon className='h-4 w-4 text-primary' />
-          Check Calendar Schedule
-        </Button>
+      {/* render prop avoids a <button> nested inside the trigger's <button> */}
+      <DialogTrigger
+        render={
+          <Button
+            variant='outline'
+            className={cn("flex items-center gap-2 rounded-full", triggerClassName)}
+          />
+        }
+      >
+        <CalendarIcon className='h-4 w-4 text-brand' />
+        Calendar
       </DialogTrigger>
       <DialogContent className='sm:max-w-2xl p-6'>
         <DialogHeader>

@@ -27,10 +27,13 @@ export async function GET() {
     // Fetch upcoming events for the next 10 days (240 hours)
     const events = await fetchUpcomingEvents(calendarClient, 240);
     return NextResponse.json({ success: true, events });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Failed to fetch Google Calendar events:", error);
     return NextResponse.json(
-      { success: false, error: error.message || String(error) },
+      {
+        success: false,
+        error: error instanceof Error ? error.message : String(error),
+      },
       { status: 500 },
     );
   }
