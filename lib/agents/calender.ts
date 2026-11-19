@@ -53,14 +53,19 @@ export async function createCalendarEvent(
   const isAllDay = !event.startTime;
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+  // Google treats all-day end dates as exclusive, so the end must be the next day.
+  const day = event.date.split("T")[0];
+  const nextDay = new Date(`${day}T00:00:00Z`);
+  nextDay.setUTCDate(nextDay.getUTCDate() + 1);
+
   const eventBody: calendar_v3.Schema$Event = {
     summary: event.title,
     description: event.description,
     start: isAllDay
-      ? { date: event.date.split("T")[0] }
+      ? { date: day }
       : { dateTime: event.startTime!, timeZone },
     end: isAllDay
-      ? { date: event.date.split("T")[0] }
+      ? { date: nextDay.toISOString().slice(0, 10) }
       : {
           dateTime:
             event.endTime ??
