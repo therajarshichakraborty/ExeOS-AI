@@ -63,11 +63,11 @@ export default async function ActivityPage() {
             No runs yet. Hit <span className='font-medium text-foreground'>Run triage</span> to start.
           </div>
         ) : (
-          <ol className='divide-y overflow-hidden rounded-2xl border'>
+          <ol className='stagger divide-y overflow-hidden rounded-2xl border bg-card/60'>
             {runs.map((run) => {
               const s = STATUS[run.status];
               return (
-                <li key={run.id} className='flex items-start gap-4 px-5 py-4'>
+                <li key={run.id} className='flex items-start gap-4 px-5 py-4 transition-colors hover:bg-card'>
                   <s.icon className={cn("mt-0.5 size-5 shrink-0", s.className)} />
                   <div className='min-w-0 flex-1'>
                     <p className='text-sm font-medium'>{run.summary || s.label}</p>

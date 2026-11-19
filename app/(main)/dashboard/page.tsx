@@ -4,6 +4,8 @@ import {
   CalendarIcon,
   CalendarCheckIcon,
   CheckIcon,
+  ExternalLinkIcon,
+  ReplyIcon,
   InboxIcon,
   MailIcon,
   PenLineIcon,
@@ -123,7 +125,12 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
                     {tab.count}
                   </span>
                 )}
-                {active && <span className='absolute inset-x-3 bottom-0 h-[3px] rounded-t-full bg-brand' />}
+                <span
+                  className={cn(
+                    "absolute inset-x-3 bottom-0 h-[3px] origin-center rounded-t-full bg-brand transition-transform duration-300",
+                    active ? "scale-x-100" : "scale-x-0",
+                  )}
+                />
               </Link>
             );
           })}
@@ -135,20 +142,21 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
       ) : null}
 
       {emails.length > 0 ? (
-        <ul className='divide-y'>
+        <ul className='stagger divide-y divide-border/60'>
           {emails.map((email) => (
-            <li key={email.emailId}>
+            <li key={email.emailId} className='group/row relative'>
               <Link
                 href={hrefWith({ id: email.emailId })}
                 className={cn(
-                  "group flex items-center gap-3 px-4 py-2.5 text-sm transition-shadow hover:z-10 hover:shadow-[inset_1px_0_0_var(--border),inset_-1px_0_0_var(--border),0_1px_3px_0_rgb(0_0_0/0.08)]",
-                  email.priority === "high" && "bg-high-soft/25",
+                  "relative flex items-center gap-3 px-4 py-3 text-sm transition-all duration-150 hover:z-10 hover:bg-card hover:shadow-[0_2px_8px_-2px_rgb(15_23_42/0.12)]",
+                  email.priority === "high" && "bg-high-soft/20",
+                  email.replySentAt && "opacity-70",
                 )}
               >
                 <PriorityDot priority={email.priority} className='ml-1' />
                 <StarIcon
                   className={cn(
-                    "size-4 shrink-0",
+                    "size-4 shrink-0 transition-transform duration-200 group-hover/row:scale-110",
                     email.priority === "high" ? "fill-medium text-medium" : "text-muted-foreground/40",
                   )}
                 />
@@ -167,7 +175,12 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
                   <span className='text-muted-foreground'> — {email.summary || email.snippet}</span>
                 </span>
                 <span className='hidden shrink-0 items-center gap-1.5 lg:flex'>
-                  {email.draftCreated && (
+                  {email.replySentAt && (
+                    <Chip className='border-brand/30 text-brand'>
+                      <ReplyIcon className='size-3' /> Replied
+                    </Chip>
+                  )}
+                  {email.draftCreated && !email.replySentAt && (
                     <Chip>
                       <PenLineIcon className='size-3' /> Draft
                     </Chip>
@@ -181,13 +194,32 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
                 </span>
                 <span
                   className={cn(
-                    "w-16 shrink-0 text-right text-xs tabular-nums",
+                    "w-16 shrink-0 text-right text-xs tabular-nums transition-opacity sm:group-hover/row:opacity-0",
                     email.priority !== "low" ? "font-semibold" : "text-muted-foreground",
                   )}
                 >
                   {shortDate(email.date || email.processedAt)}
                 </span>
               </Link>
+              {/* Gmail-style hover actions */}
+              <div className='pointer-events-none absolute inset-y-0 right-3 z-20 hidden items-center gap-0.5 opacity-0 transition-opacity duration-150 group-hover/row:pointer-events-auto group-hover/row:opacity-100 sm:flex'>
+                <Link
+                  href={hrefWith({ id: email.emailId })}
+                  title={email.replySentAt ? "Replied" : "Reply"}
+                  className='press grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground'
+                >
+                  <ReplyIcon className='size-4' />
+                </Link>
+                <a
+                  href={`https://mail.google.com/mail/u/0/#all/${email.emailId}`}
+                  target='_blank'
+                  rel='noreferrer'
+                  title='Open in Gmail'
+                  className='press grid size-8 place-items-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground'
+                >
+                  <ExternalLinkIcon className='size-4' />
+                </a>
+              </div>
             </li>
           ))}
         </ul>
@@ -234,7 +266,7 @@ function Onboarding({ gmail, calendar, name }: { gmail: boolean; calendar: boole
             <a
               key={label}
               href={href}
-              className='flex items-center gap-3 rounded-xl border bg-card px-4 py-3 text-sm font-medium transition-shadow hover:shadow-md'
+              className='lift press flex items-center gap-3 rounded-xl border bg-card px-4 py-3 text-sm font-medium hover:shadow-md'
             >
               <Icon className='size-4 text-brand' /> {label}
               <span className='ml-auto text-xs text-brand'>Connect →</span>

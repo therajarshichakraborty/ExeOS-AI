@@ -72,7 +72,7 @@ export default async function SettingsPage({
 
       <section className='space-y-3'>
         <h2 className='text-sm font-semibold'>Integrations</h2>
-        <div className='divide-y overflow-hidden rounded-2xl border'>
+        <div className='stagger divide-y overflow-hidden rounded-2xl border bg-card/60'>
           {providers.map((p) => (
             <div key={p.key} className='flex items-center gap-4 p-5'>
               <span className='grid size-10 shrink-0 place-items-center rounded-xl bg-brand-soft text-brand'>
@@ -101,7 +101,7 @@ export default async function SettingsPage({
 
       <section className='space-y-3'>
         <h2 className='text-sm font-semibold'>Agents</h2>
-        <div className='divide-y overflow-hidden rounded-2xl border'>
+        <div className='stagger divide-y overflow-hidden rounded-2xl border bg-card/60'>
           <div className='flex items-center gap-4 p-5'>
             <span className='grid size-10 shrink-0 place-items-center rounded-xl bg-muted'>
               <CpuIcon className='size-5' />
