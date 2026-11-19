@@ -136,6 +136,20 @@ export const agentRuns = pgTable("agent_runs", {
   durationMs: integer("duration_ms"),
 });
 
+// Notifications produced by the notifier agent (delivered as in-app + browser push)
+export const notifications = pgTable("notifications", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .references(() => users.id, { onDelete: "cascade" })
+    .notNull(),
+  emailId: text("email_id"),
+  title: text("title").notNull(),
+  body: text("body").notNull(),
+  priority: taskPriorityEnum("priority").default("medium").notNull(),
+  read: boolean("read").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // TypeScript types inferred from Drizzle schema
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -148,5 +162,7 @@ export type NewTask = typeof tasks.$inferInsert;
 
 export type AgentRun = typeof agentRuns.$inferSelect;
 export type NewAgentRun = typeof agentRuns.$inferInsert;
+
+export type Notification = typeof notifications.$inferSelect;
 
 export type ProcessedEmail = ActionLogEntry & { processedAt: Date };
