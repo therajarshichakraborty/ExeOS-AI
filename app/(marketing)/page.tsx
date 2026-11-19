@@ -105,7 +105,6 @@ export default function HomePage() {
     <>
       {/* Hero */}
       <section className='relative overflow-hidden'>
-        <div className='bg-grid pointer-events-none absolute inset-0 opacity-60' />
         <div className='relative mx-auto max-w-6xl px-5 pt-20 pb-20 text-center sm:pt-28'>
           <div className='stagger space-y-8'>
             <Glyph />
