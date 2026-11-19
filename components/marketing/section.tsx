@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ArrowRightIcon } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function Eyebrow({ children }: { children: React.ReactNode }) {
@@ -78,33 +77,26 @@ export function PageHero({
 export function CtaBand() {
   return (
     <section className='px-5 pb-24'>
-      <div className='relative mx-auto max-w-5xl overflow-hidden rounded-3xl border bg-card px-6 py-16 text-center shadow-sm'>
-        <div className='bg-dots pointer-events-none absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_center,#000_20%,transparent_70%)]' />
-        <div className='spotlight pointer-events-none absolute inset-0' />
+      <div className='panel-grid relative mx-auto max-w-6xl overflow-hidden rounded-3xl px-6 py-24 text-center text-white shadow-2xl shadow-slate-900/20'>
+        <div className='pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-teal-400/20 blur-3xl' />
         <div className='relative space-y-6'>
-          <h2 className='text-3xl font-semibold tracking-tight text-balance sm:text-4xl'>
-            Get back the hour you spend <Accent>sorting email</Accent>.
+          <h2 className='text-4xl font-bold tracking-tight text-balance sm:text-5xl'>
+            Let&apos;s clear your inbox today.
           </h2>
-          <p className='mx-auto max-w-lg text-muted-foreground'>
+          <p className='mx-auto max-w-lg text-lg text-white/70'>
             Connect Gmail and Calendar in under a minute. Your first triage runs
             the moment you click.
           </p>
-          <div className='flex flex-wrap justify-center gap-3'>
+          <div className='flex flex-wrap justify-center gap-3 pt-2'>
             <Link
               href='/sign-up'
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "h-11 rounded-full px-6",
-              )}
+              className='press inline-flex h-12 items-center gap-2 rounded-xl bg-white px-6 font-semibold text-slate-900 transition-all hover:bg-white/90'
             >
-              Start free <ArrowRightIcon />
+              Start free <ArrowRightIcon className='size-4' />
             </Link>
             <Link
               href='/pricing'
-              className={cn(
-                buttonVariants({ variant: "outline", size: "lg" }),
-                "h-11 rounded-full px-6",
-              )}
+              className='press inline-flex h-12 items-center rounded-xl border border-white/40 px-6 font-semibold transition-colors hover:bg-white/10'
             >
               See pricing
             </Link>
