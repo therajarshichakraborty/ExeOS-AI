@@ -51,7 +51,7 @@ export function NotificationBell() {
     const fresh = data.notifications.filter((n) => !n.read && !seen.current!.has(n.id));
     for (const n of fresh.slice(0, 3)) {
       if ("Notification" in window && Notification.permission === "granted") {
-        new Notification(n.title, { body: n.body, tag: n.id, icon: "/favicon.ico" });
+        new Notification(n.title, { body: n.body, tag: n.id, icon: "/icon.svg" });
       } else {
         toast(n.title, { description: n.body });
       }
