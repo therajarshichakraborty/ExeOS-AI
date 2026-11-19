@@ -1,60 +1,51 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Nanum_Pen_Script, Inter } from "next/font/google";
-import { ThemeProvider } from "@/providers/theme-providers";
-import { AnimatedThemeToggler } from "@/components/animated-theme-toggler";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
-import { dark } from "@clerk/ui/themes";
+import { shadcn } from "@clerk/ui/themes";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "@/providers/theme-providers";
 
-const inter = Inter({
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-geist-mono",
 });
-
-const nanumPenScript = Nanum_Pen_Script({
+const instrument = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-nanum-pen",
   weight: "400",
+  style: ["normal", "italic"],
+  variable: "--font-instrument",
 });
 
 export const metadata: Metadata = {
-  title: "ExeOS-AI",
-  description: "Your autonomous AI assistant for email and calendar management",
+  title: {
+    default: "ExeOS — The calm inbox that runs itself",
+    template: "%s · ExeOS",
+  },
+  description:
+    "ExeOS triages your Gmail by priority, drafts replies, schedules deadlines on Google Calendar and pings you only when it matters.",
 };
-
-import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang='en'
-      className={`${inter.variable} ${nanumPenScript.variable} h-full antialiased`}
+      className={`${geist.variable} ${geistMono.variable} ${instrument.variable} h-full`}
       suppressHydrationWarning
     >
-      <ClerkProvider appearance={{ theme: dark }}>
-        <body className='min-h-full flex flex-col'>
+      <ClerkProvider appearance={{ theme: shadcn }}>
+        <body className='flex min-h-full flex-col font-sans'>
           <ThemeProvider
             attribute='class'
             defaultTheme='system'
             enableSystem
             disableTransitionOnChange
           >
-            <div className='layout-theme-toggler absolute top-4 right-4'>
-              <AnimatedThemeToggler />
-            </div>
             {children}
-            <Toaster position='top-right' richColors />
-            <footer className='footer-wrapper'>
-              <div className='section-heading'>
-                <p className='text-center text-sm text-muted-foreground'>
-                  © {new Date().getFullYear()} ExeOS- AI.
-                </p>
-              </div>
-            </footer>
+            <Toaster position='bottom-right' richColors closeButton />
           </ThemeProvider>
         </body>
       </ClerkProvider>
