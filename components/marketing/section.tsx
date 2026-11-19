@@ -78,7 +78,7 @@ export function CtaBand() {
   return (
     <section className='px-5 pb-24'>
       <div className='panel-grid relative mx-auto max-w-6xl overflow-hidden rounded-3xl px-6 py-24 text-center text-white shadow-2xl shadow-slate-900/20'>
-        <div className='pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-teal-400/20 blur-3xl' />
+        <div className='pointer-events-none absolute -top-40 left-1/2 h-80 w-[40rem] -translate-x-1/2 rounded-full bg-blue-400/25 blur-3xl' />
         <div className='relative space-y-6'>
           <h2 className='text-4xl font-bold tracking-tight text-balance sm:text-5xl'>
             Let&apos;s clear your inbox today.

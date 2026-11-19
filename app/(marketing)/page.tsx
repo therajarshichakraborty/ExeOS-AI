@@ -107,7 +107,7 @@ export default function HomePage() {
       {/* Product showcase */}
       <section className='px-5 pb-28'>
         <div className='relative mx-auto max-w-5xl'>
-          <div className='pointer-events-none absolute -inset-x-16 -inset-y-10 rounded-[3rem] bg-gradient-to-b from-brand/15 via-sky-400/10 to-transparent blur-3xl' />
+          <div className='pointer-events-none absolute -inset-x-16 -inset-y-10 rounded-[3rem] bg-gradient-to-b from-brand/15 via-blue-400/10 to-transparent blur-3xl' />
           <InboxPreview className='relative' />
         </div>
       </section>
