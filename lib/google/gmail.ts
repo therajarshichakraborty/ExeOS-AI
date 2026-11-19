@@ -17,6 +17,7 @@ export async function fetchUnreadEmails(
 ): Promise<ParsedEmail[]> {
   const response = await gmail.users.messages.list({
     userId: "me",
+    labelIds: ["INBOX"],
     q: "is:unread newer_than:7d",
     maxResults,
   });
@@ -81,14 +82,30 @@ export function stripHtml(html: string): string {
     "&copy;": "©",
     "&reg;": "®",
     "&trade;": "™",
+    // Zero-width and invisible characters, common in marketing emails
+    "&zwnj;": "",
+    "&zwsp;": "",
+    "&zwj;": "",
+    "&shy;": "",
+    "&lrm;": "",
+    "&rlm;": "",
+    "&ensp;": " ",
+    "&emsp;": " ",
+    "&thinsp;": " ",
+    "&mdash;": ", ",
+    "&ndash;": "-",
+    "&hellip;": "...",
+    "&bull;": "*",
   };
-  text = text.replace(
-    /&[a-z0-9#]+;/gi,
-    (match) => entities[match.toLowerCase()] ?? match,
-  );
   text = text.replace(/&#(\d+);/g, (_, dec) =>
     String.fromCharCode(parseInt(dec, 10)),
   );
+  text = text.replace(
+    /&[a-z0-9#]+;/gi,
+    (match) => entities[match.toLowerCase()] ?? "",
+  );
+  // Remove leftover invisible Unicode characters (zero-width spaces etc.)
+  text = text.replace(/[​-‍﻿­]/g, "");
 
   // 6. Clean up redundant line spacing
   text = text

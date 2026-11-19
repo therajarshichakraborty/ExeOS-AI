@@ -43,4 +43,5 @@ next-env.d.ts
 
 progress.md
 
-docs/
+docs/*
+!docs/screenshots/
