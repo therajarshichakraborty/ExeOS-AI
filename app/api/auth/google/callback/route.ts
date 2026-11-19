@@ -1,6 +1,6 @@
 import { getUserByClerkId, upsertIntegration } from "@/db/queries";
 import { encrypt } from "@/lib/encryption";
-import { createOAuth2Client, GoogleProvider } from "@/lib/google";
+import { createOAuth2Client, GoogleProvider } from "@/lib/google/oauth";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";

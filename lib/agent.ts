@@ -8,13 +8,13 @@ import {
 import type { ActionLogEntry } from "@/db/schema";
 import { runInboxPipeline } from "@/agents";
 import { LIMITS } from "@/agents/config";
-import { getCalendarClient, getGmailClient } from "./google-client";
-import { createDraft, fetchUnreadEmails, markAsRead } from "./agents/gmail";
+import { getCalendarClient, getGmailClient } from "@/lib/google/client";
+import { createDraft, fetchUnreadEmails, markAsRead } from "@/lib/google/gmail";
 import {
   type CalendarEvent,
   createCalendarEvent,
   fetchUpcomingEvents,
-} from "./agents/calender";
+} from "@/lib/google/calendar";
 
 const plural = (n: number, word: string, many = `${word}s`) =>
   `${n} ${n === 1 ? word : many}`;

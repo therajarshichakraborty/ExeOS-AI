@@ -8,7 +8,7 @@ import {
   tasks,
   users,
 } from "./schema";
-import { GoogleProvider } from "@/lib/google";
+import { GoogleProvider } from "@/lib/google/oauth";
 
 export async function getUserByClerkId(clerkId: string) {
   const [user] = await db

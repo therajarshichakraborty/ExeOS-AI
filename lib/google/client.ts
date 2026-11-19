@@ -1,5 +1,5 @@
 import { google } from "googleapis";
-import { createOAuth2Client, type GoogleProvider } from "@/lib/google";
+import { createOAuth2Client, type GoogleProvider } from "@/lib/google/oauth";
 import { encrypt, decrypt } from "@/lib/encryption";
 import { db } from "@/db";
 import { integrations } from "@/db/schema";

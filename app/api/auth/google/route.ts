@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
-import { getAuthUrl, GoogleProvider } from "@/lib/google";
+import { getAuthUrl, GoogleProvider } from "@/lib/google/oauth";
 
 export async function GET(request: NextRequest) {
   const { userId } = await auth();

@@ -1,6 +1,6 @@
 import { getUserByClerkId } from "@/db/queries";
-import { fetchUpcomingEvents } from "@/lib/agents/calender";
-import { getCalendarClient } from "@/lib/google-client";
+import { fetchUpcomingEvents } from "@/lib/google/calendar";
+import { getCalendarClient } from "@/lib/google/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
