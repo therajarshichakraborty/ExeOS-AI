@@ -23,7 +23,7 @@ export const AGENTS = [
 
 export function AgentCards() {
   return (
-    <div className='grid gap-4 md:grid-cols-3'>
+    <div className='stagger grid gap-4 md:grid-cols-3'>
       {AGENTS.map(({ icon: Icon, name, tagline, body }, i) => (
         <div
           key={name}
@@ -31,7 +31,7 @@ export function AgentCards() {
         >
           <div className='pointer-events-none absolute -top-24 -right-24 size-48 rounded-full bg-brand/10 opacity-0 blur-3xl transition-opacity duration-500 group-hover:opacity-100' />
           <div className='mb-5 flex items-center justify-between'>
-            <span className='grid size-10 place-items-center rounded-xl bg-brand-soft text-brand'>
+            <span className='grid size-10 place-items-center rounded-xl bg-brand-soft text-brand transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110'>
               <Icon className='size-5' />
             </span>
             <span className='font-mono text-xs text-muted-foreground'>

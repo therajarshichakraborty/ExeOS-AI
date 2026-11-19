@@ -294,14 +294,18 @@
   }
 
   /* Micro-interactions */
+  /* translate/scale (not transform) so they compose with entrance animations */
   .lift {
-    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s;
+    transition: translate 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s;
   }
   .lift:hover {
-    transform: translateY(-2px);
+    translate: 0 -3px;
+  }
+  .press {
+    transition: scale 0.12s ease-out;
   }
   .press:active {
-    transform: scale(0.97);
+    scale: 0.97;
   }
   .stagger > * {
     animation: var(--animate-fade-up);

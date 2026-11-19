@@ -51,9 +51,9 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className='mx-auto grid max-w-6xl gap-4 px-5 py-24 md:grid-cols-3'>
+      <section className='stagger mx-auto grid max-w-6xl gap-4 px-5 py-24 md:grid-cols-3'>
         {VALUES.map(({ icon: Icon, title, body }) => (
-          <div key={title} className='rounded-2xl border bg-card p-7'>
+          <div key={title} className='lift rounded-2xl border bg-card p-7 hover:shadow-lg'>
             <Icon className='size-5 text-brand' />
             <h3 className='mt-4 font-semibold tracking-tight'>{title}</h3>
             <p className='mt-2 text-sm leading-relaxed text-muted-foreground'>

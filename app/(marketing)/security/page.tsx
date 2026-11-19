@@ -56,9 +56,9 @@ export default function SecurityPage() {
         }
         description='ExeOS is built around a simple rule: touch as little of your data as possible, and make everything we do visible.'
       />
-      <section className='mx-auto grid max-w-6xl gap-4 px-5 pb-24 sm:grid-cols-2 lg:grid-cols-3'>
+      <section className='stagger mx-auto grid max-w-6xl gap-4 px-5 pb-24 sm:grid-cols-2 lg:grid-cols-3'>
         {ITEMS.map(({ icon: Icon, title, body }) => (
-          <div key={title} className='rounded-2xl border bg-card p-6'>
+          <div key={title} className='lift rounded-2xl border bg-card p-6 hover:shadow-lg'>
             <span className='grid size-9 place-items-center rounded-lg bg-brand-soft text-brand'>
               <Icon className='size-4' />
             </span>

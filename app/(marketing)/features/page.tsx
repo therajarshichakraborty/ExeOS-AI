@@ -105,10 +105,10 @@ export default function FeaturesPage() {
               </>
             }
           />
-          <div className='grid gap-px overflow-hidden rounded-2xl border bg-border sm:grid-cols-2 lg:grid-cols-3 [&>*]:bg-card'>
+          <div className='stagger grid gap-px overflow-hidden rounded-2xl border bg-border sm:grid-cols-2 lg:grid-cols-3 [&>*]:bg-card'>
             {FEATURES.map(({ icon: Icon, title, body }) => (
-              <div key={title} className='space-y-3 p-7'>
-                <Icon className='size-5 text-brand' />
+              <div key={title} className='group space-y-3 p-7 transition-colors hover:bg-surface'>
+                <Icon className='size-5 text-brand transition-transform duration-300 group-hover:scale-110' />
                 <h3 className='font-semibold tracking-tight'>{title}</h3>
                 <p className='text-sm leading-relaxed text-muted-foreground'>
                   {body}

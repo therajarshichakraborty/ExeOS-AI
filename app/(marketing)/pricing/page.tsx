@@ -93,12 +93,12 @@ export default function PricingPage() {
         description='Start free. Upgrade when you want ExeOS running in the background for you.'
       />
 
-      <section className='mx-auto grid max-w-6xl gap-5 px-5 lg:grid-cols-3'>
+      <section className='stagger mx-auto grid max-w-6xl gap-5 px-5 lg:grid-cols-3'>
         {PLANS.map((plan) => (
           <div
             key={plan.name}
             className={cn(
-              "relative flex flex-col rounded-3xl border bg-card p-7",
+              "lift relative flex flex-col rounded-3xl border bg-card p-7 hover:shadow-xl",
               plan.featured && "shimmer-border shadow-xl lg:-translate-y-3",
             )}
           >

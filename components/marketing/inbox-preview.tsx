@@ -100,7 +100,7 @@ export function InboxPreview({ className }: { className?: string }) {
           </div>
 
           {/* list */}
-          <div className='divide-y'>
+          <div className='stagger divide-y'>
             {ROWS.map((row) => (
               <div
                 key={row.subject}
@@ -128,9 +128,10 @@ export function InboxPreview({ className }: { className?: string }) {
       </div>
 
       {/* floating push notification */}
-      <div className='glass absolute -right-3 -bottom-6 hidden w-64 rounded-xl p-3 shadow-xl sm:block'>
+      <div className='glass absolute -right-3 -bottom-6 hidden w-64 animate-float rounded-xl p-3 shadow-xl sm:block'>
         <div className='flex items-start gap-2.5'>
-          <span className='grid size-7 shrink-0 place-items-center rounded-lg bg-high-soft text-high'>
+          <span className='relative grid size-7 shrink-0 place-items-center rounded-lg bg-high-soft text-high'>
+            <span className='absolute inset-0 animate-ping-soft rounded-lg bg-high/30' />
             <BellIcon className='size-3.5' />
           </span>
           <div className='min-w-0'>
