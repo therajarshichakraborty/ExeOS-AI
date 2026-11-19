@@ -10,7 +10,7 @@ import {
 import type { InboxEmail } from "@/lib/inbox";
 import { senderName } from "@/lib/inbox";
 import { Chip, PriorityBadge } from "./priority";
-import { CopyButton } from "./copy-button";
+import { ReplyComposer } from "./reply-composer";
 
 function formatEventTime(e: { date: string; startTime: string | null }) {
   const d = new Date(e.startTime ?? `${e.date}T00:00:00`);
@@ -86,18 +86,14 @@ export function EmailReader({ email, backHref }: { email: InboxEmail; backHref: 
           </section>
         )}
 
-        {email.draftReply && (
-          <section className='rounded-2xl border p-5'>
-            <div className='mb-3 flex items-center justify-between'>
-              <p className='text-sm font-semibold'>Suggested reply</p>
-              <div className='flex items-center gap-2'>
-                {email.draftCreated && <Chip>Saved to Gmail drafts</Chip>}
-                <CopyButton text={email.draftReply} />
-              </div>
-            </div>
-            <p className='text-sm leading-relaxed whitespace-pre-wrap text-foreground/85'>{email.draftReply}</p>
-          </section>
-        )}
+        <ReplyComposer
+          key={`${email.emailId}-${email.draftReply ?? ""}-${email.replySentAt ?? ""}`}
+          emailId={email.emailId}
+          to={name}
+          initialBody={email.draftReply ?? null}
+          hasDraft={Boolean(email.draftId || email.draftCreated)}
+          sentAt={email.replySentAt ?? null}
+        />
 
         {(!!email.actionItems?.length || !!email.calendarEvents?.length) && (
           <div className='grid gap-4 sm:grid-cols-2'>
