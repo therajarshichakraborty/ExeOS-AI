@@ -393,3 +393,24 @@ Distributed under the **MIT License**. See `LICENSE` for details.
 <p align="center">
   Crafted with ❤️ for modern professionals, powered by <b>Next.js</b>, <b>Clerk</b>, <b>Drizzle ORM</b>, and <b>OpenRouter AI</b>.
 </p>
+
+## AI agents (`/agents`)
+
+Built on the [OpenAI Agents SDK](https://openai.github.io/openai-agents-js/). Each run makes **at most three model calls**, no matter how many emails are processed:
+
+| Agent | File | Model (default) | Input | Output |
+| --- | --- | --- | --- | --- |
+| Classifier | `agents/classifier.ts` | `gpt-4.1-nano` | all unread emails (≤15), 450-char excerpts, one batch | priority, category, summary, reply flag, action items, dated events |
+| Reply suggester | `agents/reply-suggester.ts` | `gpt-4.1-mini` | only emails flagged as needing a reply (≤5) | ≤80-word drafts, saved as Gmail drafts |
+| Notifier | `agents/notifier.ts` | `gpt-4.1-nano` | only high/medium summaries | short push title + body (≤5) |
+
+`agents/pipeline.ts` runs them in order. Token use is kept low with batching, clipped and whitespace-collapsed input, short-keyed JSON output, `maxTokens` caps and tracing turned off.
+
+**No API key? It still works.** If `OPENAI_API_KEY` is missing or a call fails, `agents/fallback.ts` triages with zero-token heuristics. Optional overrides: `OPENAI_CLASSIFIER_MODEL`, `OPENAI_REPLY_MODEL`, `OPENAI_NOTIFIER_MODEL`.
+
+**Push notifications:** notifier output is stored in the `notifications` table (created on first use, or via `/api/setup-db`). The bell in the app top bar polls `/api/notifications` and shows browser notifications once permission is granted.
+
+## Routes
+
+- Marketing: `/`, `/features`, `/pricing`, `/about`, `/security`
+- App: `/dashboard` (Gmail-style priority inbox: `?p=high|medium|low`, `?view=high|reply|drafts|scheduled`, `?cat=…`, `?q=…`, `?id=<emailId>`), `/monitoring` (activity), `/settings`
