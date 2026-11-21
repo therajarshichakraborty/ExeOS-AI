@@ -103,12 +103,12 @@ export function NotificationBell() {
       <button
         type='button'
         onClick={() => setOpen((v) => !v)}
-        className='press relative grid size-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-card/60 hover:text-foreground [&>svg]:transition-transform hover:[&>svg]:-rotate-12'
+        className='press relative grid size-9 place-items-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&>svg]:transition-transform hover:[&>svg]:-rotate-12'
         aria-label={`Notifications${unread ? ` (${unread} unread)` : ""}`}
       >
-        {unread ? <BellRingIcon className='size-5' /> : <BellIcon className='size-5' />}
+        {unread ? <BellRingIcon className='size-[18px]' /> : <BellIcon className='size-[18px]' />}
         {unread > 0 && (
-          <span className='absolute top-1.5 right-1.5 grid min-w-4 place-items-center rounded-full bg-high px-1 text-[10px] font-semibold text-white'>
+          <span className='absolute top-1 right-1 grid min-w-4 place-items-center rounded-full bg-high px-1 text-[10px] font-semibold text-white'>
             <span className='absolute inset-0 animate-ping-soft rounded-full bg-high' />
             <span className='relative'>{unread}</span>
           </span>
@@ -129,7 +129,7 @@ export function NotificationBell() {
           {permission === "default" && (
             <button
               onClick={enablePush}
-              className='flex w-full items-center gap-2 border-b bg-brand-soft/60 px-4 py-2.5 text-left text-xs font-medium text-brand hover:bg-brand-soft'
+              className='flex w-full items-center gap-2 border-b bg-brand/10 px-4 py-2.5 text-left text-xs font-medium text-brand hover:bg-brand/15'
             >
               <BellRingIcon className='size-3.5' /> Enable browser push for urgent mail
             </button>

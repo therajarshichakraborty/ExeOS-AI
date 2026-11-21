@@ -1,80 +1,53 @@
 import Link from "next/link";
 import {
   ArrowRightIcon,
-  BellRingIcon,
-  CalendarCheckIcon,
+  BotIcon,
+  CalendarDaysIcon,
+  DatabaseIcon,
+  KeyRoundIcon,
   LayersIcon,
   LockKeyholeIcon,
-  MessageSquareReplyIcon,
+  MailIcon,
+  MousePointerClickIcon,
   ShieldCheckIcon,
-  XIcon,
-  CheckIcon,
+  TriangleIcon,
 } from "lucide-react";
 import { AgentCards } from "@/components/marketing/agent-cards";
-import { InboxPreview } from "@/components/marketing/inbox-preview";
+import { BeforeAfter } from "@/components/marketing/before-after";
+import { Bento } from "@/components/marketing/bento";
 import { Faq } from "@/components/marketing/faq";
-import { CtaBand, SectionHeading } from "@/components/marketing/section";
-import { CountUp } from "@/components/motion/count-up";
+import { InboxPreview } from "@/components/marketing/inbox-preview";
+import { CtaBand, HeroArcs, SectionHeading } from "@/components/marketing/section";
+import { Stats } from "@/components/marketing/stats";
+import { RoleCards, Testimonials } from "@/components/marketing/testimonials";
+import { AnimatedWords } from "@/components/motion/animated-words";
 import { Reveal } from "@/components/motion/reveal";
 
-const PILLARS = [
-  {
-    icon: LayersIcon,
-    title: "Priority, not chronology",
-    body: "Every unread email is ranked high, medium or low with a one-line summary, so you read what matters first.",
-  },
-  {
-    icon: MessageSquareReplyIcon,
-    title: "Replies, already drafted",
-    body: "Careful drafts land in the right Gmail thread. Edit and send from ExeOS or Gmail, it's the same draft.",
-  },
-  {
-    icon: BellRingIcon,
-    title: "Alerts that earn it",
-    body: "Push notifications only for the urgent few. Receipts and newsletters never interrupt your day again.",
-  },
+const STACK = [
+  { icon: MailIcon, label: "Gmail" },
+  { icon: CalendarDaysIcon, label: "Google Calendar" },
+  { icon: BotIcon, label: "OpenAI Agents" },
+  { icon: KeyRoundIcon, label: "Clerk" },
+  { icon: DatabaseIcon, label: "Postgres" },
+  { icon: TriangleIcon, label: "Vercel" },
 ];
 
 const STEPS = [
-  { icon: LockKeyholeIcon, title: "Connect Google", body: "Secure OAuth, encrypted tokens, revoke any time." },
-  { icon: LayersIcon, title: "Agents triage", body: "Priorities, drafts and calendar holds in one quiet run." },
-  { icon: CalendarCheckIcon, title: "You decide", body: "Review in a Gmail-familiar inbox and hit send." },
-];
-
-const AUDIENCE = [
-  "Founders",
-  "Recruiters",
-  "Freelancers",
-  "Sales leads",
-  "Students",
-  "Operators",
-  "Consultants",
-  "Engineering managers",
-  "Agencies",
-  "Researchers",
-];
-
-const BEFORE = [
-  "142 unread, sorted by time, not importance",
-  "Important threads buried under newsletters",
-  "Replies written from scratch at 11pm",
-  "Deadlines living only inside email bodies",
-  "Every ping feels urgent",
-];
-
-const AFTER = [
-  "A short list of what actually needs you",
-  "Bulk mail quietly filed, never in your way",
-  "Drafts waiting in the right Gmail thread",
-  "Meetings and due dates already on your calendar",
-  "Alerts only for the truly urgent few",
-];
-
-const DAY = [
-  { time: "08:00", title: "Morning triage", body: "Overnight mail is ranked. You open a calm list of six, not sixty." },
-  { time: "10:30", title: "One urgent ping", body: "A client deadline moved up. You get a single, clear push notification." },
-  { time: "13:15", title: "Reply in a click", body: "The draft is already in the thread. Tweak a line, press send." },
-  { time: "17:00", title: "Tomorrow, sorted", body: "The interview invite became a calendar hold while you were busy." },
+  {
+    icon: LockKeyholeIcon,
+    title: "Connect Google",
+    body: "Secure OAuth with encrypted tokens. Revoke any time from your Google account.",
+  },
+  {
+    icon: LayersIcon,
+    title: "Agents triage",
+    body: "Priorities, drafts and calendar holds in one quiet, token-frugal run.",
+  },
+  {
+    icon: MousePointerClickIcon,
+    title: "You decide",
+    body: "Review a calm, ranked inbox and send with one click. Nothing goes out without you.",
+  },
 ];
 
 const FAQ = [
@@ -82,96 +55,97 @@ const FAQ = [
   { q: "Do I have to switch email clients?", a: "No. ExeOS works on top of Gmail, so everything stays in sync with your existing inbox." },
   { q: "How much does each run cost in AI usage?", a: "Bulk mail is sorted locally and real conversations are batched, so a run is usually a fraction of a cent." },
   { q: "Can I use it without an AI key?", a: "Yes. A built-in rules engine still ranks your mail and flags urgent messages." },
+  { q: "Is my email used to train models?", a: "No. Emails are processed only for the run that handles them and are never used for training." },
 ];
-
-/** Hand-drawn chevron mark echoing the brand, drawn on load. */
-function Glyph() {
-  return (
-    <svg viewBox='0 0 64 48' className='mx-auto h-12 w-16 text-foreground/80' aria-hidden>
-      <path
-        d='M10 8 C 28 16, 44 20, 54 24 C 44 28, 28 34, 12 42'
-        fill='none'
-        stroke='currentColor'
-        strokeWidth='6'
-        strokeLinecap='round'
-        className='[stroke-dasharray:120] [stroke-dashoffset:120] motion-safe:animate-[draw_1.2s_ease-out_0.2s_forwards] motion-reduce:[stroke-dashoffset:0]'
-      />
-    </svg>
-  );
-}
 
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <section className='relative overflow-hidden'>
-        <div className='relative mx-auto max-w-6xl px-5 pt-20 pb-20 text-center sm:pt-28'>
-          <div className='stagger space-y-8'>
-            <Glyph />
-            <h1 className='mx-auto max-w-5xl text-5xl leading-[1.05] font-bold tracking-tight text-balance text-foreground/90 sm:text-7xl lg:text-[5.5rem]'>
-              Email that finally <span className='text-gradient'>makes sense.</span>
+      {/* ------------------------------------------------------------ Hero */}
+      <section className='relative -mt-[76px] px-3 pt-[76px]'>
+        <div className='relative mx-auto max-w-7xl overflow-hidden rounded-b-[2.5rem]'>
+          <div className='hero-wash pointer-events-none absolute inset-0' />
+          <HeroArcs className='h-[55%]' />
+
+          <div className='relative mx-auto max-w-5xl px-5 pt-20 text-center sm:pt-28'>
+            <Link
+              href='/features'
+              className='group mx-auto inline-flex animate-fade-up items-center gap-2 rounded-full border bg-card/80 py-1 pr-3 pl-1 text-sm shadow-sm backdrop-blur transition-colors hover:border-foreground/20'
+            >
+              <span className='rounded-full bg-brand px-2.5 py-0.5 text-xs font-semibold text-brand-foreground'>New</span>
+              <span className='text-muted-foreground'>Drafts now sync straight into Gmail threads</span>
+              <ArrowRightIcon className='size-3.5 text-muted-foreground transition-transform group-hover:translate-x-0.5' />
+            </Link>
+
+            <h1 className='mt-8 text-[2.75rem] leading-[1.02] font-bold tracking-[-0.035em] text-balance sm:text-7xl lg:text-[5.75rem]'>
+              <AnimatedWords text='The inbox that' delay={40} />{" "}
+              <AnimatedWords text='runs itself.' delay={140} wordClassName='text-gradient pb-3' />
+              <br className='hidden sm:block' />{" "}
+              <AnimatedWords text='Calmer days,' delay={220} />{" "}
+              <AnimatedWords text='by design.' delay={300} wordClassName='text-gradient pb-3' />
             </h1>
-            <p className='mx-auto max-w-2xl text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl'>
+
+            <p
+              className='mx-auto mt-7 max-w-2xl animate-fade-up text-lg leading-relaxed text-balance text-muted-foreground sm:text-xl'
+              style={{ animationDelay: "250ms" }}
+            >
               ExeOS reads your <span className='font-semibold text-foreground'>Gmail</span>, ranks it by
               priority, drafts the replies and puts deadlines on your{" "}
-              <span className='font-semibold text-foreground'>Google Calendar</span>, then pings you only
+              <span className='font-semibold text-foreground'>Google Calendar</span>. It pings you only
               when it truly matters.
             </p>
-            <div className='flex flex-wrap justify-center gap-3'>
+
+            <div
+              className='mt-10 flex animate-fade-up flex-wrap justify-center gap-3'
+              style={{ animationDelay: "320ms" }}
+            >
               <Link
                 href='/sign-up'
-                className='press group inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-6 font-semibold text-primary-foreground shadow-lg shadow-primary/10 transition-all hover:opacity-90'
+                className='btn-ink sheen press group inline-flex h-13 items-center gap-2 rounded-2xl px-8 text-[15px] font-semibold'
               >
-                Start free
-                <ArrowRightIcon className='size-4 transition-transform group-hover:translate-x-0.5' />
+                Get started free
+                <ArrowRightIcon className='size-4 transition-transform duration-300 group-hover:translate-x-1' />
               </Link>
               <Link
                 href='/features'
-                className='press inline-flex h-12 items-center rounded-xl border bg-background px-6 font-semibold transition-colors hover:bg-muted'
+                className='press inline-flex h-13 items-center gap-2 rounded-2xl border bg-background/80 px-8 text-[15px] font-semibold backdrop-blur transition-colors hover:bg-muted'
               >
                 See how it works
               </Link>
             </div>
-          </div>
 
-          {/* Three pillars, outlined icons as in the reference */}
-          <div className='stagger mx-auto mt-24 grid max-w-5xl gap-10 text-left md:grid-cols-3'>
-            {PILLARS.map(({ icon: Icon, title, body }) => (
-              <div key={title} className='group flex gap-4'>
-                <span className='grid size-11 shrink-0 place-items-center rounded-xl border-2 border-brand/60 text-brand transition-all duration-300 group-hover:-rotate-6 group-hover:bg-brand-soft'>
-                  <Icon className='size-5' />
-                </span>
-                <div>
-                  <h3 className='font-semibold'>{title}</h3>
-                  <p className='mt-2 leading-relaxed text-muted-foreground'>{body}</p>
-                </div>
-              </div>
-            ))}
+            <p
+              className='mt-6 flex animate-fade-up items-center justify-center gap-2 text-sm text-muted-foreground'
+              style={{ animationDelay: "380ms" }}
+            >
+              <ShieldCheckIcon className='size-4 text-brand' /> Free forever plan · No credit card ·
+              Nothing sent without your click
+            </p>
+
+            <div
+              className='relative mx-auto mt-20 max-w-6xl animate-fade-up pb-24 text-left'
+              style={{ animationDelay: "420ms" }}
+            >
+              <InboxPreview />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Product showcase */}
-      <section className='px-5 pb-20'>
-        <Reveal className='relative mx-auto max-w-5xl'>
-          <div className='pointer-events-none absolute -inset-x-16 -inset-y-10 rounded-[3rem] bg-gradient-to-b from-brand/15 via-blue-400/10 to-transparent blur-3xl' />
-          <InboxPreview className='relative' />
-        </Reveal>
-      </section>
-
-      {/* Audience marquee */}
-      <section className='pb-28' aria-label='Who uses ExeOS'>
-        <p className='mb-6 text-center text-sm text-muted-foreground'>
-          Made for people whose inbox is part of the job
+      {/* ------------------------------------------------------- Built on */}
+      <section className='mx-auto max-w-6xl px-5 py-20' aria-label='Built on'>
+        <p className='text-center text-lg font-semibold tracking-tight'>
+          Built on the tools you already trust
         </p>
-        <div className='group relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,#000_12%,#000_88%,transparent)]'>
-          <div className='flex w-max animate-marquee gap-3 group-hover:[animation-play-state:paused]'>
-            {[...AUDIENCE, ...AUDIENCE].map((label, i) => (
+        <div className='mask-fade-x group mt-10 overflow-hidden'>
+          <div className='flex w-max animate-marquee gap-14 group-hover:[animation-play-state:paused]'>
+            {[...STACK, ...STACK].map(({ icon: Icon, label }, i) => (
               <span
                 key={i}
-                aria-hidden={i >= AUDIENCE.length}
-                className='rounded-full border bg-card px-5 py-2 text-sm whitespace-nowrap text-foreground/80 shadow-xs transition-colors hover:border-brand/40 hover:text-brand'
+                aria-hidden={i >= STACK.length}
+                className='flex items-center gap-2.5 text-2xl font-bold tracking-tight whitespace-nowrap text-foreground/40 transition-colors duration-300 hover:text-foreground'
               >
+                <Icon className='size-7' strokeWidth={2.25} />
                 {label}
               </span>
             ))}
@@ -179,55 +153,96 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Before / after */}
-      <section className='mx-auto max-w-6xl space-y-14 px-5 pb-28'>
+      {/* ---------------------------------------------------------- Stats */}
+      <section className='mx-auto max-w-7xl space-y-14 px-5 pb-32'>
         <Reveal>
           <SectionHeading
-            eyebrow='Before and after'
-            title='Same inbox. Completely different day.'
-            description='ExeOS does the sorting you were going to do anyway, before you even open your laptop.'
+            title={
+              <>
+                Calm at <span className='text-gradient'>any</span> volume
+              </>
+            }
+            description='Whether it is 20 unread or 2,000, ExeOS batches the work so every run stays fast, cheap and quiet.'
           />
         </Reveal>
-        <div className='grid gap-5 md:grid-cols-2'>
-          <Reveal className='rounded-3xl border bg-card p-8'>
-            <p className='text-sm font-semibold text-muted-foreground'>Your inbox today</p>
-            <ul className='mt-6 space-y-4'>
-              {BEFORE.map((item) => (
-                <li key={item} className='flex gap-3 text-[15px] text-muted-foreground'>
-                  <span className='mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-muted'>
-                    <XIcon className='size-3' />
-                  </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+        <Stats />
+      </section>
+
+      {/* ---------------------------------------------------------- Bento */}
+      <section className='mx-auto max-w-7xl space-y-14 px-5 pb-32'>
+        <Reveal>
+          <SectionHeading
+            title={
+              <>
+                Features so good you&apos;ll <span className='text-gradient'>love it</span>
+              </>
+            }
+            description='Every card below is live. Type an email, drag the slider, switch the tone, click the calendar.'
+          />
+        </Reveal>
+        <Reveal delay={100}>
+          <Bento />
+        </Reveal>
+      </section>
+
+      {/* ---------------------------------------------------- How it works */}
+      <section className='px-3 pb-32'>
+        <div className='panel-ink relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] px-6 py-24 text-white sm:px-12'>
+          <Reveal className='relative mx-auto max-w-2xl space-y-5 text-center'>
+            <h2 className='text-4xl leading-[1.05] font-bold tracking-tight sm:text-5xl'>
+              Set up in <span className='bg-gradient-to-r from-white to-white/55 bg-clip-text text-transparent'>60 seconds.</span>
+            </h2>
+            <p className='text-lg text-white/65'>
+              Three steps. No new email client, no migration, no habits to build.
+            </p>
           </Reveal>
-          <Reveal
-            delay={120}
-            className='relative overflow-hidden rounded-3xl border border-brand/30 bg-card p-8 shadow-xl shadow-brand/5'
-          >
-            <div className='pointer-events-none absolute -top-20 -right-20 size-56 rounded-full bg-brand/10 blur-3xl' />
-            <p className='relative text-sm font-semibold text-brand'>With ExeOS</p>
-            <ul className='relative mt-6 space-y-4'>
-              {AFTER.map((item) => (
-                <li key={item} className='flex gap-3 text-[15px]'>
-                  <span className='mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-brand-foreground'>
-                    <CheckIcon className='size-3' />
+          <div className='relative mt-16 grid gap-5 md:grid-cols-3'>
+            <div className='pointer-events-none absolute top-8 right-[16%] left-[16%] hidden h-px overflow-hidden bg-white/10 md:block'>
+              <div className='h-full w-1/3 animate-beam bg-gradient-to-r from-transparent via-brand to-transparent' />
+            </div>
+            {STEPS.map(({ icon: Icon, title, body }, i) => (
+              <Reveal key={title} delay={i * 120} className='group relative text-center'>
+                <span className='relative mx-auto grid size-16 place-items-center rounded-2xl border border-white/15 bg-white/5 backdrop-blur transition-all duration-500 group-hover:-translate-y-1 group-hover:border-white/40 group-hover:bg-white/10'>
+                  <Icon className='size-6 text-white/85 transition-colors group-hover:text-white' />
+                  <span className='absolute -top-2 -right-2 grid size-6 place-items-center rounded-full bg-white font-mono text-[11px] font-bold text-slate-900'>
+                    {i + 1}
                   </span>
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
+                </span>
+                <h3 className='mt-6 text-xl font-semibold'>{title}</h3>
+                <p className='mx-auto mt-2 max-w-xs leading-relaxed text-white/60'>{body}</p>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Agents */}
-      <section className='mx-auto max-w-6xl space-y-14 px-5 pb-28'>
+      {/* --------------------------------------------------- Before/after */}
+      <section className='mx-auto max-w-5xl space-y-12 px-5 pb-32'>
+        <Reveal>
+          <SectionHeading
+            title={
+              <>
+                Same inbox. <span className='text-gradient'>Different day.</span>
+              </>
+            }
+            description='ExeOS does the sorting you were going to do anyway, before you even open your laptop.'
+          />
+        </Reveal>
+        <Reveal delay={100}>
+          <BeforeAfter />
+        </Reveal>
+      </section>
+
+      {/* --------------------------------------------------------- Agents */}
+      <section className='mx-auto max-w-7xl space-y-14 px-5 pb-32'>
         <Reveal>
           <SectionHeading
             eyebrow='Built on the OpenAI Agents SDK'
-            title={<>Three specialists, one tidy run.</>}
+            title={
+              <>
+                Three specialists. <span className='text-gradient'>One tidy run.</span>
+              </>
+            }
             description='Each agent does one job and sees only what it needs: fast, accurate and remarkably cheap to run.'
           />
         </Reveal>
@@ -236,82 +251,26 @@ export default function HomePage() {
         </Reveal>
       </section>
 
-      {/* A day with ExeOS */}
-      <section className='border-y bg-surface/60'>
-        <div className='mx-auto grid max-w-6xl gap-14 px-5 py-28 lg:grid-cols-[1fr_1.3fr]'>
-          <Reveal className='lg:sticky lg:top-28 lg:self-start'>
-            <SectionHeading
-              eyebrow='A day with ExeOS'
-              title='Your inbox, working in the background.'
-              description='No new habits to build. You just notice that email stopped being the loudest thing in your day.'
-              className='mx-0 text-left'
-            />
-          </Reveal>
-          <ol className='relative space-y-4'>
-            {DAY.map(({ time, title, body }, i) => (
-              <Reveal
-                as='li'
-                key={time}
-                delay={i * 90}
-                className='group relative flex gap-5 rounded-2xl border bg-card p-5 transition-shadow hover:shadow-lg'
-              >
-                <span className='grid h-9 w-14 shrink-0 place-items-center rounded-full bg-background font-mono text-xs ring-1 ring-border transition-colors duration-300 group-hover:bg-brand group-hover:text-brand-foreground group-hover:ring-brand'>
-                  {time}
-                </span>
-                <div>
-                  <h3 className='font-semibold'>{title}</h3>
-                  <p className='mt-1 text-sm leading-relaxed text-muted-foreground'>{body}</p>
-                </div>
-              </Reveal>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      {/* Numbers */}
-      <section className='mx-auto max-w-6xl px-5 py-28'>
-        <div className='grid grid-cols-2 gap-5 md:grid-cols-4'>
-          {[
-            { node: <CountUp to={3} />, label: "model calls per run, max" },
-            { node: <CountUp to={15} />, label: "emails triaged per run" },
-            { node: <CountUp to={1} prefix='<' suffix='¢' />, label: "typical AI cost per run" },
-            { node: <CountUp to={0} />, label: "emails sent without you" },
-          ].map(({ node, label }, i) => (
-            <Reveal
-              key={label}
-              delay={i * 80}
-              className='lift rounded-2xl border bg-card p-6 text-center hover:shadow-lg'
-            >
-              <p className='text-gradient text-5xl font-bold tracking-tight'>{node}</p>
-              <p className='mt-2 text-sm text-muted-foreground'>{label}</p>
-            </Reveal>
-          ))}
-        </div>
-      </section>
-
-      {/* Steps */}
-      <section className='mx-auto max-w-6xl px-5 pb-28'>
-        <Reveal className='grid gap-px overflow-hidden rounded-3xl border bg-border md:grid-cols-3'>
-          {STEPS.map(({ icon: Icon, title, body }, i) => (
-            <div key={title} className='group bg-card p-8 transition-colors hover:bg-surface'>
-              <div className='flex items-center justify-between'>
-                <Icon className='size-5 text-brand transition-transform duration-300 group-hover:scale-110' />
-                <span className='font-mono text-xs text-muted-foreground'>0{i + 1}</span>
-              </div>
-              <h3 className='mt-6 text-lg font-semibold'>{title}</h3>
-              <p className='mt-1.5 text-sm text-muted-foreground'>{body}</p>
-            </div>
-          ))}
-        </Reveal>
-        <p className='mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground'>
-          <ShieldCheckIcon className='size-4 text-brand' /> Nothing is ever sent without your click.
-        </p>
-      </section>
-
-      {/* FAQ */}
-      <section className='mx-auto max-w-6xl space-y-12 px-5 pb-28'>
+      {/* ---------------------------------------------------- Personas */}
+      <section className='mx-auto max-w-7xl px-5 pb-32'>
         <Reveal>
-          <SectionHeading eyebrow='FAQ' title='Questions, answered.' />
+          <Testimonials />
+        </Reveal>
+        <Reveal delay={100} className='mt-20'>
+          <RoleCards />
+        </Reveal>
+      </section>
+
+      {/* ------------------------------------------------------------ FAQ */}
+      <section className='mx-auto max-w-6xl space-y-12 px-5 pb-32'>
+        <Reveal>
+          <SectionHeading
+            title={
+              <>
+                Questions, <span className='text-gradient'>answered.</span>
+              </>
+            }
+          />
         </Reveal>
         <Reveal delay={100}>
           <Faq items={FAQ} />

@@ -165,7 +165,21 @@ export async function getUnreadEmails(userId: string) {
   };
 }
 
+// Indexes for the per-user lookups every dashboard page makes. Created lazily
+// (IF NOT EXISTS, once per server process) so no manual migration is needed.
+let indexesReady: Promise<unknown> | null = null;
+export function ensureIndexes() {
+  indexesReady ??= Promise.all([
+    db.execute(sql`CREATE INDEX IF NOT EXISTS "agent_runs_user_started_idx" ON "agent_runs" ("user_id", "started_at" DESC)`),
+    db.execute(sql`CREATE INDEX IF NOT EXISTS "integrations_user_idx" ON "integrations" ("user_id")`),
+  ]).catch((error) => {
+    console.error("Index creation skipped:", error);
+  });
+  return indexesReady;
+}
+
 export async function getAgentRuns(userId: string) {
+  void ensureIndexes();
   const results = await db
     .select()
     .from(agentRuns)
@@ -200,6 +214,11 @@ export function ensureNotificationsTable() {
         "read" boolean NOT NULL DEFAULT false,
         "created_at" timestamp NOT NULL DEFAULT now()
       )`,
+    )
+    .then(() =>
+      db.execute(
+        sql`CREATE INDEX IF NOT EXISTS "notifications_user_created_idx" ON "notifications" ("user_id", "created_at" DESC)`,
+      ),
     )
     .catch((error) => {
       notificationsReady = null;

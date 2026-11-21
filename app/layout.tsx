@@ -4,6 +4,8 @@ import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
 import { Toaster } from "sonner";
+import { Suspense } from "react";
+import { NavProgress } from "@/components/motion/nav-progress";
 import { ThemeProvider } from "@/providers/theme-providers";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
@@ -33,17 +35,21 @@ export default function RootLayout({
   return (
     <html
       lang='en'
-      className={`${geist.variable} ${geistMono.variable} ${instrument.variable} h-full`}
+      className={`${geist.variable} ${geistMono.variable} ${instrument.variable} light h-full`}
       suppressHydrationWarning
     >
       <ClerkProvider appearance={{ theme: shadcn }}>
         <body className='flex min-h-full flex-col font-sans'>
           <ThemeProvider
             attribute='class'
-            defaultTheme='system'
-            enableSystem
+            forcedTheme='light'
+            defaultTheme='light'
+            enableSystem={false}
             disableTransitionOnChange
           >
+            <Suspense fallback={null}>
+              <NavProgress />
+            </Suspense>
             {children}
             <Toaster position='bottom-right' closeButton toastOptions={{ classNames: { toast: 'rounded-2xl! border! shadow-lg!' } }} />
           </ThemeProvider>

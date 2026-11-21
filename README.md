@@ -19,7 +19,7 @@ puts deadlines on your Google Calendar and notifies you only when something trul
 
 <br />
 
-<img src="public/landing.png" alt="ExeOS landing page" width="100%" />
+<img src="docs/screenshots/hero.png" alt="ExeOS landing page hero: The inbox that runs itself" width="100%" />
 
 </div>
 
@@ -64,32 +64,17 @@ Every run is recorded, so you can always see what was processed, drafted and sch
 
 ## Screenshots
 
-### Priority inbox
+### Dashboard overview
 
-<img src="public/dashboard.png" alt="ExeOS priority inbox with High, Medium and Low tabs, smart views and category labels" width="100%" />
+<img src="docs/screenshots/dashboard-overview.png" alt="ExeOS dashboard overview with stat cards, priority mix, pick up where you left off, emails triaged chart and recent runs" width="100%" />
 
-The signed in inbox: every email ranked High, Medium or Low, smart views for high priority, needs reply, drafted and scheduled mail, category labels and one click triage.
+A greeting, four live stat cards (emails triaged, needs reply, drafts ready, events scheduled), the priority mix, the emails waiting on you, a 14 day triage chart and the latest agent runs. Every email also has **Get AI summary** and **Draft with AI** buttons.
 
-### Product pages
+### Activity
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/features.png" alt="Features page with the inbox preview" /></td>
-    <td width="50%"><img src="docs/screenshots/pricing.png" alt="Pricing page" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Features</b>: Gmail style priority inbox with agent status</td>
-    <td align="center"><b>Pricing</b>: Free, Pro and Team plans</td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/security.png" alt="Security page" /></td>
-    <td width="50%"><img src="docs/screenshots/signin.png" alt="Sign in page" /></td>
-  </tr>
-  <tr>
-    <td align="center"><b>Security</b>: how ExeOS treats your data</td>
-    <td align="center"><b>Sign in</b>: Clerk authentication with Google</td>
-  </tr>
-</table>
+<img src="docs/screenshots/dashboard-activity.png" alt="ExeOS activity page with run totals and the run history timeline" width="100%" />
+
+Run totals and a timeline of every agent run: what it processed, drafted and scheduled, how long it took, and whether it succeeded.
 
 ---
 
@@ -157,11 +142,13 @@ The agents live in [`agents/`](agents) and are built on the [OpenAI Agents SDK](
 
 | Agent           | File                                                     | Default model  | Input                                                   | Output                                                         |
 | :-------------- | :------------------------------------------------------- | :------------- | :------------------------------------------------------ | :------------------------------------------------------------- |
-| Classifier      | [`agents/classifier.ts`](agents/classifier.ts)           | `gpt-4.1-nano` | Up to 15 unread emails, 450 character excerpts, batched | Priority, category, summary, reply flag, action items, events  |
-| Reply suggester | [`agents/reply-suggester.ts`](agents/reply-suggester.ts) | `gpt-4.1-mini` | Only emails flagged as needing a reply (up to 5)        | Short drafts (about 80 words) saved as Gmail drafts            |
-| Notifier        | [`agents/notifier.ts`](agents/notifier.ts)               | `gpt-4.1-nano` | Only high and medium priority summaries                 | Short push notification title and body (up to 5)               |
+| Classifier      | [`agents/classifier.ts`](agents/classifier.ts)           | `gpt-4o-mini`  | Up to 15 unread emails, 450 character excerpts, batched | Priority, category, summary, reply flag, action items, events  |
+| Reply suggester | [`agents/reply-suggester.ts`](agents/reply-suggester.ts) | `gpt-4o-mini`  | Only emails flagged as needing a reply (up to 5)        | Short drafts (about 80 words) saved as Gmail drafts            |
+| Notifier        | [`agents/notifier.ts`](agents/notifier.ts)               | `gpt-4o-mini`  | Only high and medium priority summaries                 | Short push notification title and body (up to 5)               |
 
 [`agents/pipeline.ts`](agents/pipeline.ts) runs them in order and [`agents/fallback.ts`](agents/fallback.ts) provides the heuristic triage used when no model is available.
+
+[`agents/on-demand.ts`](agents/on-demand.ts) powers the per-email **Get AI summary** and **Draft with AI** buttons: one small `gpt-4o-mini` call each, with a rules-based fallback when no key is set. Summaries are saved on the email; drafts only reach Gmail when you save or send them.
 
 **Keeping token use low**
 
@@ -252,9 +239,9 @@ Open [http://localhost:4040](http://localhost:4040), sign in, then go to **Setti
 | `ENCRYPTION_KEY`                    |   Yes    | Secret used to derive the AES-256-GCM key for OAuth tokens (32+ characters) |
 | `CRON_SECRET`                       |   Yes    | Bearer token that authorizes scheduled agent runs                         |
 | `OPENAI_API_KEY`                    |    No    | Enables the AI agents; without it the heuristic triage is used            |
-| `OPENAI_CLASSIFIER_MODEL`           |    No    | Overrides the classifier model (default `gpt-4.1-nano`)                   |
-| `OPENAI_REPLY_MODEL`                |    No    | Overrides the reply model (default `gpt-4.1-mini`)                        |
-| `OPENAI_NOTIFIER_MODEL`             |    No    | Overrides the notifier model (default `gpt-4.1-nano`)                     |
+| `OPENAI_CLASSIFIER_MODEL`           |    No    | Overrides the classifier and summarizer model (default `gpt-4o-mini`)     |
+| `OPENAI_REPLY_MODEL`                |    No    | Overrides the reply model (default `gpt-4o-mini`)                         |
+| `OPENAI_NOTIFIER_MODEL`             |    No    | Overrides the notifier model (default `gpt-4o-mini`)                      |
 
 Example:
 
@@ -348,6 +335,7 @@ Generate strong secrets with `openssl rand -hex 32`. Never commit `.env`.
 | `GET`      | `/api/auth/google`                | Start the Google OAuth flow for Gmail or Calendar                           |
 | `GET`      | `/api/auth/google/callback`       | OAuth callback; stores encrypted tokens                                     |
 | `POST`     | `/api/emails/:emailId/reply`      | Save (`mode: "draft"`) or send (`mode: "send"`) the reply for an email      |
+| `POST`     | `/api/emails/:emailId/ai`         | AI summary (`action: "summary"`) or AI reply draft (`action: "draft"`) for an email |
 | `GET`      | `/api/calendar/events`            | Upcoming Google Calendar events                                             |
 | `GET POST` | `/api/notifications`              | List notifications and mark them as read                                    |
 | `GET`      | `/api/setup-db`                   | Create missing tables (for example `notifications`) on first use            |

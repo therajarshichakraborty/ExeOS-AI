@@ -1,24 +1,28 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
+/**
+ * The ExeOS mark: an open "E" drawn as three inbox rows on a blue tile. The
+ * middle row is shorter and ends in a dot (the agent at work). Identical to
+ * app/icon.svg, which is used as the favicon.
+ */
 export function LogoMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "relative grid size-7 place-items-center rounded-lg bg-primary text-primary-foreground shadow-sm",
+        "relative grid size-8 shrink-0 place-items-center overflow-hidden rounded-[9px] shadow-[0_6px_16px_-6px_oklch(0.5_0.22_262/0.7),inset_0_0_0_1px_oklch(1_0_0/0.18)]",
         className,
       )}
+      style={{ background: "linear-gradient(145deg, #4b8bff 0%, #2563eb 55%, #1d3fbf 100%)" }}
+      aria-hidden
     >
-      <svg viewBox='0 0 24 24' fill='none' className='size-4' aria-hidden>
-        <path
-          d='M4 7.5 12 13l8-5.5M5 5h14a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Z'
-          stroke='currentColor'
-          strokeWidth='1.8'
-          strokeLinecap='round'
-          strokeLinejoin='round'
-        />
+      <svg viewBox='0 0 32 32' className='relative z-10 size-full'>
+        <rect x='8.5' y='8.6' width='15' height='3.4' rx='1.7' fill='#fff' />
+        <rect x='8.5' y='14.3' width='8.6' height='3.4' rx='1.7' fill='#fff' />
+        <circle cx='21.1' cy='16' r='2' fill='#fff' />
+        <rect x='8.5' y='20' width='15' height='3.4' rx='1.7' fill='#fff' />
       </svg>
-      <span className='absolute -top-0.5 -right-0.5 size-2 rounded-full bg-brand ring-2 ring-background' />
+      <span className='pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent' />
     </span>
   );
 }
@@ -31,12 +35,14 @@ export function Logo({
   className?: string;
 }) {
   return (
-    <Link
-      href={href}
-      className={cn("flex items-center gap-2.5 font-semibold", className)}
-    >
-      <LogoMark />
-      <span className='text-[15px] tracking-tight'>ExeOS</span>
+    <Link href={href} className={cn("group flex items-center gap-2.5", className)}>
+      <LogoMark className='transition-transform duration-300 group-hover:-rotate-3 group-hover:scale-105' />
+      <span className='flex items-baseline gap-1 text-[17px] font-semibold tracking-[-0.025em]'>
+        ExeOS
+        <span className='rounded-[5px] bg-brand/10 px-1 py-px text-[10px] leading-none font-bold tracking-wide text-brand'>
+          AI
+        </span>
+      </span>
     </Link>
   );
 }

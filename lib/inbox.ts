@@ -5,21 +5,32 @@ import { redirect } from "next/navigation";
 import {
   getAgentRuns,
   getOrCreateUser,
+  getUserByClerkId,
   getUserIntegrations,
 } from "@/db/queries";
 import type { AgentRun, ProcessedEmail } from "@/db/schema";
 
 export type InboxEmail = ProcessedEmail & { runId: string };
 
-/** Resolves the signed-in user once per request (shared by layout + page). */
+/**
+ * Resolves the signed-in user once per request (shared by layout + page).
+ * auth() is read locally from the session token, and name/email come from our
+ * own users row, so the slow Clerk API call (currentUser) only happens once,
+ * the first time a new user is seen.
+ */
 export const getSessionUser = cache(async () => {
   const { userId: clerkId, has } = await auth();
   if (!clerkId) redirect("/sign-in");
-  const clerkUser = await currentUser();
-  const email = clerkUser?.emailAddresses[0]?.emailAddress ?? "";
-  const name = clerkUser?.fullName ?? "";
-  const user = await getOrCreateUser(clerkId, email, name);
-  return { user, email, name, isPro: has({ plan: "pro_plan" }) };
+  let user = await getUserByClerkId(clerkId);
+  if (!user) {
+    const clerkUser = await currentUser();
+    user = await getOrCreateUser(
+      clerkId,
+      clerkUser?.emailAddresses[0]?.emailAddress ?? "",
+      clerkUser?.fullName ?? "",
+    );
+  }
+  return { user, email: user.email, name: user.name ?? "", isPro: has({ plan: "pro_plan" }) };
 });
 
 /** Flattens recent agent runs into a de-duplicated, newest-first inbox. */

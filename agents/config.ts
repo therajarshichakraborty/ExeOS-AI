@@ -6,9 +6,9 @@ import { setDefaultOpenAIKey, setTracingDisabled } from "@openai/agents";
  * returns short-keyed JSON, so a batch of 15 emails stays around a few thousand tokens.
  */
 export const MODELS = {
-  classifier: process.env.OPENAI_CLASSIFIER_MODEL ?? "gpt-4.1-nano",
-  reply: process.env.OPENAI_REPLY_MODEL ?? "gpt-4.1-mini",
-  notifier: process.env.OPENAI_NOTIFIER_MODEL ?? "gpt-4.1-nano",
+  classifier: process.env.OPENAI_CLASSIFIER_MODEL ?? "gpt-4o-mini",
+  reply: process.env.OPENAI_REPLY_MODEL ?? "gpt-4o-mini",
+  notifier: process.env.OPENAI_NOTIFIER_MODEL ?? "gpt-4o-mini",
 } as const;
 
 export const LIMITS = {

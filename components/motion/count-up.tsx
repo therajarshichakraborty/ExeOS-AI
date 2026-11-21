@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /** Counts from 0 to `to` once visible. Renders the final value without JS. */
-export function CountUp({ to, prefix = "", suffix = "", duration = 1200 }: {
+export function CountUp({ to, prefix = "", suffix = "", duration = 700 }: {
   to: number;
   prefix?: string;
   suffix?: string;

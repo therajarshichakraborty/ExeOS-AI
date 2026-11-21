@@ -28,7 +28,7 @@ export function Reveal({
           io.disconnect();
         }
       },
-      { rootMargin: "0px 0px -10% 0px" },
+      { rootMargin: "0px 0px 8% 0px" },
     );
     io.observe(el);
     return () => io.disconnect();
@@ -37,10 +37,10 @@ export function Reveal({
   return (
     <Tag
       ref={ref as React.Ref<never>}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ transitionDelay: `${Math.round(delay * 0.4)}ms` }}
       className={cn(
-        "transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-        visible ? "translate-y-0 opacity-100 blur-0" : "translate-y-6 opacity-0 blur-[2px]",
+        "transition-[opacity,translate] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+        visible ? "translate-y-0 opacity-100" : "translate-y-3 opacity-0",
         className,
       )}
     >

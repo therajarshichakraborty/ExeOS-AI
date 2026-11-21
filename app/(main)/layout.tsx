@@ -1,8 +1,7 @@
 import { Suspense } from "react";
-import Link from "next/link";
+import { AppShell } from "@/components/app/shell";
 import { AppSidebar } from "@/components/app/sidebar";
 import { Topbar } from "@/components/app/topbar";
-import { RunAgentButton } from "@/components/run-agent-button";
 import { getInbox, getSessionUser } from "@/lib/inbox";
 
 export default async function MainLayout({
@@ -10,47 +9,32 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { user, isPro } = await getSessionUser();
-  const { counts } = await getInbox(user.id);
+  const { user, isPro, name, email } = await getSessionUser();
+  const { counts, emails } = await getInbox(user.id);
+
+  const byCategory = new Map<string, number>();
+  for (const e of emails) {
+    if (e.category) byCategory.set(e.category, (byCategory.get(e.category) ?? 0) + 1);
+  }
+  const categories = [...byCategory.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([key, count]) => ({ key, count }));
 
   return (
-    <div className='backdrop-app min-h-screen bg-fixed'>
-      <div>
+    <Suspense>
+      <AppShell
+        sidebar={
+          <AppSidebar
+            counts={counts}
+            categories={categories}
+            name={name}
+            email={email}
+          />
+        }
+      >
         <Topbar isPro={isPro} />
-
-        {/* Mobile nav */}
-        <div className='flex items-center gap-2 overflow-x-auto px-4 pb-3 md:hidden'>
-          <RunAgentButton className='h-9 shrink-0 rounded-full px-4' label='Run' />
-          {[
-            ["/dashboard", "Inbox"],
-            ["/dashboard?view=high", "High"],
-            ["/dashboard?view=reply", "Reply"],
-            ["/monitoring", "Activity"],
-            ["/settings", "Settings"],
-          ].map(([href, label]) => (
-            <Link
-              key={href}
-              href={href}
-              className='glass-panel press shrink-0 rounded-full px-3.5 py-1.5 text-sm'
-            >
-              {label}
-            </Link>
-          ))}
-        </div>
-
-        <div className='flex gap-2 pr-4 pb-4 max-md:pl-4'>
-          <Suspense fallback={<div className='w-64 shrink-0 max-md:hidden' />}>
-            <AppSidebar
-              counts={counts}
-              isPro={isPro}
-              className='sticky top-4 h-[calc(100vh-6rem)] max-md:hidden'
-            />
-          </Suspense>
-          <main className='glass-panel min-h-[calc(100vh-5rem)] min-w-0 flex-1 overflow-hidden rounded-3xl shadow-[0_8px_40px_-12px_rgb(15_23_42/0.18)]'>
-            {children}
-          </main>
-        </div>
-      </div>
-    </div>
+        <main className='thin-scrollbar min-w-0 flex-1'>{children}</main>
+      </AppShell>
+    </Suspense>
   );
 }

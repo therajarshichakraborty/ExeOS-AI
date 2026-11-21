@@ -146,7 +146,7 @@ export function CalendarPopup({
           />
         }
       >
-        <CalendarIcon className='h-4 w-4 text-brand' />
+        <CalendarIcon className='h-4 w-4 text-foreground' />
         Calendar
       </DialogTrigger>
       <DialogContent className='sm:max-w-2xl p-6'>
